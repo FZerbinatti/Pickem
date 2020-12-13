@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Calendar"
+    android:background="@color/picks_background">
+
+    <LinearLayout
+        android:id="@+id/linear_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </LinearLayout>
+
+
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:orientation="vertical"
+            android:weightSum="3"
+            android:paddingTop="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/picks_top_page"
+            >
+
+            <!--  Primo Linear, LEC/LCS/LCK-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:paddingHorizontal="5dp"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <!--        <ImageView-->
+                <!--            android:layout_width="0dp"-->
+                <!--            android:layout_height="match_parent"-->
+                <!--            android:layout_weight="1"-->
+                <!--            android:paddingHorizontal="5dp"-->
+                <!--            android:src="@drawable/arrow_left">-->
+                <!--        </ImageView>-->
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/left_league"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:layout_weight="3"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="LCS"
+                    android:enabled="true"
+                    android:fontFamily="@font/simplex"
+                    android:textSize="24dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/picks_league_button">
+
+                </Button>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:id="@+id/main_league"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:enabled="false"
+                    android:textAlignment="center"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="4"
+                    android:text="LEC"
+                    android:fontFamily="@font/simplex"
+                    android:textSize="50dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/picks_league_button">
+                </Button>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/right_league"
+                    android:layout_gravity="center"
+                    android:enabled="true"
+                    android:textAlignment="center"
+                    android:layout_weight="3"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="LCK"
+                    android:fontFamily="@font/simplex"
+                    android:textSize="24dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/picks_league_button">
+                </Button>
+
+                <!--        <ImageView-->
+                <!--            android:layout_width="0dp"-->
+                <!--            android:layout_height="match_parent"-->
+                <!--            android:layout_weight="1"-->
+                <!--            android:paddingHorizontal="5dp"-->
+                <!--            android:src="@drawable/arrow_right">-->
+                <!--        </ImageView>-->
+
+
+
+            </LinearLayout>
+
+            <!--  Secondo Linear, giornata-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                >
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="5dp"
+                    android:src="@drawable/arrow_left">
+                </ImageView>
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:layout_weight="4"
+                    android:text="Saturday - Jan 19"
+                    android:fontFamily="@font/simplex"
+                    android:textSize="20sp"
+                    android:textColor="@color/white"
+                    android:layout_marginHorizontal="10dp"
+                    android:backgroundTint="@color/league_name"
+                    android:background="@drawable/picks_league_button">
+                </TextView>
+
+
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="5dp"
+                    android:src="@drawable/arrow_right">
+                </ImageView>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!--/////////////////////// Terzo /////////////////////// /////////////////////// /////////////////////// Linear,/////////////////////// /////////////////////// Picks-->
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:paddingBottom="245dp"
+            app:layout_constraintTop_toBottomOf="@+id/picks_top_page"
+            app:layout_constraintBottom_toTopOf="@+id/linear_toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/external_constraint">
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/external_constraint"
+                    android:id="@+id/constraint_1"
+                    >
+
+                    <ImageView
+                        android:id="@+id/icon_team_1"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_vs1"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        android:src="@drawable/logo_sk"
+                        android:paddingStart="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/icon_vs1"
+                        android:layout_width="@dimen/vs_icons_dimens"
+                        android:layout_height="@dimen/vs_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_team_1"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_team_2"
+                        android:src="@drawable/vsv2"
+                        android:paddingEnd="7dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_team_1"
+                        app:layout_constraintTop_toTopOf="@+id/icon_team_1" />
+
+                    <ImageView
+                        android:id="@+id/icon_team_2"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_vs1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/logo_ogn"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_vs1"
+                        app:layout_constraintTop_toTopOf="@+id/icon_vs1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/constraint_1"
+                    android:id="@+id/constraint_2">
+
+                    <ImageView
+                        android:id="@+id/icon_team_3"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_vs2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        android:src="@drawable/logo_sk"
+                        android:paddingStart="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/icon_vs2"
+                        android:layout_width="@dimen/vs_icons_dimens"
+                        android:layout_height="@dimen/vs_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_team_3"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_team_4"
+                        android:src="@drawable/vsv2"
+                        android:paddingEnd="7dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_team_3"
+                        app:layout_constraintTop_toTopOf="@+id/icon_team_3" />
+
+                    <ImageView
+                        android:id="@+id/icon_team_4"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_vs2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/logo_ogn"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_vs2"
+                        app:layout_constraintTop_toTopOf="@+id/icon_vs2" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/constraint_2"
+                    android:id="@+id/constraint_3">
+
+                    <ImageView
+                        android:id="@+id/icon_team_5"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_vs3"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        android:src="@drawable/logo_sk"
+                        android:paddingStart="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/icon_vs3"
+                        android:layout_width="@dimen/vs_icons_dimens"
+                        android:layout_height="@dimen/vs_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_team_5"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_team_6"
+                        android:src="@drawable/vsv2"
+                        android:paddingEnd="7dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_team_5"
+                        app:layout_constraintTop_toTopOf="@+id/icon_team_5" />
+
+                    <ImageView
+                        android:id="@+id/icon_team_6"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_vs3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/logo_ogn"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_vs3"
+                        app:layout_constraintTop_toTopOf="@+id/icon_vs3" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/constraint_3"
+                    android:id="@+id/constraint_4">
+
+                    <ImageView
+                        android:id="@+id/icon_team_7"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_vs4"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        android:src="@drawable/logo_sk"
+                        android:paddingStart="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/icon_vs4"
+                        android:layout_width="@dimen/vs_icons_dimens"
+                        android:layout_height="@dimen/vs_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_team_7"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_team_8"
+                        android:src="@drawable/vsv2"
+                        android:paddingEnd="7dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_team_7"
+                        app:layout_constraintTop_toTopOf="@+id/icon_team_7" />
+
+                    <ImageView
+                        android:id="@+id/icon_team_8"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_vs4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/logo_ogn"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_vs4"
+                        app:layout_constraintTop_toTopOf="@+id/icon_vs4" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintTop_toBottomOf="@id/constraint_4"
+                    android:id="@+id/constraint_5">
+
+                    <ImageView
+                        android:id="@+id/icon_team_9"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_vs5"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        android:src="@drawable/logo_sk"
+                        android:paddingStart="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <ImageView
+                        android:id="@+id/icon_vs5"
+                        android:layout_width="@dimen/vs_icons_dimens"
+                        android:layout_height="@dimen/vs_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_team_9"
+                        app:layout_constraintEnd_toStartOf="@+id/icon_team_10"
+                        android:src="@drawable/vsv2"
+                        android:paddingEnd="7dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_team_9"
+                        app:layout_constraintTop_toTopOf="@+id/icon_team_9" />
+
+                    <ImageView
+                        android:id="@+id/icon_team_10"
+                        android:layout_width="@dimen/teams_icons_dimens"
+                        android:layout_height="@dimen/teams_icons_dimens"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/icon_vs5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/logo_ogn"
+                        android:paddingEnd="10dp"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/icon_vs5"
+                        app:layout_constraintTop_toTopOf="@+id/icon_vs5" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/constraint_5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:id="@+id/constraint_6">
+
+                    <Button
+                        android:id="@+id/button_save"
+                        app:layout_constraintTop_toTopOf="@id/constraint_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:enabled="true"
+                        android:background="@drawable/login_button"
+                        android:textColor="@color/white"
+                        android:paddingStart="10dp"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/simplex"
+                        android:textAllCaps="false"
+                        android:paddingEnd="10dp"
+                        android:text="Save"
+                        android:layout_marginBottom="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+        </ScrollView>
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
