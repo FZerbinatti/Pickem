@@ -18,7 +18,9 @@ public class PicksActivity extends AppCompatActivity {
     ViewPager viewPager;
     League_selection_Adapter adapter;
     List<SelectionLeague> selectedLeagues;
-    Integer[] colors = null;
+    Integer[] colors_backgroundlistview = null;
+    Integer[] colors_background_navbar = null;
+
     ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     ConstraintLayout pick_background;
 
@@ -49,34 +51,42 @@ public class PicksActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setPadding(400, 0, 400, 0);
 
+        /*Integer[] colors_bluegradient = {
+                getResources().getColor(R.color.var2),
+                getResources().getColor(R.color.var1),
+                getResources().getColor(R.color.var2),
+                getResources().getColor(R.color.var1)
+        };*/
+
         Integer[] colors_temp = {
-                getResources().getColor(R.color.background_lck),
-                getResources().getColor(R.color.background_lec),
-                getResources().getColor(R.color.background_lpl),
-                getResources().getColor(R.color.background_lcs)
+                getResources().getColor(R.color.sfum1),
+                getResources().getColor(R.color.sfum2),
+                getResources().getColor(R.color.sfum3),
+                getResources().getColor(R.color.sfum4)
         };
 
-        colors = colors_temp;
+        //colors_background_navbar = colors_bluegradient;
+        colors_backgroundlistview = colors_temp;
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                if (position < (adapter.getCount() -1) && position < (colors.length - 1)) {
-                    /*viewPager.setBackgroundColor(
+                if (position < (adapter.getCount() -1) && position < (colors_backgroundlistview.length - 1)) {
+/*                    viewPager.setBackgroundColor(
 
                             (Integer) argbEvaluator.evaluate(
                                     positionOffset,
-                                    colors[position],
-                                    colors[position + 1]
+                                    colors_background_navbar[position],
+                                    colors_background_navbar[position + 1]
                             )
                     );*/
                     pick_background.setBackgroundColor(
 
                             (Integer) argbEvaluator.evaluate(
                                     positionOffset,
-                                    colors[position],
-                                    colors[position + 1]
+                                    colors_backgroundlistview[position],
+                                    colors_backgroundlistview[position + 1]
                             )
                     );
 
@@ -84,8 +94,8 @@ public class PicksActivity extends AppCompatActivity {
                 }
 
                 else {
-                    //viewPager.setBackgroundColor(colors[colors.length - 1]);
-                    pick_background.setBackgroundColor(colors[colors.length - 1]);
+//                    viewPager.setBackgroundColor(colors_background_navbar[colors_background_navbar.length - 1]);
+                    pick_background.setBackgroundColor(colors_backgroundlistview[colors_backgroundlistview.length - 1]);
                 }
             }
 
