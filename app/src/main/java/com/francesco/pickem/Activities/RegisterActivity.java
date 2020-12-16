@@ -6,46 +6,30 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.francesco.pickem.R;
 
-public class LoginActivity extends AppCompatActivity {
-    Button login_button;
-    TextView go_to_registration;
+public class RegisterActivity extends AppCompatActivity {
+    TextView go_to_login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        login_button = findViewById(R.id.button_login);
-        go_to_registration = findViewById(R.id.go_to_registration);
+        setContentView(R.layout.activity_register);
 
-        login_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        go_to_registration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent( LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-
-
-
+        go_to_login = findViewById(R.id.go_to_login);
 
         changeNavBarColor();
 
+        go_to_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent( RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private void changeNavBarColor() {

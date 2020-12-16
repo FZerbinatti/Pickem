@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pickem">
+        <activity android:name=".Activities.RegisterActivity"></activity>
         <activity android:name=".Activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,10 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Calendar" />
-        <activity android:name=".PicksActivity">
-
-        </activity>
+        <activity android:name=".Activities.Calendar" />
+        <activity android:name=".Activities.PicksActivity"></activity>
     </application>
 
 </manifest>

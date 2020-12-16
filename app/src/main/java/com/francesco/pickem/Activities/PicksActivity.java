@@ -1,4 +1,4 @@
-package com.francesco.pickem;
+package com.francesco.pickem.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.francesco.pickem.Adapters.League_selection_Adapter;
 import com.francesco.pickem.Models.SelectionLeague;
+import com.francesco.pickem.R;
 
 import java.util.ArrayList;
 import java.util.List;

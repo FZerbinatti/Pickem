@@ -1,8 +1,10 @@
-package com.francesco.pickem;
+package com.francesco.pickem.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.francesco.pickem.R;
 
 public class Calendar extends AppCompatActivity {
 
