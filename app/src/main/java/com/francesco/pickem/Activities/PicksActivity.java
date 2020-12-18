@@ -8,18 +8,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.animation.ArgbEvaluator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Adapters.League_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
+import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.Models.SelectionLeague;
 import com.francesco.pickem.Models.SingleMatch;
 import com.francesco.pickem.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,14 +42,16 @@ public class PicksActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<SingleMatch> singleMatchList;
     private String TAG ="PicksActivity";
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picks);
         recyclerView = findViewById(R.id.picksactivity_recyclerview);
+        context = this;
         changeNavBarColor();
-        setupToolbar();
+        setupBottomNavView();
         initializeLeagueSelection();
         initRecyclerView();
 
@@ -87,40 +94,40 @@ public class PicksActivity extends AppCompatActivity {
 
     }
 
-    private void setupToolbar() {
 
-        picks = findViewById(R.id.button_picks);
-        calendar = findViewById(R.id.button_calendar);
-        stats = findViewById(R.id.button_statistics);
-        notification = findViewById(R.id.button_notification);
+    private void setupBottomNavView() {
 
-        picks.setOnClickListener(new View.OnClickListener() {
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation_view);
+        bottomNavigationView.setSelectedItemId(R.id.button_picks);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(getApplicationContext(), PicksActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-        calendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(getApplicationContext(), Calendar.class);
-                startActivity(intent);
-            }
-        });
-        stats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(getApplicationContext(), StatsActivity.class);
-                startActivity(intent);
-            }
-        });
-        notification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(getApplicationContext(), NotificationActivity.class);
-                startActivity(intent);
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+
+                    case R.id.button_picks:
+                        Intent intentPicks= new Intent(context, PicksActivity.class);
+                        startActivity(intentPicks);
+                        Animatoo.animateFade(context);
+                        break;
+                    case R.id.button_calendar:
+                        Intent intentCalendar= new Intent(context, Calendar.class);
+                        startActivity(intentCalendar);
+                        Animatoo.animateFade(context);
+                        break;
+
+                    case R.id.button_statistics:
+                        Intent intentStats= new Intent(context, StatsActivity.class);
+                        startActivity(intentStats);
+                        Animatoo.animateFade(context);
+                        break;
+
+                    case R.id.button_notification:
+                        Intent intentNotif= new Intent(context, NotificationActivity.class);
+                        startActivity(intentNotif);
+                        Animatoo.animateFade(context);
+                        break;
+                }
+                return true;
             }
         });
 
