@@ -2,13 +2,23 @@ package com.francesco.pickem.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.animation.ArgbEvaluator;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.francesco.pickem.Adapters.League_selection_Adapter;
+import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
 import com.francesco.pickem.Models.SelectionLeague;
+import com.francesco.pickem.Models.SingleMatch;
 import com.francesco.pickem.R;
 
 import java.util.ArrayList;
@@ -18,19 +28,101 @@ public class PicksActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     League_selection_Adapter adapter;
+    RecyclerView_Picks_Adapter adapterRecycler;
     List<SelectionLeague> selectedLeagues;
     Integer[] colors_backgroundlistview = null;
-    Integer[] colors_background_navbar = null;
-
     ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     ConstraintLayout pick_background;
+    ImageButton notification, picks, calendar, stats;
+    RecyclerView recyclerView;
+    ArrayList<SingleMatch> singleMatchList;
+    private String TAG ="PicksActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picks);
-
+        recyclerView = findViewById(R.id.picksactivity_recyclerview);
+        changeNavBarColor();
+        setupToolbar();
         initializeLeagueSelection();
+        initRecyclerView();
+
+    }
+
+    private void initRecyclerView(){
+        Log.d(TAG, "initRecyclerView: ");
+
+        singleMatchList = new ArrayList<>();
+        singleMatchList.add(new SingleMatch("FNC", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/f/fc/Fnaticlogo_square.png/revision/latest?cb=20200124163013",
+                                           "G2", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/7/77/G2_Esportslogo_square.png/revision/latest?cb=20190201222017"));
+        singleMatchList.add(new SingleMatch("RGE", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/a4/Rogue_%28European_Team%29logo_square.png/revision/latest?cb=20190415174442",
+                                           "SK", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016"));
+
+
+/*        RecyclerViewClickListener listener = new RecyclerViewClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                ArrayList<String> images_paths = null;
+                // open the Full screen image display
+                Intent intent = new Intent(MainActivity.this, MovieDetails.class);
+                // passa solamente una lista dei path delle immagini
+                for (int i=0; i<movieList.size(); i++){
+                    images_paths.add(movieList.get(i).getMovie_poster());
+                }
+
+                intent.putExtra("MOVIE_PHOTO", "") ;
+                startActivity(intent);
+
+
+            }
+        };*/
+
+
+        adapterRecycler = new RecyclerView_Picks_Adapter(this, singleMatchList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapterRecycler);
+        //adapter.notifyDataSetChanged();
+
+    }
+
+    private void setupToolbar() {
+
+        picks = findViewById(R.id.button_picks);
+        calendar = findViewById(R.id.button_calendar);
+        stats = findViewById(R.id.button_statistics);
+        notification = findViewById(R.id.button_notification);
+
+        picks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(getApplicationContext(), PicksActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(getApplicationContext(), Calendar.class);
+                startActivity(intent);
+            }
+        });
+        stats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(getApplicationContext(), StatsActivity.class);
+                startActivity(intent);
+            }
+        });
+        notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(getApplicationContext(), NotificationActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -52,12 +144,6 @@ public class PicksActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setPadding(400, 0, 400, 0);
 
-        /*Integer[] colors_bluegradient = {
-                getResources().getColor(R.color.var2),
-                getResources().getColor(R.color.var1),
-                getResources().getColor(R.color.var2),
-                getResources().getColor(R.color.var1)
-        };*/
 
         Integer[] colors_temp = {
                 getResources().getColor(R.color.sfum1),
@@ -66,7 +152,6 @@ public class PicksActivity extends AppCompatActivity {
                 getResources().getColor(R.color.sfum4)
         };
 
-        //colors_background_navbar = colors_bluegradient;
         colors_backgroundlistview = colors_temp;
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -74,14 +159,7 @@ public class PicksActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
                 if (position < (adapter.getCount() -1) && position < (colors_backgroundlistview.length - 1)) {
-/*                    viewPager.setBackgroundColor(
 
-                            (Integer) argbEvaluator.evaluate(
-                                    positionOffset,
-                                    colors_background_navbar[position],
-                                    colors_background_navbar[position + 1]
-                            )
-                    );*/
                     pick_background.setBackgroundColor(
 
                             (Integer) argbEvaluator.evaluate(
@@ -95,7 +173,6 @@ public class PicksActivity extends AppCompatActivity {
                 }
 
                 else {
-//                    viewPager.setBackgroundColor(colors_background_navbar[colors_background_navbar.length - 1]);
                     pick_background.setBackgroundColor(colors_backgroundlistview[colors_backgroundlistview.length - 1]);
                 }
             }
@@ -112,5 +189,12 @@ public class PicksActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    public void changeNavBarColor() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.background_dark));
+            getWindow().setStatusBarColor(getResources().getColor(R.color.background_dark));
+        }
     }
 }

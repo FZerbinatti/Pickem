@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent( LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
-                finish();
+
             }
         });
 
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void changeNavBarColor() {
+    public void changeNavBarColor() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.background_dark));
             getWindow().setStatusBarColor(getResources().getColor(R.color.background_dark));

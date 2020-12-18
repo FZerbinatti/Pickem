@@ -71,7 +71,7 @@
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:enabled="true"
-        android:background="@drawable/login_button"
+        android:background="@drawable/buttons_background_white_stroke"
         android:textColor="@color/white"
         android:paddingHorizontal="10dp"
         android:textSize="20sp"
