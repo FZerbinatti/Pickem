@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageButton;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
@@ -121,8 +120,8 @@ public class PicksActivity extends AppCompatActivity {
                         Animatoo.animateFade(context);
                         break;
 
-                    case R.id.button_notification:
-                        Intent intentNotif= new Intent(context, NotificationActivity.class);
+                    case R.id.button_settings:
+                        Intent intentNotif= new Intent(context, SettingsActivity.class);
                         startActivity(intentNotif);
                         Animatoo.animateFade(context);
                         break;

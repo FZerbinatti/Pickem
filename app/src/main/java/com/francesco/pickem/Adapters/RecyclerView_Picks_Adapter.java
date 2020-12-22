@@ -1,13 +1,11 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +22,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     private Context context;
     private List<SingleMatch> singleMatchList;
     private String TAG ="Adapter RecyclerVIew";
+    RecyclerViewClickListener clickListener;
+
 
 
     public RecyclerView_Picks_Adapter(Context context, List<SingleMatch> singleMatchList) {
@@ -60,6 +60,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         Glide.with(context).load(team1LogoURL).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
         Glide.with(context).load(team2LogoURL).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+
     }
 
     @Override

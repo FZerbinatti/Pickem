@@ -62,13 +62,13 @@
             android:src="@drawable/ic_equalizer_24px"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_notification"
+            app:layout_constraintEnd_toStartOf="@+id/button_settings"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/button_calendar"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/button_notification"
+            android:id="@+id/button_settings"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:background="@color/transparent"
