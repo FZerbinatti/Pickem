@@ -14,4 +14,8 @@
     <string name="lcs">LCS</string>
     <string name="lck">LCK</string>
     <string name="lpl">LPL</string>
+    <string name="reset">Reset</string>
+    <string name="new_password">New Password</string>
+    <string name="repeat_new_password">Repeat new password</string>
+    <string name="pmbe">Passwords must be equal</string>
 </resources>

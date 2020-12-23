@@ -61,9 +61,9 @@ public class PicksActivity extends AppCompatActivity {
 
         singleMatchList = new ArrayList<>();
         singleMatchList.add(new SingleMatch("FNC", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/f/fc/Fnaticlogo_square.png/revision/latest?cb=20200124163013",
-                                           "G2", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/7/77/G2_Esportslogo_square.png/revision/latest?cb=20190201222017"));
+                                           "G2", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/7/77/G2_Esportslogo_square.png/revision/latest?cb=20190201222017", "17:00"));
         singleMatchList.add(new SingleMatch("RGE", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/a4/Rogue_%28European_Team%29logo_square.png/revision/latest?cb=20190415174442",
-                                           "SK", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016"));
+                                           "SK", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016", "18:00"));
 
 
 /*        RecyclerViewClickListener listener = new RecyclerViewClickListener() {

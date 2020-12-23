@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,8 +47,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
-        String team1LogoURL = (singleMatchList.get(i).getUrlLogoTeam1());
-        String team2LogoURL = (singleMatchList.get(i).getUrlLogoTeam2());
+        String team1LogoURL = singleMatchList.get(i).getUrlLogoTeam1();
+        String team2LogoURL = singleMatchList.get(i).getUrlLogoTeam2();
+        String match_timer = singleMatchList.get(i).getMatch_time();
 
         Log.d(TAG, "onBindViewHolder: team1LogoURL: "+team1LogoURL);
         Log.d(TAG, "onBindViewHolder: team2LogoURL: "+team2LogoURL);
@@ -60,6 +62,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         Glide.with(context).load(team1LogoURL).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
         Glide.with(context).load(team2LogoURL).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+        viewHolder.textview_match_timer.setText(match_timer);
+
 
     }
 
@@ -74,6 +78,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         private ImageView opacity_team_1;
         private ImageView image_team_2;
         private ImageView opacity_team_2;
+        private TextView textview_match_timer;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -83,6 +88,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             image_team_2 = (ImageView) itemView.findViewById(R.id.logo_team_2);
             opacity_team_1 = (ImageView) itemView.findViewById(R.id.opacity_team_1);
             opacity_team_2 = (ImageView) itemView.findViewById(R.id.opacity_team_2);
+            textview_match_timer = (TextView) itemView.findViewById(R.id.textview_match_timer);
+
 
 
             image_team_1.setOnClickListener(new View.OnClickListener() {
@@ -92,6 +99,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                     opacity_team_1.setVisibility(View.INVISIBLE);
                 }
             });
+
             image_team_2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

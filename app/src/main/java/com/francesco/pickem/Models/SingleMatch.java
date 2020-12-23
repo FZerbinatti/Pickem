@@ -6,13 +6,14 @@ public class SingleMatch {
     private String nameTeam2;
     private String urlLogoTeam1;
     private String urlLogoTeam2;
+    private String match_time;
 
-    public SingleMatch(String nameTeam1, String urlLogoTeam1, String nameTeam2, String urlLogoTeam2) {
+    public SingleMatch(String nameTeam1, String urlLogoTeam1, String nameTeam2,  String urlLogoTeam2, String match_time) {
         this.nameTeam1 = nameTeam1;
-        this.urlLogoTeam1 = urlLogoTeam1;
-
         this.nameTeam2 = nameTeam2;
+        this.urlLogoTeam1 = urlLogoTeam1;
         this.urlLogoTeam2 = urlLogoTeam2;
+        this.match_time = match_time;
     }
 
     public String getNameTeam1() {
@@ -45,5 +46,13 @@ public class SingleMatch {
 
     public void setUrlLogoTeam2(String urlLogoTeam2) {
         this.urlLogoTeam2 = urlLogoTeam2;
+    }
+
+    public String getMatch_time() {
+        return match_time;
+    }
+
+    public void setMatch_time(String match_time) {
+        this.match_time = match_time;
     }
 }

@@ -60,6 +60,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //array di acronimi delle leghe ceh l'use vuole seguire
     private static final String LEAGUES_OF_INTEREST = "LEAGUES_OF_INTEREST";
+    private static final String USERNAME = "USERNAME";
+
 
 
  // array di squadre che vincono
@@ -74,8 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //creating tables
         String CREATE_TABLE_MOVIES = "CREATE TABLE " + TABLE_PREFERENCES +
                 "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "MATCH_DATE" + " TEXT ,  "
-                + "MOVIE_YEAR" + " TEXT , "
+                + USERNAME + " TEXT ,  "
+                + LEAGUES_OF_INTEREST + " TEXT , "
                 + "MOVIE_DESCRIPTION" + " TEXT , "
                 + "MOVIE_FAVOURITE" + " TEXT , "
                 + "MOVIE_POSTER" + " TEXT   );";
