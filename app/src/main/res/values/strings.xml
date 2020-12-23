@@ -18,4 +18,12 @@
     <string name="new_password">New Password</string>
     <string name="repeat_new_password">Repeat new password</string>
     <string name="pmbe">Passwords must be equal</string>
+    <string name="tcl">TCL</string>
+    <string name="cblol">CBLOL</string>
+    <string name="opl">OPL</string>
+    <string name="lla">LLA</string>
+    <string name="pcs">PCS</string>
+    <string name="ljl">LJL</string>
+    <string name="lcs_academy">LCS ACADEMY</string>
+    <string name="eum">EU MASTERS</string>
 </resources>

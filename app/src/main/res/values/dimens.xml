@@ -8,5 +8,11 @@
 
     <dimen name="edittexts_textsize">18sp</dimen>
 
+    <dimen name="startSpacing">0dp</dimen>
+    <dimen name="secndrowspacing">180dp</dimen>
+
+
+
+
 
 </resources>

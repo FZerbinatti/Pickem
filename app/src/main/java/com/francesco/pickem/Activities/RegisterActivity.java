@@ -2,8 +2,10 @@ package com.francesco.pickem.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,9 +36,14 @@ public class RegisterActivity extends AppCompatActivity {
     TextView go_to_login;
     private FirebaseAuth mAuth;
     EditText register_username, register_email, register_password, register_repeat_password;
-    CheckBox checkbox_lec,checkbox_lck,checkbox_lpl,checkbox_lcs;
+    CheckBox checkbox_lec,checkbox_lck,checkbox_lpl,checkbox_lcs,checkbox_tcl,checkbox_cblol;
+    CheckBox checkbox_opl,checkbox_ljl,checkbox_pcs,checkbox_eum,checkbox_lcsa,checkbox_lla;
+
     Button button_register;
     ProgressBar register_progressbar;
+    ImageButton registration_show_regions;
+    ConstraintLayout collapsable_box_registration;
+    Integer dropdown_status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +55,58 @@ public class RegisterActivity extends AppCompatActivity {
         register_email = findViewById(R.id.register_email);
         register_password = findViewById(R.id.register_password);
         register_repeat_password = findViewById(R.id.register_repeat_password);
+        registration_show_regions = findViewById(R.id.registration_show_regions);
+        collapsable_box_registration = findViewById(R.id.collapsable_box_registration);
 
         checkbox_lec = findViewById(R.id.checkbox_lec);
         checkbox_lck = findViewById(R.id.checkbox_lck);
         checkbox_lpl = findViewById(R.id.checkbox_lpl);
         checkbox_lcs = findViewById(R.id.checkbox_lcs);
+
+        checkbox_tcl = findViewById(R.id.checkbox_tcl);
+        checkbox_cblol = findViewById(R.id.checkbox_cblol);
+        checkbox_opl = findViewById(R.id.checkbox_opl);
+        checkbox_ljl = findViewById(R.id.checkbox_ljl);
+
+        checkbox_pcs = findViewById(R.id.checkbox_pcs);
+        checkbox_eum = findViewById(R.id.checkbox_eum);
+        checkbox_lcsa = findViewById(R.id.checkbox_lcsa);
+        checkbox_lla = findViewById(R.id.checkbox_lla);
+
+
         register_progressbar = findViewById(R.id.register_progressbar);
         button_register = findViewById(R.id.button_register);
         mAuth = FirebaseAuth.getInstance();
+        dropdown_status=0;
+
 
         changeNavBarColor();
         goToLogin();
         registration();
+        dropdownMenu();
 
 
 
+
+    }
+
+    private void dropdownMenu() {
+
+        registration_show_regions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (dropdown_status == 0){
+                    collapsable_box_registration.setVisibility(View.VISIBLE);
+                    registration_show_regions.setImageResource(R.drawable.ic_dropup);
+                    dropdown_status =1;
+                }else {
+                    collapsable_box_registration.setVisibility(View.GONE);
+                    registration_show_regions.setImageResource(R.drawable.ic_dropdown);
+                    dropdown_status =0;
+                }
+
+            }
+        });
 
     }
 
@@ -74,11 +119,21 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = register_password.getText().toString();
                 String repeated_password = register_repeat_password.getText().toString();
                 ArrayList <String> choosen_regions = new ArrayList<>();
-                if (checkbox_lck.isChecked()){choosen_regions.add("LCK");}
-                if (checkbox_lec.isChecked()){choosen_regions.add("LEC");}
-                if (checkbox_lpl.isChecked()){choosen_regions.add("LPL");}
-                if (checkbox_lcs.isChecked()){choosen_regions.add("LCS");}
 
+                if (checkbox_lck.isChecked()){choosen_regions.add(getString(R.string.lck));}
+                if (checkbox_lec.isChecked()){choosen_regions.add(getString(R.string.lec));}
+                if (checkbox_lpl.isChecked()){choosen_regions.add(getString(R.string.lpl));}
+                if (checkbox_lcs.isChecked()){choosen_regions.add(getString(R.string.lcs));}
+
+                if (checkbox_tcl.isChecked()){choosen_regions.add(getString(R.string.tcl));}
+                if (checkbox_cblol.isChecked()){choosen_regions.add(getString(R.string.cblol));}
+                if (checkbox_opl.isChecked()){choosen_regions.add(getString(R.string.opl));}
+                if (checkbox_ljl.isChecked()){choosen_regions.add(getString(R.string.ljl));}
+
+                if (checkbox_pcs.isChecked()){choosen_regions.add(getString(R.string.pcs));}
+                if (checkbox_eum.isChecked()){choosen_regions.add(getString(R.string.eum));}
+                if (checkbox_lcsa.isChecked()){choosen_regions.add(getString(R.string.lcs_academy));}
+                if (checkbox_lla.isChecked()){choosen_regions.add(getString(R.string.lla));}
 
                 if (username.isEmpty()||email.isEmpty()||password.isEmpty()||repeated_password.isEmpty()){
                     Toast.makeText(RegisterActivity.this, "Fill all the fields!", Toast.LENGTH_SHORT).show();

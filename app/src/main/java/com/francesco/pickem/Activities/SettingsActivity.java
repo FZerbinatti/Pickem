@@ -44,7 +44,10 @@ public class SettingsActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private String userID;
     EditText edittext_username;
-    CheckBox settings_checkbox_lec,settings_checkbox_lcs,settings_checkbox_lck,settings_checkbox_lpl;
+    CheckBox settings_checkbox_lec,settings_checkbox_lck,settings_checkbox_lpl,settings_checkbox_lcs,settings_checkbox_tcl,settings_checkbox_cblol;
+    CheckBox settings_checkbox_opl,settings_checkbox_ljl,settings_checkbox_pcs,settings_checkbox_eum,settings_checkbox_lcsa,settings_checkbox_lla;
+
+
 
 
 
@@ -59,10 +62,20 @@ public class SettingsActivity extends AppCompatActivity {
         button_logout = findViewById(R.id.button_logout);
         edittext_username = findViewById(R.id.edittext_username);
 
-        settings_checkbox_lec = findViewById(R.id.settings_checkbox_lec);
-        settings_checkbox_lcs = findViewById(R.id.settings_checkbox_lcs);
-        settings_checkbox_lck = findViewById(R.id.settings_checkbox_lck);
-        settings_checkbox_lpl = findViewById(R.id.settings_checkbox_lpl);
+        settings_checkbox_lec = findViewById(R.id.checkbox_lec);
+        settings_checkbox_lcs = findViewById(R.id.checkbox_lcs);
+        settings_checkbox_lck = findViewById(R.id.checkbox_lck);
+        settings_checkbox_lpl = findViewById(R.id.checkbox_lpl);
+
+        settings_checkbox_tcl = findViewById(R.id.checkbox_tcl);
+        settings_checkbox_cblol = findViewById(R.id.checkbox_cblol);
+        settings_checkbox_opl = findViewById(R.id.checkbox_opl);
+        settings_checkbox_ljl = findViewById(R.id.checkbox_ljl);
+
+        settings_checkbox_pcs = findViewById(R.id.checkbox_pcs);
+        settings_checkbox_eum = findViewById(R.id.checkbox_eum);
+        settings_checkbox_lcsa = findViewById(R.id.checkbox_lcsa);
+        settings_checkbox_lla = findViewById(R.id.checkbox_lla);
 
 
         context = this;
@@ -91,6 +104,15 @@ public class SettingsActivity extends AppCompatActivity {
                     if (choosenRegions.contains(getString(R.string.lpl))){settings_checkbox_lpl.setChecked(true);}
                     if (choosenRegions.contains(getString(R.string.lck))){settings_checkbox_lck.setChecked(true);}
 
+                    if (choosenRegions.contains(getString(R.string.tcl))){settings_checkbox_tcl.setChecked(true);}
+                    if (choosenRegions.contains(getString(R.string.cblol))){settings_checkbox_cblol.setChecked(true);}
+                    if (choosenRegions.contains(getString(R.string.opl))){settings_checkbox_opl.setChecked(true);}
+                    if (choosenRegions.contains(getString(R.string.ljl))){settings_checkbox_ljl.setChecked(true);}
+
+                    if (choosenRegions.contains(getString(R.string.pcs))){settings_checkbox_pcs.setChecked(true);}
+                    if (choosenRegions.contains(getString(R.string.eum))){settings_checkbox_eum.setChecked(true);}
+                    if (choosenRegions.contains(getString(R.string.lcs_academy))){settings_checkbox_lcsa.setChecked(true);}
+                    if (choosenRegions.contains(getString(R.string.lla))){settings_checkbox_lla.setChecked(true);}
 
                 }
             }
