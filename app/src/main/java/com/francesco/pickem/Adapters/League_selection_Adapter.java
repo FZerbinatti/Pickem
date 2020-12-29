@@ -1,32 +1,28 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.francesco.pickem.Models.SelectionLeague;
+import com.francesco.pickem.Models.TeamDetails;
 import com.francesco.pickem.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class League_selection_Adapter extends PagerAdapter {
 
-    private List<SelectionLeague> leaguesSelectedList;
+    private List<TeamDetails> leaguesSelectedList;
     private LayoutInflater layoutInflater;
     private Context context;
     private String TAG ="Adapter ";
 
 
-    public League_selection_Adapter(List<SelectionLeague> leaguesSelectedList, Context context) {
+    public League_selection_Adapter(List<TeamDetails> leaguesSelectedList, Context context) {
         this.leaguesSelectedList = leaguesSelectedList;
         this.context = context;
     }

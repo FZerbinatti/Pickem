@@ -20,34 +20,37 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Adapters.League_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
 import com.francesco.pickem.Annotation.NonNull;
-import com.francesco.pickem.Models.SelectionLeague;
-import com.francesco.pickem.Models.SingleMatch;
+import com.francesco.pickem.Models.TeamDetails;
+import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PicksActivity extends AppCompatActivity {
+public class PicksActivity extends AppCompatActivity  {
 
     ViewPager viewPager;
     League_selection_Adapter adapter;
     RecyclerView_Picks_Adapter adapterRecycler;
-    List<SelectionLeague> selectedLeagues;
+    List<TeamDetails> selectedLeagues;
     Integer[] colors_backgroundlistview = null;
     ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     ConstraintLayout pick_background;
     ImageButton notification, picks, calendar, stats;
     RecyclerView recyclerView;
-    ArrayList<SingleMatch> singleMatchList;
+    ArrayList<MatchDetails> matchDetailsList;
     private String TAG ="PicksActivity";
     Context context;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picks);
         recyclerView = findViewById(R.id.picksactivity_recyclerview);
+
         context = this;
         changeNavBarColor();
         setupBottomNavView();
@@ -56,14 +59,32 @@ public class PicksActivity extends AppCompatActivity {
 
     }
 
+
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: ");
 
-        singleMatchList = new ArrayList<>();
-        singleMatchList.add(new SingleMatch("FNC", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/f/fc/Fnaticlogo_square.png/revision/latest?cb=20200124163013",
-                                           "G2", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/7/77/G2_Esportslogo_square.png/revision/latest?cb=20190201222017", "17:00"));
-        singleMatchList.add(new SingleMatch("RGE", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/a4/Rogue_%28European_Team%29logo_square.png/revision/latest?cb=20190415174442",
-                                           "SK", "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016", "18:00"));
+        matchDetailsList = new ArrayList<>();
+
+        matchDetailsList.add(new MatchDetails(0000001, "24/01/2020", "17.00" ,"FNC", "G2",
+                  "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/f/fc/Fnaticlogo_square.png/revision/latest?cb=20200124163013",
+                  "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/7/77/G2_Esportslogo_square.png/revision/latest?cb=20190201222017",1,1));
+
+        matchDetailsList.add(new MatchDetails(0000002, "24/01/2020", "18.00" ,"RGE", "SK",
+                 "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/a4/Rogue_%28European_Team%29logo_square.png/revision/latest?cb=20190415174442",
+                 "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016",1,2));
+
+        matchDetailsList.add(new MatchDetails(0000003, "24/01/2020", "19.30" ,"FNC", "G2",
+                "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/f/fc/Fnaticlogo_square.png/revision/latest?cb=20200124163013",
+                "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/7/77/G2_Esportslogo_square.png/revision/latest?cb=20190201222017",2,2));
+
+        matchDetailsList.add(new MatchDetails(0000004, "24/01/2020", "20.00" ,"RGE", "SK",
+                "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/a4/Rogue_%28European_Team%29logo_square.png/revision/latest?cb=20190415174442",
+                "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016",-1,1));
+
+        matchDetailsList.add(new MatchDetails(0000005, "24/01/2020", "21.10" ,"RGE", "SK",
+                "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/a/a4/Rogue_%28European_Team%29logo_square.png/revision/latest?cb=20190415174442",
+                "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/4/4f/SK_Gaminglogo_square.png/revision/latest?cb=20180706022016",-1,-1));
+
 
 
 /*        RecyclerViewClickListener listener = new RecyclerViewClickListener() {
@@ -85,7 +106,7 @@ public class PicksActivity extends AppCompatActivity {
         };*/
 
 
-        adapterRecycler = new RecyclerView_Picks_Adapter(this, singleMatchList);
+        adapterRecycler = new RecyclerView_Picks_Adapter(this, matchDetailsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapterRecycler);
@@ -139,10 +160,10 @@ public class PicksActivity extends AppCompatActivity {
 
 
         selectedLeagues = new ArrayList<>();
-        selectedLeagues.add(new SelectionLeague(R.drawable.logo_lck, "LCK"));
-        selectedLeagues.add(new SelectionLeague(R.drawable.logo_lec, "LEC"));
-        selectedLeagues.add(new SelectionLeague(R.drawable.logo_lpl, "LPL"));
-        selectedLeagues.add(new SelectionLeague(R.drawable.logo_lcs, "LCS"));
+        selectedLeagues.add(new TeamDetails(R.drawable.logo_lck, "LCK"));
+        selectedLeagues.add(new TeamDetails(R.drawable.logo_lec, "LEC"));
+        selectedLeagues.add(new TeamDetails(R.drawable.logo_lpl, "LPL"));
+        selectedLeagues.add(new TeamDetails(R.drawable.logo_lcs, "LCS"));
 
         adapter = new League_selection_Adapter(selectedLeagues, this);
 
@@ -203,4 +224,6 @@ public class PicksActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.background_dark));
         }
     }
+
+
 }

@@ -22,7 +22,7 @@
     <color name="league_name">#6A86A3</color>
 
     <color name="material_watergreen">#64FFDA</color>
-    <color name="material_lightgreen">#B9F6CA</color>
+    <color name="material_lightgreen">#87FFA9</color>
     <color name="material_green">#B2FF59</color>
     <color name="material_yellow">#FFF59D</color>
 
@@ -43,6 +43,8 @@
     <color name="g1">#BDFF6F</color>
     <color name="g2">#6BE871</color>
     <color name="g3">#4CAF50</color>
+    <color name="material_red">#FD9890</color>
+
 
     <!-- materials basic -->
     <color name="sfum1">#B3E5FC</color>

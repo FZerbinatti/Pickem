@@ -1,16 +1,16 @@
 package com.francesco.pickem.Activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -19,18 +19,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.francesco.pickem.Models.User;
+import com.francesco.pickem.Models.RegionNotifications;
+import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.francesco.pickem.SQLite.DatabaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
     TextView go_to_login;
@@ -38,12 +37,20 @@ public class RegisterActivity extends AppCompatActivity {
     EditText register_username, register_email, register_password, register_repeat_password;
     CheckBox checkbox_lec,checkbox_lck,checkbox_lpl,checkbox_lcs,checkbox_tcl,checkbox_cblol;
     CheckBox checkbox_opl,checkbox_ljl,checkbox_pcs,checkbox_eum,checkbox_lcsa,checkbox_lla;
+    private  static String TAG ="RegisterActivity: ";
 
     Button button_register;
     ProgressBar register_progressbar;
     ImageButton registration_show_regions;
     ConstraintLayout collapsable_box_registration;
     Integer dropdown_status;
+    DatabaseHelper databaseHelper;
+    private DatabaseReference reference;
+    private DatabaseReference user_preferences_reference;
+    private FirebaseUser user;
+    private FirebaseAuth firebaseAuth;
+    String UID ="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
         checkbox_lcsa = findViewById(R.id.checkbox_lcsa);
         checkbox_lla = findViewById(R.id.checkbox_lla);
 
+        databaseHelper = new DatabaseHelper(this);
 
         register_progressbar = findViewById(R.id.register_progressbar);
         button_register = findViewById(R.id.button_register);
@@ -85,9 +93,6 @@ public class RegisterActivity extends AppCompatActivity {
         registration();
         dropdownMenu();
 
-
-
-
     }
 
     private void dropdownMenu() {
@@ -99,6 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
                     collapsable_box_registration.setVisibility(View.VISIBLE);
                     registration_show_regions.setImageResource(R.drawable.ic_dropup);
                     dropdown_status =1;
+                    hideKeyboard(RegisterActivity.this);
                 }else {
                     collapsable_box_registration.setVisibility(View.GONE);
                     registration_show_regions.setImageResource(R.drawable.ic_dropdown);
@@ -108,6 +114,17 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void registration() {
@@ -149,27 +166,38 @@ public class RegisterActivity extends AppCompatActivity {
                 }else if(!checkbox_lck.isChecked()&&!checkbox_lcs.isChecked()&&!checkbox_lec.isChecked()&&!checkbox_lpl.isChecked()){
                     Toast.makeText(RegisterActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                 }else {
+                     UID = (Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())).getUid();
+                    Log.d(TAG, "onClick: UID:"+UID);
                     register_progressbar.setVisibility(View.VISIBLE);
                     mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+
                         if (task.isSuccessful()){
-                            User user = new User( username, email, choosen_regions);
+                            UserGeneralities user = new UserGeneralities( email, username, choosen_regions);
                             FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(UID)
+                                    .child(getString(R.string.firebase_users_generealities))
                                     .setValue(user).addOnCompleteListener(task1 -> {
                                         if (task1.isSuccessful()){
                                             Toast.makeText(RegisterActivity.this, "User has been registered Successfully", Toast.LENGTH_SHORT).show();
-                                            register_progressbar.setVisibility(View.GONE);
 
                                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                                            if (firebaseUser.isEmailVerified()){
-                                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                            }else {
+                                            if (!firebaseUser.isEmailVerified()){
+                                                UserGeneralities sgo = new UserGeneralities(email, username, choosen_regions);
+                                                //alla registrazione effettuata, crea il db e inizializzalo con le regioni scelte e di default solo la notifica se non hai fatto i pick
+
+                                                for (int i=0; i<choosen_regions.size(); i++){
+                                                    databaseHelper.initializeNotificationRegion(choosen_regions.get(i));
+                                                }
+                                                databaseHelper.initializeAccountSettings(sgo);
+                                                //databaseHelper.initializeNotificationTeams();
                                                 firebaseUser.sendEmailVerification();
                                                 Toast.makeText(RegisterActivity.this, "Email verification sent, check your email!", Toast.LENGTH_LONG).show();
-                                            }
+                                                register_progressbar.setVisibility(View.GONE);
+                                                /*Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                                startActivity(intent);
+                                                finish();*/
 
+                                            }
 
                                         }else{
                                             Toast.makeText(RegisterActivity.this, "Registration Error", Toast.LENGTH_SHORT).show();
@@ -183,6 +211,53 @@ public class RegisterActivity extends AppCompatActivity {
                             register_progressbar.setVisibility(View.GONE);
                         }
                     });
+
+                    //crea anche la sezione delle notifiche  di default per le region scelte
+                    // -------------------------------------
+                    // da loopare per ogni regione scelta
+
+                    for (int i=0; i<choosen_regions.size(); i++){
+                        //databaseHelper.initializeNotificationRegion(choosen_regions.get(i));
+                        RegionNotifications regionNotifications = new RegionNotifications(choosen_regions.get(i),0,0,1);
+                        FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                .child(UID)
+                                .child(getString(R.string.firebase_user_notification))
+                                .child(getString(R.string.firebase_user_notification_region))
+                                .child(choosen_regions.get(i))
+                                .setValue(regionNotifications).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()){
+                                Log.d(TAG, "registered: Notification Region ");
+
+                            }else{
+                                Log.d(TAG, "ERROR: registered: Notification Region ");
+                            }
+                        });
+
+                    }
+
+
+/*                    FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(getString(R.string.firebase_user_notification))
+                            .child(getString(R.string.firebase_user_notification_teams))
+                            .setValue(regionNotifications).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()){
+                            Log.d(TAG, "registered: Notification Region ");
+
+                        }else{
+                            Log.d(TAG, "ERROR: registered: Notification Region ");
+                        }
+                    });*/
+
+
+
+                    // -------------------------------------
+
+                    // questo crea sotto Users un UsersPreferences, un ID, e sotto 3 caselle di cui una lista
+/*                    reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+                    user_preferences_reference = reference.child(getString(R.string.firebase_preferences));
+                    user_preferences_reference.push().setValue(new UserGeneralities("","" , choosen_regions));*/
+
                 }
 
 
@@ -191,6 +266,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
+
 
     private void goToLogin() {
         go_to_login.setOnClickListener(new View.OnClickListener() {

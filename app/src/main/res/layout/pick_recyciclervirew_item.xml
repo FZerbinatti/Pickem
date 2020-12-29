@@ -29,6 +29,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:id="@+id/icon_prediction_correct_team1"
+        android:visibility="invisible"
+        android:src="@drawable/ic_prediction_right"
+        app:layout_constraintStart_toStartOf="@+id/logo_team_1"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:id="@+id/icon_prediction_wrong_team1"
+        android:visibility="invisible"
+        android:src="@drawable/ic_prediction_wrong"
+        app:layout_constraintStart_toStartOf="@+id/logo_team_1"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:id="@+id/icon_waiting_for_save_team1"
+        android:visibility="invisible"
+        android:src="@drawable/ic_waiting_for_save"
+        app:layout_constraintStart_toStartOf="@+id/logo_team_1"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
+
+
 
     <ImageView
         android:id="@+id/icon_vs1"
@@ -61,6 +93,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/icon_vs1"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
+
+    <ImageView
+        android:id="@+id/icon_prediction_correct_team2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:src="@drawable/ic_prediction_right"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:id="@+id/icon_prediction_wrong_team2"
+        android:visibility="invisible"
+        android:src="@drawable/ic_prediction_wrong"
+        app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:id="@+id/icon_waiting_for_save_team2"
+        android:visibility="invisible"
+        android:src="@drawable/ic_waiting_for_save"
+        app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
 
     <TextView
         android:id="@+id/textview_match_timer"

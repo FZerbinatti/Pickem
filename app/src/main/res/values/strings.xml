@@ -9,15 +9,16 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="email">email</string>
-    <string name="firebase_users">Users</string>
-    <string name="lec">LEC</string>
-    <string name="lcs">LCS</string>
-    <string name="lck">LCK</string>
-    <string name="lpl">LPL</string>
+
     <string name="reset">Reset</string>
     <string name="new_password">New Password</string>
     <string name="repeat_new_password">Repeat new password</string>
     <string name="pmbe">Passwords must be equal</string>
+
+    <string name="lec">LEC</string>
+    <string name="lcs">LCS</string>
+    <string name="lck">LCK</string>
+    <string name="lpl">LPL</string>
     <string name="tcl">TCL</string>
     <string name="cblol">CBLOL</string>
     <string name="opl">OPL</string>
@@ -26,4 +27,14 @@
     <string name="ljl">LJL</string>
     <string name="lcs_academy">LCS ACADEMY</string>
     <string name="eum">EU MASTERS</string>
+    <string name="reminder_if_nothing_has_been_chosen_on_match_day_1h_before_match_start">Reminder if nothing has been chosen on match day 1h before match start</string>
+
+    // firebase children
+    <string name="firebase_users">Users</string>
+    <string name="firebase_users_generealities">UsersGeneralities</string>
+    <string name="firebase_user_notification">UserNotifications</string>
+
+    <string name="firebase_user_notification_region">Regions</string>
+    <string name="firebase_user_notification_teams">Teams</string>
+
 </resources>

@@ -3,99 +3,244 @@ package com.francesco.pickem.SQLite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.francesco.pickem.Models.TeamNotification;
+import com.francesco.pickem.Models.UserGeneralities;
+import com.francesco.pickem.Models.RegionNotifications;
 
 import java.util.ArrayList;
-
-import static android.content.ContentValues.TAG;
+import java.util.StringTokenizer;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+
+    private static String TAG = "DatabaseHelper: ";
 
 
     private static final String DB_NAME = "Pickem_LocalDB";
     private static final int DB_VERSION = 1;
 
-    static final String TABLE_LEC = "TABLE_LEC";
-    static final String TABLE_LCS = "TABLE_LCS";
-    static final String TABLE_LPL = "TABLE_LPL";
-    static final String TABLE_LCK = "TABLE_LCK";
-    static final String TABLE_PREFERENCES = "TABLE_PREFERENCES";
-
-    private static final String LEAGUE_TYPE = "LEAGUE_TYPE";
-
-    //tabelle per stagioni regolari delle principali leghe
-    private static final String MATCH_DATE = "LEAGUE_TYPE";
-    private static final String MATCH_1_TIME = "MATCH_1_TIME";
-
-    private static final String TEAM_1 = "TEAM_1";
-    private static final String TEAM_2 = "TEAM_2";
-    private static final String TEAM_3 = "TEAM_3";
-    private static final String TEAM_4 = "TEAM_4";
-    private static final String TEAM_5 = "TEAM_5";
-    private static final String TEAM_6 = "TEAM_6";
-    private static final String TEAM_7 = "TEAM_7";
-    private static final String TEAM_8 = "TEAM_8";
-    private static final String TEAM_9 = "TEAM_9";
-    private static final String TEAM_10 = "TEAM_10";
-
-    private static final String MATCH_1_PREDICTION = "MATCH_1_PREDICTION";
-    private static final String MATCH_2_PREDICTION = "MATCH_2_PREDICTION";
-    private static final String MATCH_3_PREDICTION = "MATCH_3_PREDICTION";
-    private static final String MATCH_4_PREDICTION = "MATCH_4_PREDICTION";
-    private static final String MATCH_5_PREDICTION = "MATCH_5_PREDICTION";
-
     //tabella per le preferenze dello user
-    private static final String NOTIFICATION_LEC = "NOTIFICATION_LEC";
-    private static final String NOTIFICATION_LCS = "NOTIFICATION_LCS";
-    private static final String NOTIFICATION_LPL = "NOTIFICATION_LPL";
-    private static final String NOTIFICATION_LCK = "NOTIFICATION_LCK";
-    private static final String NOTIFICATION_MATCH_START = "NOTIFICATION_MATCH_START";
-    private static final String NOTIFICATION_5_MINUTES = "NOTIFICATION_5_MINUTES";
-    private static final String NOTIFICATION_ALL_GAMES = "NOTIFICATION_ALL_GAMES";
-    private static final String NOTIFICATION_MORNING = "NOTIFICATION_MORNING";
-
-    //array di acronimi delle leghe ceh l'use vuole seguire
-    private static final String LEAGUES_OF_INTEREST = "LEAGUES_OF_INTEREST";
+    static final String TABLE_ACCOUNT_SETTINGS = "TABLE_ACCOUNT_SETTINGS";
+    private static final String EMAIL = "EMAIL";
     private static final String USERNAME = "USERNAME";
+    private static final String LEAGUES_OF_INTEREST = "LEAGUES_OF_INTEREST";
 
+    //tabella teams
+    static final String TABLE_TEAMS = "TABLE_TEAMS";
+    private static final String TEAM_ID = "TEAM_ID";
+    private static final String TEAM_REGION = "TEAM_REGION";
+    private static final String TEAM_NAME = "TEAM_NAME";
+    private static final String TEAM_LOGO = "TEAM_LOGO";
 
+    //tabella notifiche Regions
+    static final String TABLE_NOTIFICATIONS_REGION = "TABLE_NOTIFICATIONS_REGION";
+    private static final String NOTIFICATIONS_REGION_NAME  = "NOTIFICATIONS_REGION_NAME";
+    private static final String NOTIFICATION_FIRST_MATCH_OTD  = "NOTIFICATION_FIRST_MATCH_OTD";
+    private static final String NOTIFICATION_MORNING     = "NOTIFICATION_MORNING";
+    private static final String NOTIFICATION_NO_CHOICE_MADE  = "NOTIFICATION_NO_CHOICE_MADE";
 
- // array di squadre che vincono
+    //tabella notifiche Teams
+    static final String TABLE_NOTIFICATIONS_TEAM = "TABLE_NOTIFICATIONS_TEAM";
+    private static final String NOTIFICATIONS_TEAM_NAME  = "NOTIFICATIONS_TEAM_NAME";
+    private static final String NOTIFICATION_MORNING_REMINDER  = "NOTIFICATION_MORNING_REMINDER";
+    private static final String NOTIFICATION_AS_TEAM_PLAYS = "NOTIFICATION_AS_TEAM_PLAYS";
+
+    //tabella dei match
+    private static final String TABLE_MATCH = "TABLE_MATCH";
+    private static final String MATCH_DATE = "MATCH_DATE";
+    private static final String MATCH_TIME = "MATCH_TIME";
+    private static final String MATCH_ID = "MATCH_ID";
+    private static final String MATCH_SEASON = "MATCH_SEASON";
+    private static final String MATCH_TEAM_1 = "MATCH_TEAM_1";
+    private static final String MATCH_TEAM_2 = "MATCH_TEAM_2";
+    private static final String MATCH_REGION = "MATCH_REGION";
+    private static final String MATCH_PREDICTION = "MATCH_PREDICTION";
+    private static final String MATCH_WINNER = "MATCH_WINNER";
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null,DB_VERSION);
     }
 
-
-
-    private void createTables(SQLiteDatabase db){
+    private void createTableSettings(SQLiteDatabase db){
         //creating tables
-        String CREATE_TABLE_MOVIES = "CREATE TABLE " + TABLE_PREFERENCES +
+        String CREATE_TABLE_ACCOUNT_SETTINGS = "CREATE TABLE " + TABLE_ACCOUNT_SETTINGS +
                 "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + EMAIL + " TEXT ,  "
                 + USERNAME + " TEXT ,  "
-                + LEAGUES_OF_INTEREST + " TEXT , "
-                + "MOVIE_DESCRIPTION" + " TEXT , "
-                + "MOVIE_FAVOURITE" + " TEXT , "
-                + "MOVIE_POSTER" + " TEXT   );";
+                + LEAGUES_OF_INTEREST + " TEXT  );";
 
-        db.execSQL(CREATE_TABLE_MOVIES);
+        String CREATE_TABLE_TEAMS = "CREATE TABLE " + TABLE_TEAMS +
+                "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + TEAM_ID + " TEXT ,  "
+                + TEAM_REGION + " TEXT , "
+                + TEAM_NAME + " TEXT , "
+                + TEAM_LOGO + " TEXT   );";
+
+        String CREATE_TABLE_NOTIFICATIONS_REGION = "CREATE TABLE " + TABLE_NOTIFICATIONS_REGION +
+                "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + NOTIFICATIONS_REGION_NAME            + " TEXT , "
+                + NOTIFICATION_FIRST_MATCH_OTD              + " INTEGER , "
+                + NOTIFICATION_MORNING      + " INTEGER , "
+                + NOTIFICATION_NO_CHOICE_MADE        + " INTEGER );";
+
+        String CREATE_TABLE_NOTIFICATIONS_TEAM = "CREATE TABLE " + TABLE_NOTIFICATIONS_TEAM +
+                "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + NOTIFICATIONS_TEAM_NAME            + " TEXT , "
+                + NOTIFICATION_MORNING_REMINDER              + " INTEGER , "
+                + NOTIFICATION_AS_TEAM_PLAYS        + " INTEGER );";
+
+        String CREATE_TABLE_MATCH = "CREATE TABLE " + TABLE_MATCH +
+                "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MATCH_SEASON + " TEXT NOT NULL, "
+                + MATCH_REGION + " TEXT NOT NULL,  "
+                + MATCH_ID + " INTEGER UNIQUE NOT NULL ,  "
+                + MATCH_DATE + " TEXT , "
+                + MATCH_TIME + " TEXT , "
+                + MATCH_TEAM_1 + " TEXT , "
+                + MATCH_TEAM_2 + " TEXT , "
+                + MATCH_PREDICTION + " TEXT , "
+                + MATCH_WINNER + " TEXT   );";
+
+        db.execSQL(CREATE_TABLE_ACCOUNT_SETTINGS);
+        db.execSQL(CREATE_TABLE_TEAMS);
+        db.execSQL(CREATE_TABLE_NOTIFICATIONS_REGION);
+        db.execSQL(CREATE_TABLE_NOTIFICATIONS_TEAM);
+        db.execSQL(CREATE_TABLE_MATCH);
 
     }
 
+
+
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        createTables(sqLiteDatabase);
+        createTableSettings(sqLiteDatabase);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PREFERENCES);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS_REGION);
         onCreate(sqLiteDatabase);
     }
+
+
+
+    public void initializeNotificationRegion(String regionName ){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(NOTIFICATIONS_REGION_NAME, regionName);
+        cv.put(NOTIFICATION_FIRST_MATCH_OTD, 0);
+        cv.put(NOTIFICATION_NO_CHOICE_MADE, 1  );
+        cv.put(NOTIFICATION_MORNING, 0  );
+
+        db.insert(TABLE_NOTIFICATIONS_REGION, null, cv);
+        db.close();
+    }
+
+    public void initializeNotificationTeams(TeamNotification teamNotification){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(NOTIFICATIONS_TEAM_NAME, teamNotification.getTeam_name());
+        cv.put(NOTIFICATION_MORNING_REMINDER, 0  );
+        cv.put(NOTIFICATION_AS_TEAM_PLAYS, 0  );
+
+        db.insert(TABLE_NOTIFICATIONS_REGION, null, cv);
+        db.close();
+    }
+
+    public void initializeAccountSettings(UserGeneralities userGeneralities){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(EMAIL, userGeneralities.getEmail());
+        cv.put(USERNAME, userGeneralities.getUsername()  );
+        cv.put(LEAGUES_OF_INTEREST, fromArrayListToString(userGeneralities.getChoosen_regions())   );
+
+        db.insert(TABLE_ACCOUNT_SETTINGS, null, cv);
+        db.close();
+    }
+
+    public void updateSettingsNotification(RegionNotifications regionNotifications){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(NOTIFICATIONS_REGION_NAME, regionNotifications.getRegion_name());
+        cv.put(NOTIFICATION_FIRST_MATCH_OTD, regionNotifications.getNotification_first_match_otd());
+        cv.put(NOTIFICATION_NO_CHOICE_MADE, regionNotifications.getNo_choice_made()  );
+        cv.put(NOTIFICATION_MORNING, regionNotifications.getNotification_morning_reminder()  );
+
+        db.update(TABLE_NOTIFICATIONS_REGION, cv, null, null);
+        db.close();
+    }
+
+    public void updateGeneralSettings(UserGeneralities sgo){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(USERNAME, sgo.getUsername());
+        cv.put(LEAGUES_OF_INTEREST, fromArrayListToString(sgo.getChoosen_regions()));
+        db.update(TABLE_NOTIFICATIONS_TEAM, cv, null, null);
+        db.close();
+    }
+
+    public UserGeneralities getgeneralSettings (){
+
+
+        UserGeneralities userGeneralities = new UserGeneralities();
+        SQLiteDatabase db = this.getReadableDatabase();
+            //                                 0              1                    2
+            String selectQuery = "SELECT " + EMAIL +", "+ USERNAME +", " + LEAGUES_OF_INTEREST +" FROM " + TABLE_ACCOUNT_SETTINGS;
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                do {
+
+                    UserGeneralities userGeneralitiesDatabase  = new UserGeneralities(cursor.getString(0), cursor.getString(1), fromStringToArrayList(cursor.getString(2)));
+                    userGeneralities = userGeneralitiesDatabase;
+
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            db.close();
+        Log.d(TAG, "getgeneralSettings: "+userGeneralities.getEmail());
+        Log.d(TAG, "set_gen.getChoosen_regions().size(): "+userGeneralities.getChoosen_regions().size());
+            return userGeneralities;
+
+    }
+
+    public String fromArrayListToString (ArrayList<String> arrayList){
+
+        String string_of_chosen_regions = "";
+        for (int i=0; i<arrayList.size(); i++){
+            string_of_chosen_regions = string_of_chosen_regions + arrayList.get(i)+ " ";
+        }
+        return  string_of_chosen_regions;
+
+    }
+
+    public ArrayList<String> fromStringToArrayList(String stringStart){
+
+        ArrayList <String> arrayList = new ArrayList<>();
+        Log.d(TAG, "fromStringToArrayList: stringStart: "+stringStart);
+        StringTokenizer stringTokenizer = new StringTokenizer(stringStart, " ");
+        while (stringTokenizer.hasMoreTokens()){
+            arrayList.add(stringTokenizer.nextToken());
+        }
+
+        Log.d(TAG, "fromStringToArrayList: arrayList.size: "+arrayList.size());
+
+        return arrayList;
+
+
+    }
+
+
+
+    // dopo che hai modificato sqlite, modifica/update  il firebase
 
 
     /*public void addMovie ( Movie movie ){
@@ -113,20 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateFavourite(Boolean favourite, String movie_name){
-        SQLiteDatabase db = this.getWritableDatabase();
-        String bool ="0";
-        ContentValues cv = new ContentValues();
-        if (favourite){
-            bool = "1";
-        }else {
-            bool = "0";
-        }
-        cv.put("MOVIE_FAVOURITE", bool);
-        db.update(TABLE_PICKEM, cv, "MOVIE_TITLE" + "= ?", new String[] {movie_name});
-        db.close();
-        Log.d(TAG, "updateFavourite: now movie parameter for facourite is  "+ bool);
-    }
+
 
     public Boolean getFavourite ( String movie_title){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -263,6 +395,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 */
+    /*private String fromRegionToTable(Integer region){
+        String table_name="";
 
+        switch(region) {
 
+            case R.string.lec:
+                table_name = TABLE_LEC;
+            break;
+
+            case R.string.lcs:
+                table_name = TABLE_LCS;
+            break;
+
+            case R.string.lck:
+                table_name = TABLE_LCK;
+            break;
+
+            case R.string.lpl:
+                table_name = TABLE_LPL;
+            break;
+
+            case R.string.tcl:
+                table_name = TABLE_TCL;
+            break;
+
+            case R.string.cblol:
+                table_name = TABLE_CBLOL;
+            break;
+
+            case R.string.opl:
+                table_name = TABLE_OPL;
+            break;
+
+            case R.string.lla:
+                table_name = TABLE_LLA;
+            break;
+
+            case R.string.pcs:
+                table_name = TABLE_PCS;
+            break;
+
+            case R.string.ljl:
+                table_name = TABLE_LJL;
+            break;
+
+            case R.string.lcs_academy:
+                table_name = TABLE_LCSA;
+            break;
+
+            case R.string.eum:
+                table_name = TABLE_EUM;
+            break;
+
+        }
+        return table_name;
+    }*/
 }
+
+

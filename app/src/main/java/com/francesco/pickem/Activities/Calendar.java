@@ -5,16 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class Calendar extends AppCompatActivity {
+public class Calendar extends AppCompatActivity{
 
     Context context;
+
+
+    private String TAG ="CalendarActivity";
 
 
     @Override
@@ -62,4 +68,6 @@ public class Calendar extends AppCompatActivity {
         });
 
     }
+
+
 }

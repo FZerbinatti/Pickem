@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
     Button login_button;
@@ -45,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String email = login_email.getText().toString();
                 String password = login_password.getText().toString();
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 if (email.isEmpty()){
                     login_email.setError("email address required to login");
@@ -57,12 +59,14 @@ public class LoginActivity extends AppCompatActivity {
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()){
+                            if (task.isSuccessful() && firebaseUser.isEmailVerified()){
+                                //check if sqlite has data, if not, download it from firebase
+
                                 login_progressbar.setVisibility(View.GONE);
                                 Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
                                 startActivity(intent);
                             }else {
-                                Toast.makeText(LoginActivity.this, "Login Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Login Error, Have you verified your email?", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -87,6 +91,8 @@ public class LoginActivity extends AppCompatActivity {
         changeNavBarColor();
 
     }
+
+
 
     public void changeNavBarColor() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

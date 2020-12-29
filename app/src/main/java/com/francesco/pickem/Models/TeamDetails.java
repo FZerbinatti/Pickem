@@ -1,11 +1,11 @@
 package com.francesco.pickem.Models;
 
-public class SelectionLeague {
+public class TeamDetails {
 
     private int image;
     private String league_name;
 
-    public SelectionLeague(int image, String league_name) {
+    public TeamDetails(int image, String league_name) {
         this.image = image;
         this.league_name = league_name;
     }
