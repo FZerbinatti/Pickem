@@ -29,6 +29,7 @@ import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.R;
 import com.francesco.pickem.SQLite.DatabaseHelper;
+import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -312,6 +314,7 @@ public class SettingsActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 FirebaseAuth.getInstance().signOut();
                                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                                PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
                                 startActivity(intent);
                             }
                         });

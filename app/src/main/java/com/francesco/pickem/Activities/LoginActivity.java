@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -63,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                                 //check if sqlite has data, if not, download it from firebase
 
                                 login_progressbar.setVisibility(View.GONE);
+                                PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
                                 Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
                                 startActivity(intent);
                             }else {
