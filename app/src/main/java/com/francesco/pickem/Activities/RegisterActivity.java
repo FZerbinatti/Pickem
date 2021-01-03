@@ -49,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference user_preferences_reference;
     private FirebaseUser user;
     private FirebaseAuth firebaseAuth;
-    String UID ="";
+    String UID;
 
 
     @Override
@@ -64,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         register_repeat_password = findViewById(R.id.register_repeat_password);
         registration_show_regions = findViewById(R.id.registration_show_regions);
         collapsable_box_registration = findViewById(R.id.collapsable_box_registration);
+        UID="";
 
         checkbox_lec = findViewById(R.id.checkbox_lec);
         checkbox_lck = findViewById(R.id.checkbox_lck);
@@ -149,7 +150,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (checkbox_pcs.isChecked()){choosen_regions.add(getString(R.string.pcs));}
                 if (checkbox_eum.isChecked()){choosen_regions.add(getString(R.string.eum));}
-                if (checkbox_lcsa.isChecked()){choosen_regions.add(getString(R.string.lcs_academy));}
+                if (checkbox_lcsa.isChecked()){choosen_regions.add(getString(R.string.lcsa));}
                 if (checkbox_lla.isChecked()){choosen_regions.add(getString(R.string.lla));}
 
                 if (username.isEmpty()||email.isEmpty()||password.isEmpty()||repeated_password.isEmpty()){
@@ -163,10 +164,12 @@ public class RegisterActivity extends AppCompatActivity {
                 }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                     Toast.makeText(RegisterActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
                     register_email.requestFocus();
-                }else if(!checkbox_lck.isChecked()&&!checkbox_lcs.isChecked()&&!checkbox_lec.isChecked()&&!checkbox_lpl.isChecked()){
+                }else if(choosen_regions.isEmpty()){
                     Toast.makeText(RegisterActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                 }else {
-                     UID = (Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())).getUid();
+                     /*UID = (Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser())).getUid();
+                    Log.d(TAG, "onClick: UID:"+UID);*/
+                   UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     Log.d(TAG, "onClick: UID:"+UID);
                     register_progressbar.setVisibility(View.VISIBLE);
                     mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
@@ -180,11 +183,14 @@ public class RegisterActivity extends AppCompatActivity {
                                         if (task1.isSuccessful()){
                                             Toast.makeText(RegisterActivity.this, "User has been registered Successfully", Toast.LENGTH_SHORT).show();
 
+                                            Log.d(TAG, "onClick: FirebaseAuth.getInstance().getCurrentUser().getUid():"+FirebaseAuth.getInstance().getCurrentUser().getUid());
                                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                            Log.d(TAG, "onClick: firebaseUser: "+firebaseUser);
+                                            Log.d(TAG, "onClick: firebaseUser = "+firebaseUser.getUid());
                                             if (!firebaseUser.isEmailVerified()){
                                                 UserGeneralities sgo = new UserGeneralities(email, username, choosen_regions);
                                                 //alla registrazione effettuata, crea il db e inizializzalo con le regioni scelte e di default solo la notifica se non hai fatto i pick
-
+                                                Log.d(TAG, "onClick: choosen_regions.size(): "+choosen_regions.size());
                                                 for (int i=0; i<choosen_regions.size(); i++){
                                                     databaseHelper.initializeNotificationRegion(choosen_regions.get(i));
                                                 }
@@ -193,9 +199,9 @@ public class RegisterActivity extends AppCompatActivity {
                                                 firebaseUser.sendEmailVerification();
                                                 Toast.makeText(RegisterActivity.this, "Email verification sent, check your email!", Toast.LENGTH_LONG).show();
                                                 register_progressbar.setVisibility(View.GONE);
-                                                /*Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                                 startActivity(intent);
-                                                finish();*/
+                                                finish();
 
                                             }
 
@@ -217,7 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
                     // da loopare per ogni regione scelta
 
                     for (int i=0; i<choosen_regions.size(); i++){
-                        //databaseHelper.initializeNotificationRegion(choosen_regions.get(i));
+
                         RegionNotifications regionNotifications = new RegionNotifications(choosen_regions.get(i),0,0,1);
                         FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                                 .child(UID)

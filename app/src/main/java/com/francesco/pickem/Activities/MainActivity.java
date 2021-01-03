@@ -23,9 +23,11 @@ public class MainActivity extends AppCompatActivity {
 
         if ( PreferencesData.getUserLoggedInStatus(this) ){
             Intent intent = new Intent(MainActivity.this, PicksActivity.class);
+            mainActivityProgressBar.setVisibility(View.GONE);
             startActivity(intent);
         }else {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            mainActivityProgressBar.setVisibility(View.GONE);
             startActivity(intent);
         }
 

@@ -3,10 +3,13 @@ package com.francesco.pickem.SQLite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
@@ -60,11 +63,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String MATCH_PREDICTION = "MATCH_PREDICTION";
     private static final String MATCH_WINNER = "MATCH_WINNER";
 
+    //tabella delle Regions
+    private static final String TABLE_REGIONS = "TABLE_REGIONS";
+    private static final String REGION_ID= "REGION_ID";
+    private static final String REGION_NAME= "REGION_NAME";
+    private static final String REGION_NAME_EXT= "REGION_NAME_EXT";
+    private static final String REGION_LOGO = "REGION_LOGO";
+
+
+
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null,DB_VERSION);
     }
 
-    private void createTableSettings(SQLiteDatabase db){
+    private void createTables(SQLiteDatabase db){
         //creating tables
         String CREATE_TABLE_ACCOUNT_SETTINGS = "CREATE TABLE " + TABLE_ACCOUNT_SETTINGS +
                 "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -81,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String CREATE_TABLE_NOTIFICATIONS_REGION = "CREATE TABLE " + TABLE_NOTIFICATIONS_REGION +
                 "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + NOTIFICATIONS_REGION_NAME            + " TEXT , "
+                + NOTIFICATIONS_REGION_NAME            + " TEXT UNIQUE, "
                 + NOTIFICATION_FIRST_MATCH_OTD              + " INTEGER , "
                 + NOTIFICATION_MORNING      + " INTEGER , "
                 + NOTIFICATION_NO_CHOICE_MADE        + " INTEGER );";
@@ -104,11 +116,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + MATCH_PREDICTION + " TEXT , "
                 + MATCH_WINNER + " TEXT   );";
 
+        String CREATE_TABLE_REGIONS = "CREATE TABLE " + TABLE_REGIONS +
+                "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + REGION_ID + " TEXT ,  "
+                + REGION_LOGO + " TEXT , "
+                + REGION_NAME_EXT + " TEXT , "
+                + REGION_NAME + " TEXT   );";
+
         db.execSQL(CREATE_TABLE_ACCOUNT_SETTINGS);
         db.execSQL(CREATE_TABLE_TEAMS);
         db.execSQL(CREATE_TABLE_NOTIFICATIONS_REGION);
         db.execSQL(CREATE_TABLE_NOTIFICATIONS_TEAM);
         db.execSQL(CREATE_TABLE_MATCH);
+        db.execSQL(CREATE_TABLE_REGIONS);
 
     }
 
@@ -116,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        createTableSettings(sqLiteDatabase);
+        createTables(sqLiteDatabase);
     }
 
     @Override
@@ -125,9 +145,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    public void initializeTableRegions(){
+
+
+
+    }
+
+    public void insertRegion(RegionDetails region){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(REGION_ID, region.getRegion_ID());
+        cv.put(REGION_LOGO, region.getRegion_logo()  );
+        cv.put(REGION_NAME, region.getRegion_name());
+        cv.put(REGION_NAME_EXT, region.getRegion_name_ext());
+
+
+        db.insert(TABLE_REGIONS, null, cv);
+        db.close();
+
+    }
+
 
 
     public void initializeNotificationRegion(String regionName ){
+        Log.d(TAG, "initializeNotificationRegion: initializing notification region for region: "+regionName);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -451,6 +493,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return table_name;
     }*/
+
+    public boolean checkifDataExisit() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String Query = "Select * from " + TABLE_MATCH ;
+        Cursor cursor = db.rawQuery(Query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
+    }
+
+    public ArrayList<Cursor> getData(String Query){
+        //get writable database
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        String[] columns = new String[] { "message" };
+        //an array list of cursor to save two cursors one has results from the query
+        //other cursor stores error message if any errors are triggered
+        ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
+        MatrixCursor Cursor2= new MatrixCursor(columns);
+        alc.add(null);
+        alc.add(null);
+
+        try{
+            String maxQuery = Query ;
+            //execute the query results will be save in Cursor c
+            Cursor c = sqlDB.rawQuery(maxQuery, null);
+
+            //add value to cursor2
+            Cursor2.addRow(new Object[] { "Success" });
+
+            alc.set(1,Cursor2);
+            if (null != c && c.getCount() > 0) {
+
+                alc.set(0,c);
+                c.moveToFirst();
+
+                return alc ;
+            }
+            return alc;
+        } catch(SQLException sqlEx){
+            Log.d("printing exception", sqlEx.getMessage());
+            //if any exceptions are triggered save the error message to cursor an return the arraylist
+            Cursor2.addRow(new Object[] { ""+sqlEx.getMessage() });
+            alc.set(1,Cursor2);
+            return alc;
+        } catch(Exception ex){
+            Log.d("printing exception", ex.getMessage());
+
+            //if any exceptions are triggered save the error message to cursor an return the arraylist
+            Cursor2.addRow(new Object[] { ""+ex.getMessage() });
+            alc.set(1,Cursor2);
+            return alc;
+        }
+    }
 }
 
 
