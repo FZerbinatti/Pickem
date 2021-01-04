@@ -3,16 +3,9 @@ package com.francesco.pickem.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.DownloadManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,35 +14,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.R;
-import com.francesco.pickem.SQLite.AndroidDatabaseManager;
-import com.francesco.pickem.SQLite.DatabaseHelper;
 import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Paths;
-
-import static android.os.Environment.DIRECTORY_DOWNLOADS;
 
 public class LoginActivity extends AppCompatActivity {
     Button login_button;
@@ -57,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     EditText login_email, login_password;
     ProgressBar login_progressbar;
     private StorageReference storageReference;
-    DatabaseHelper databaseHelper;
     private FirebaseAuth mAuth;
     private String TAG ="LoginActivity: ";
 
@@ -77,17 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         login_password = findViewById(R.id.login_password);
         login_progressbar = findViewById(R.id.login_progressbar);
         mAuth = FirebaseAuth.getInstance();
-        databaseHelper = new DatabaseHelper(this);
 
-        //database watcher:
-        see_database = findViewById(R.id.see_database);
-        see_database.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(LoginActivity.this, AndroidDatabaseManager.class);
-                startActivity(intent);
-            }
-        });
 
 
         login_button.setOnClickListener(new View.OnClickListener() {
@@ -110,20 +71,12 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful() && firebaseUser.isEmailVerified()){
-                                //check if sqlite has data, if not, download it from firebase
-                               if (databaseHelper.checkifDataExisit()){
-                                   Log.d(TAG, "onComplete: SQLITE HAS DATA");
+
                                    login_progressbar.setVisibility(View.GONE);
                                    PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
                                    Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
                                    startActivity(intent);
-                               }else{
-                                   login_progressbar.setVisibility(View.GONE);
-                                   Log.d(TAG, "onComplete: SQLITE HAS NO DATA");
-                                   PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
-                                   Intent intent = new Intent( LoginActivity.this, DownloadActivity.class);
-                                   startActivity(intent);
-                               }
+
 
                                 
                             }else {

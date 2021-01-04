@@ -22,27 +22,29 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.R;
-import com.francesco.pickem.SQLite.DatabaseHelper;
 import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.prefs.Preferences;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    SwitchCompat switch_notification, switch_notificationx;
-    ConstraintLayout show_notifications_box, show_notifications_boxx;
+    SwitchCompat switch_notification, switch_user_settings;
+    ConstraintLayout show_notifications_box, show_user_box;
     private String TAG ="NotificationActivity: ";
     Context context;
     ImageButton button_logout;
@@ -58,29 +60,29 @@ public class SettingsActivity extends AppCompatActivity {
     RegionNotifications setnot_object;
     ProgressBar settings_progressbar;
 
-    DatabaseHelper databaseHelper;
-
     EditText edittext_username;
     ListView settings_regions_listview;
     //CheckBox checkbox_at_match_start, five_mins_before, checkbox_morning_reminder, not_picked;
     CheckBox settings_checkbox_lec,settings_checkbox_lck,settings_checkbox_lpl,settings_checkbox_lcs,settings_checkbox_tcl,settings_checkbox_cblol;
     CheckBox settings_checkbox_opl,settings_checkbox_ljl,settings_checkbox_pcs,settings_checkbox_eum,settings_checkbox_lcsa,settings_checkbox_lla;
 
+    ArrayList <String> choosenRegionsfromDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         switch_notification = (SwitchCompat)  findViewById(R.id.switch_notification);
-        switch_notificationx = (SwitchCompat)  findViewById(R.id.switch_notificationx);
+        switch_user_settings = (SwitchCompat)  findViewById(R.id.switch_notificationx);
         show_notifications_box = findViewById(R.id.show_notifications_box);
-        show_notifications_boxx = findViewById(R.id.show_notifications_boxx);
+        show_user_box = findViewById(R.id.show_notifications_boxx);
         button_logout = findViewById(R.id.button_logout);
         edittext_username = findViewById(R.id.edittext_username);
         button_save_settings_account = findViewById(R.id.button_save_settings_account);
-        databaseHelper = new DatabaseHelper(this);
         firebaseAuth = FirebaseAuth.getInstance();
         settings_progressbar = findViewById(R.id.settings_progressbar);
         settings_regions_listview = findViewById(R.id.settings_regions_listview);
+        choosenRegionsfromDB = new ArrayList<>();
 
         settings_checkbox_lec = findViewById(R.id.checkbox_lec);
         settings_checkbox_lcs = findViewById(R.id.checkbox_lcs);
@@ -173,28 +175,46 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void loadSqliteData() {
 
-        ArrayList <String> choosenRegions = new ArrayList<>();
-        UserGeneralities sgo = databaseHelper.getgeneralSettings();
-        choosenRegions = sgo.getChoosen_regions();
-        Log.d(TAG, "loadSqliteData: choosenRegions.size: "+choosenRegions.size());
 
-        if (choosenRegions.contains(getString(R.string.lec))){settings_checkbox_lec.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.lcs))){settings_checkbox_lcs.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.lpl))){settings_checkbox_lpl.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.lck))){settings_checkbox_lck.setChecked(true);}
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+        userID = user.getUid();
 
-        if (choosenRegions.contains(getString(R.string.tcl))){settings_checkbox_tcl.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.cblol))){settings_checkbox_cblol.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.opl))){settings_checkbox_opl.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.ljl))){settings_checkbox_ljl.setChecked(true);}
 
-        if (choosenRegions.contains(getString(R.string.pcs))){settings_checkbox_pcs.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.eum))){settings_checkbox_eum.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.lcs_academy))){settings_checkbox_lcsa.setChecked(true);}
-        if (choosenRegions.contains(getString(R.string.lla))){settings_checkbox_lla.setChecked(true);}
+        Log.d(TAG, "onCreate: userID: "+userID);
+        reference.child(userID).child(getString(R.string.firebase_users_generealities)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
+                if (userProfile !=null){
+                    String database_username = userProfile.getUsername();
+                    edittext_username.setText(database_username);
 
-        String username = sgo.getUsername();
-        edittext_username.setText(username);
+                    choosenRegionsfromDB = userProfile.getChoosen_regions();
+                    if (choosenRegionsfromDB.contains(getString(R.string.lec))){settings_checkbox_lec.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.lcs))){settings_checkbox_lcs.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.lpl))){settings_checkbox_lpl.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.lck))){settings_checkbox_lck.setChecked(true);}
+
+                    if (choosenRegionsfromDB.contains(getString(R.string.tcl))){settings_checkbox_tcl.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.cblol))){settings_checkbox_cblol.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.opl))){settings_checkbox_opl.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.lla))){settings_checkbox_lla.setChecked(true);}
+
+                    if (choosenRegionsfromDB.contains(getString(R.string.pcs))){settings_checkbox_pcs.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.ljl))){settings_checkbox_ljl.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.lcsa))){settings_checkbox_lcsa.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.eum))){settings_checkbox_eum.setChecked(true);}
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         settings_progressbar.setVisibility(View.INVISIBLE);
 
@@ -246,14 +266,16 @@ public class SettingsActivity extends AppCompatActivity {
                                 int_no_choice_made
                         );*/
 
+                Log.d(TAG, "onClick: passing this size: "+choosen_regions.size());
+
 
                 UserGeneralities userGeneralities = new UserGeneralities("", edittext_username.getText().toString(), choosen_regions);
-
-                databaseHelper.updateGeneralSettings(userGeneralities);
-                updateFirebaseGeneralSettings(userGeneralities);
-
-
-                show_notifications_box.setVisibility(View.GONE);
+                //updateFirebaseRegionNotifications(userGeneralities);
+                //updateFirebaseRegionNotifications(userGeneralities);
+                updateUserGeneralities(userGeneralities);
+                show_user_box.setVisibility(View.GONE);
+                switch_user_settings.setChecked(false);
+                Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
                 settings_progressbar.setVisibility(View.INVISIBLE);
 
 
@@ -264,14 +286,111 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void updateFirebaseGeneralSettings(UserGeneralities setnot_object) {
+    private void updateFirebaseRegionNotifications(UserGeneralities userGeneralities) {
 
-/*        reference = FirebaseDatabase.getInstance().getReference();
-        user_preferences_reference = reference.child(getString(R.string.firebase_users_generealities));
-        user_preferences_reference.push().set*/
+        ArrayList <String> newRegions = new ArrayList<>();
+        ArrayList <String> oldRegions = new ArrayList<>();
+        ArrayList <String> unchangedRegions = new ArrayList<>();
 
+        newRegions = userGeneralities.getChoosen_regions();
+        oldRegions = choosenRegionsfromDB;
+
+        Log.d(TAG, "updateFirebaseRegionNotifications: newRegions.seize():"+newRegions.size());
+        Log.d(TAG, "updateFirebaseRegionNotifications: oldRegions.seize():"+oldRegions.size());
+
+
+        // lista delle regioni non modificate
+        for  (int i=0; i<getAllRegions().size(); i++){
+            if (newRegions.contains(getAllRegions().get(i)) && oldRegions.contains(getAllRegions().get(i))){
+                unchangedRegions.add(getAllRegions().get(i));
+            }
+        }
+
+        //lista delle nuove regioni da aggiungere
+        for  (int i=0; i<unchangedRegions.size(); i++){
+            if (newRegions.contains(unchangedRegions.get(i))){
+                newRegions.remove(i);
+            }
+        }
+
+        //lista delle regioni da eliminare
+        for  (int i=0; i<unchangedRegions.size(); i++){
+            if (oldRegions.contains(unchangedRegions.get(i))){
+                oldRegions.remove(i);
+            }
+        }
+
+        /*
+        * old: LEC LCS LCK LPL
+        * new:
+        *
+        * unchanged: LEC
+        *
+        *
+        *
+        * */
+
+
+        //regions aggiunte : aggiungi regione e inizializzala
+        for (int i=0; i<newRegions.size(); i++){
+
+            RegionNotifications regionNotifications = new RegionNotifications(newRegions.get(i),0,0,1);
+            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(getString(R.string.firebase_user_notification))
+                    .child(getString(R.string.firebase_user_notification_region))
+                    .child(newRegions.get(i))
+                    .setValue(regionNotifications).addOnCompleteListener(task2 -> {
+                if (task2.isSuccessful()){
+                    Log.d(TAG, "ADDED: Notification Region ");
+                }else{
+                    Log.d(TAG, "ERROR: registered: Notification Region ");
+                }
+            });
+        }
+
+        //regioni eliminate: eliminale dal db
+        for (int i=0; i<oldRegions.size(); i++){
+
+            RegionNotifications regionNotifications = new RegionNotifications(oldRegions.get(i),0,0,1);
+            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(getString(R.string.firebase_user_notification))
+                    .child(getString(R.string.firebase_user_notification_region))
+                    .child(oldRegions.get(i))
+                    .removeValue();
+        }
 
     }
+
+    public void updateUserGeneralities (UserGeneralities userGeneralities){
+
+        //remove all old regions
+                FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(getString(R.string.firebase_users_generealities))
+                    .child(getString(R.string.firebase_user_notification_region))
+                    .removeValue();
+
+        //add all selected regions
+
+        FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_users_generealities))
+                .child(getString(R.string.firebase_user_choosen_regions))
+                .setValue(userGeneralities.getChoosen_regions()).addOnCompleteListener(task2 -> {
+            if (task2.isSuccessful()){
+                Log.d(TAG, "added: Notification Region ");
+
+            }else{
+                Log.d(TAG, "ERROR: registered: Notification Region ");
+            }
+        });
+
+
+
+}
+
 
 
     private void buttonActions() {
@@ -289,15 +408,15 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switch_notificationx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switch_user_settings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (switch_notificationx.isChecked()){
+                if (switch_user_settings.isChecked()){
                     Log.d(TAG, "onCreate: ON");
-                    show_notifications_boxx.setVisibility(View.VISIBLE);
+                    show_user_box.setVisibility(View.VISIBLE);
                 }else {
                     Log.d(TAG, "onCreate: OFF");
-                    show_notifications_boxx.setVisibility(View.GONE);
+                    show_user_box.setVisibility(View.GONE);
                 }
             }
         });

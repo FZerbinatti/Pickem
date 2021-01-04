@@ -158,6 +158,8 @@ public class PicksActivity extends AppCompatActivity  {
         viewPager = findViewById(R.id.viewPager_picksActivity);
         pick_background = findViewById(R.id.pick_background);
 
+        
+
 
         selectedLeagues = new ArrayList<>();
         selectedLeagues.add(new TeamDetails(R.drawable.logo_lck, "LCK"));
