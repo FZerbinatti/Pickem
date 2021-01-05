@@ -600,6 +600,7 @@
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
                                     android:layout_marginTop="15dp"
+
                                     android:buttonTint="@color/background"
                                     app:layout_constraintEnd_toEndOf="@+id/checkbox_lec"
                                     app:layout_constraintTop_toBottomOf="@+id/checkbox_lec" />
@@ -622,6 +623,7 @@
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
                                     android:layout_marginTop="15dp"
+
                                     android:buttonTint="@color/background"
                                     app:layout_constraintEnd_toEndOf="@+id/checkbox_lpl"
                                     app:layout_constraintTop_toBottomOf="@+id/checkbox_lpl" />
@@ -640,11 +642,12 @@
                                     app:layout_constraintTop_toTopOf="@+id/checkbox_lck" />
 
                                 <com.google.android.material.checkbox.MaterialCheckBox
-                                    android:id="@+id/checkbox_lcs"
+                                    android:id="@+id/checkbox_cblol"
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
-                                    android:buttonTint="@color/background"
                                     android:layout_marginTop="15dp"
+                                    android:buttonTint="@color/background"
+
                                     app:layout_constraintEnd_toEndOf="@+id/checkbox_lck"
                                     app:layout_constraintTop_toBottomOf="@+id/checkbox_lck" />
 
@@ -654,12 +657,12 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
                                     android:fontFamily="@font/simplex"
-                                    android:text="@string/lcs"
+                                    android:text="@string/cblol"
                                     android:textColor="@color/white"
                                     android:textSize="20sp"
-                                    app:layout_constraintBottom_toBottomOf="@+id/checkbox_lcs"
-                                    app:layout_constraintStart_toEndOf="@+id/checkbox_lcs"
-                                    app:layout_constraintTop_toTopOf="@+id/checkbox_lcs" />
+                                    app:layout_constraintBottom_toBottomOf="@+id/checkbox_cblol"
+                                    app:layout_constraintStart_toEndOf="@+id/checkbox_cblol"
+                                    app:layout_constraintTop_toTopOf="@+id/checkbox_cblol" />
 
                                 <com.google.android.material.checkbox.MaterialCheckBox
                                     android:id="@+id/checkbox_tcl"
@@ -684,12 +687,12 @@
                                     app:layout_constraintTop_toTopOf="@+id/checkbox_tcl" />
 
                                 <com.google.android.material.checkbox.MaterialCheckBox
-                                    android:id="@+id/checkbox_cblol"
+                                    android:id="@+id/checkbox_lcs"
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
                                     android:buttonTint="@color/background"
                                     app:layout_constraintBottom_toBottomOf="@+id/checkbox_eum"
-                                    app:layout_constraintStart_toStartOf="@+id/checkbox_ljl"
+                                    app:layout_constraintStart_toEndOf="@+id/textView9"
                                     app:layout_constraintTop_toTopOf="@+id/checkbox_eum" />
 
                                 <TextView
@@ -698,12 +701,12 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
                                     android:fontFamily="@font/simplex"
-                                    android:text="@string/cblol"
+                                    android:text="@string/lcs"
                                     android:textColor="@color/white"
                                     android:textSize="20sp"
-                                    app:layout_constraintBottom_toBottomOf="@+id/checkbox_cblol"
-                                    app:layout_constraintStart_toEndOf="@+id/checkbox_cblol"
-                                    app:layout_constraintTop_toTopOf="@+id/checkbox_cblol" />
+                                    app:layout_constraintBottom_toBottomOf="@+id/checkbox_lcs"
+                                    app:layout_constraintStart_toEndOf="@+id/checkbox_lcs"
+                                    app:layout_constraintTop_toTopOf="@+id/checkbox_lcs" />
 
                                 <com.google.android.material.checkbox.MaterialCheckBox
                                     android:id="@+id/checkbox_opl"
@@ -751,11 +754,12 @@
                                 <com.google.android.material.checkbox.MaterialCheckBox
                                     android:id="@+id/checkbox_lcsa"
                                     android:layout_width="25dp"
-                                    android:layout_marginTop="15dp"
                                     android:layout_height="25dp"
+
+                                    android:layout_marginTop="15dp"
                                     android:buttonTint="@color/background"
-                                    app:layout_constraintEnd_toEndOf="@+id/checkbox_lcs"
-                                    app:layout_constraintTop_toBottomOf="@+id/checkbox_lcs" />
+                                    app:layout_constraintEnd_toEndOf="@+id/checkbox_cblol"
+                                    app:layout_constraintTop_toBottomOf="@+id/checkbox_cblol" />
 
                                 <TextView
                                     android:id="@+id/textView6"
@@ -763,6 +767,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
                                     android:fontFamily="@font/simplex"
+
                                     android:text="@string/lcs_academy"
                                     android:textColor="@color/white"
                                     android:textSize="18sp"
@@ -775,9 +780,9 @@
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
                                     android:buttonTint="@color/background"
-                                    app:layout_constraintBottom_toBottomOf="@+id/checkbox_lcs"
+                                    app:layout_constraintBottom_toBottomOf="@+id/checkbox_cblol"
                                     app:layout_constraintStart_toStartOf="@+id/checkbox_ljl"
-                                    app:layout_constraintTop_toTopOf="@+id/checkbox_lcs" />
+                                    app:layout_constraintTop_toTopOf="@+id/checkbox_cblol" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -795,8 +800,9 @@
                                     android:id="@+id/checkbox_eum"
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
-                                    android:buttonTint="@color/background"
                                     android:layout_marginTop="15dp"
+                                    android:buttonTint="@color/background"
+
                                     app:layout_constraintEnd_toEndOf="@+id/checkbox_lcsa"
                                     app:layout_constraintTop_toBottomOf="@+id/checkbox_lcsa" />
 
@@ -806,7 +812,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
                                     android:fontFamily="@font/simplex"
-                                    android:text="EU MASTERS"
+                                    android:text="@string/eu_masters"
                                     android:textColor="@color/white"
                                     android:textSize="18sp"
                                     app:layout_constraintBottom_toBottomOf="@+id/checkbox_eum"
@@ -817,10 +823,9 @@
                                     android:id="@+id/checkbox_ljl"
                                     android:layout_width="25dp"
                                     android:layout_height="25dp"
-                                    android:layout_marginStart="10dp"
                                     android:buttonTint="@color/background"
                                     app:layout_constraintBottom_toBottomOf="@+id/checkbox_lcsa"
-                                    app:layout_constraintStart_toEndOf="@+id/textView6"
+                                    app:layout_constraintStart_toStartOf="@+id/checkbox_lcs"
                                     app:layout_constraintTop_toTopOf="@+id/checkbox_lcsa" />
 
                                 <TextView

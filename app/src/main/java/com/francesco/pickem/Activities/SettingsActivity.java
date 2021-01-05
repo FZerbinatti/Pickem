@@ -203,8 +203,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                     if (choosenRegionsfromDB.contains(getString(R.string.pcs))){settings_checkbox_pcs.setChecked(true);}
                     if (choosenRegionsfromDB.contains(getString(R.string.ljl))){settings_checkbox_ljl.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.lcsa))){settings_checkbox_lcsa.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.eum))){settings_checkbox_eum.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.lcs_academy))){settings_checkbox_lcsa.setChecked(true);}
+                    if (choosenRegionsfromDB.contains(getString(R.string.eu_masters))){settings_checkbox_eum.setChecked(true);}
 
 
                 }
@@ -246,7 +246,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if(settings_checkbox_opl.isChecked())  {choosen_regions .add(getString(R.string.opl)) ;}
                 if(settings_checkbox_ljl.isChecked())  {choosen_regions .add(getString(R.string.ljl)) ;}
                 if(settings_checkbox_pcs.isChecked())  {choosen_regions .add(getString(R.string.pcs)) ;}
-                if(settings_checkbox_eum.isChecked())  {choosen_regions .add(getString(R.string.eum)) ;}
+                if(settings_checkbox_eum.isChecked())  {choosen_regions .add(getString(R.string.eu_masters)) ;}
                 if(settings_checkbox_lcsa.isChecked()) {choosen_regions .add(getString(R.string.lcs_academy) );}
                 if(settings_checkbox_lla.isChecked())  {choosen_regions .add(getString(R.string.lla)); }
 
@@ -320,15 +320,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        /*
-        * old: LEC LCS LCK LPL
-        * new:
-        *
-        * unchanged: LEC
-        *
-        *
-        *
-        * */
 
 
         //regions aggiunte : aggiungi regione e inizializzala
@@ -510,7 +501,7 @@ public class SettingsActivity extends AppCompatActivity {
         regions.add(getString(R.string.opl));
         regions.add(getString(R.string.ljl));
         regions.add(getString(R.string.pcs));
-        regions.add(getString(R.string.eum));
+        regions.add(getString(R.string.eu_masters));
         regions.add(getString(R.string.lcs_academy));
         regions.add(getString(R.string.lla));
 

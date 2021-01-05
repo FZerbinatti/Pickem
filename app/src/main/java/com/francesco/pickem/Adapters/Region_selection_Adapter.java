@@ -1,6 +1,7 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,20 +10,24 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.Models.TeamDetails;
 import com.francesco.pickem.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class League_selection_Adapter extends PagerAdapter {
+public class Region_selection_Adapter extends PagerAdapter {
 
-    private List<TeamDetails> leaguesSelectedList;
+    private ArrayList<RegionDetails> leaguesSelectedList;
     private LayoutInflater layoutInflater;
     private Context context;
     private String TAG ="Adapter ";
 
 
-    public League_selection_Adapter(List<TeamDetails> leaguesSelectedList, Context context) {
+    public Region_selection_Adapter(ArrayList<RegionDetails> leaguesSelectedList, Context context) {
         this.leaguesSelectedList = leaguesSelectedList;
         this.context = context;
     }
@@ -50,8 +55,17 @@ public class League_selection_Adapter extends PagerAdapter {
         imageView = view.findViewById(R.id.league_logo);
        // title = view.findViewById(R.id.league_name);
 
-        imageView.setImageResource(leaguesSelectedList.get(position).getImage());
+        //imageView.setImageResource(leaguesSelectedList.get(position).getImage());
         //title.setText(leaguesSelectedList.get(position).getLeague_name());
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.logo_lec)
+                .error(R.drawable.logo_lck);
+
+        Log.d(TAG, "/////////////////////////////////////////instantiateItem: "+leaguesSelectedList.get(position).getImage());
+
+        Glide.with(context).load(leaguesSelectedList.get(position).getImage()).placeholder(R.drawable.ic_load).apply(options).into(imageView);
 
 
 /*        view.setOnClickListener(new View.OnClickListener() {

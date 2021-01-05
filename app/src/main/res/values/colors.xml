@@ -47,10 +47,18 @@
 
 
     <!-- materials basic -->
-    <color name="sfum1">#B3E5FC</color>
-    <color name="sfum2">#FAE4B0</color>
-    <color name="sfum3">#B9F6CA</color>
-    <color name="sfum4">#FFAB91</color>
+    <color name="sfum1">#eddcd2</color>
+    <color name="sfum2">#fff1e6</color>
+    <color name="sfum3">#fde2e4</color>
+    <color name="sfum4">#fad2e1</color>
+    <color name="sfum5">#c5dedd</color>
+    <color name="sfum6">#dbe7e4</color>
+    <color name="sfum7">#f0efeb</color>
+    <color name="sfum8">#d6e2e9</color>
+    <color name="sfum9">#bcd4e6</color>
+    <color name="sfum10">#99c1de</color>
+    <color name="sfum11">#d0d1ff</color>
+    <color name="sfum12">#ecbcfd</color>
 
     <color name="purple_200">#9C27B0</color>
     <color name="purple_500">#9C27B0</color>

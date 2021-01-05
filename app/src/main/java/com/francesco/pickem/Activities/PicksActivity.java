@@ -17,13 +17,19 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
-import com.francesco.pickem.Adapters.League_selection_Adapter;
+import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
 import com.francesco.pickem.Annotation.NonNull;
-import com.francesco.pickem.Models.TeamDetails;
 import com.francesco.pickem.Models.MatchDetails;
+import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +37,10 @@ import java.util.List;
 public class PicksActivity extends AppCompatActivity  {
 
     ViewPager viewPager;
-    League_selection_Adapter adapter;
+    Region_selection_Adapter adapter;
     RecyclerView_Picks_Adapter adapterRecycler;
-    List<TeamDetails> selectedLeagues;
+    List<String> selectedRegions;
+    ArrayList <RegionDetails> displayRegions;
     Integer[] colors_backgroundlistview = null;
     ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     ConstraintLayout pick_background;
@@ -50,6 +57,9 @@ public class PicksActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picks);
         recyclerView = findViewById(R.id.picksactivity_recyclerview);
+
+        selectedRegions = new ArrayList<String>();
+        displayRegions = new ArrayList<RegionDetails>();
 
         context = this;
         changeNavBarColor();
@@ -154,68 +164,170 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void initializeLeagueSelection() {
+        Log.d(TAG, "initializeLeagueSelection: ");
 
         viewPager = findViewById(R.id.viewPager_picksActivity);
         pick_background = findViewById(R.id.pick_background);
 
-        
 
 
-        selectedLeagues = new ArrayList<>();
-        selectedLeagues.add(new TeamDetails(R.drawable.logo_lck, "LCK"));
-        selectedLeagues.add(new TeamDetails(R.drawable.logo_lec, "LEC"));
-        selectedLeagues.add(new TeamDetails(R.drawable.logo_lpl, "LPL"));
-        selectedLeagues.add(new TeamDetails(R.drawable.logo_lcs, "LCS"));
+        Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
+/*        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
+        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));*/
 
-        adapter = new League_selection_Adapter(selectedLeagues, this);
+        Log.d(TAG, "initializeLeagueSelection: UID: "+FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        viewPager = findViewById(R.id.viewPager_picksActivity);
-        viewPager.setAdapter(adapter);
-        viewPager.setPadding(400, 0, 400, 0);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_users_generealities))
+                .child(getString(R.string.firebase_user_choosen_regions));
 
-
-        Integer[] colors_temp = {
-                getResources().getColor(R.color.sfum1),
-                getResources().getColor(R.color.sfum2),
-                getResources().getColor(R.color.sfum3),
-                getResources().getColor(R.color.sfum4)
-        };
-
-        colors_backgroundlistview = colors_temp;
-
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
 
-                if (position < (adapter.getCount() -1) && position < (colors_backgroundlistview.length - 1)) {
-
-                    pick_background.setBackgroundColor(
-
-                            (Integer) argbEvaluator.evaluate(
-                                    positionOffset,
-                                    colors_backgroundlistview[position],
-                                    colors_backgroundlistview[position + 1]
-                            )
-                    );
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String regionDetails = snapshot.getValue(String.class);
+                    selectedRegions.add(regionDetails);
+                    Log.d(TAG, "onDataChange: adding region to arraylist:"+regionDetails);
 
 
                 }
 
-                else {
-                    pick_background.setBackgroundColor(colors_backgroundlistview[colors_backgroundlistview.length - 1]);
+                Log.d(TAG, "initializeLeagueSelection: selectedRegions.size(2)"+selectedRegions.size());
+
+                for (int i=0; i<selectedRegions.size(); i++){
+                    // per ogni nome nella lista, prendi l'oggetto corrispondente in /Regions
+                    Log.d(TAG, "onDataChange: SEARCHING FOR THIS REGION IN REGIONS: "+ selectedRegions.get(i));
+                    DatabaseReference referenceRegions = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions))
+                            .child(selectedRegions.get(i));
+
+                    referenceRegions.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                            RegionDetails regionDetails = dataSnapshot.getValue(RegionDetails.class);
+                            if (regionDetails!=null){
+                                displayRegions.add(regionDetails);
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                        }
+
+                    });
+
+
+/*                    referenceRegions.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                Log.d(TAG, "onDataChange: snapshot.child(getString(R.string.regions_name)).getValue(String.class):"+snapshot.child(getString(R.string.regions_name)).getValue(String.class));
+
+                                RegionDetails regionDetails = new RegionDetails();
+                                regionDetails.setId(snapshot.child(getString(R.string.regions_id)).getValue(String.class));
+                                regionDetails.setImage(snapshot.child(getString(R.string.regions_image)).getValue(String.class));
+                                regionDetails.setName(snapshot.child(getString(R.string.regions_name)).getValue(String.class));
+
+                                regionDetails.setPriority(snapshot.child(getString(R.string.regions_priority)).getValue(Integer.class));
+
+                                regionDetails.setRegion(snapshot.child(getString(R.string.regions_region)).getValue(String.class));
+                                regionDetails.setSlug(snapshot.child(getString(R.string.regions_slug)).getValue(String.class));
+
+
+                                displayRegions.add(regionDetails);
+                                Log.d(TAG, "onDataChange: adding region to regionDetail:"+regionDetails.getName());
+
+
+                            }
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                        }
+                    });*/
                 }
+
+                adapter = new Region_selection_Adapter(displayRegions, PicksActivity.this);
+
+                Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
+
+                viewPager = findViewById(R.id.viewPager_picksActivity);
+                viewPager.setAdapter(adapter);
+                viewPager.setPadding(400, 0, 400, 0);
+
+                Integer[] colors_temp = {
+                        getResources().getColor(R.color.sfum1),
+                        getResources().getColor(R.color.sfum2),
+                        getResources().getColor(R.color.sfum3),
+                        getResources().getColor(R.color.sfum4),
+                        getResources().getColor(R.color.sfum5),
+                        getResources().getColor(R.color.sfum6),
+                        getResources().getColor(R.color.sfum7),
+                        getResources().getColor(R.color.sfum8),
+                        getResources().getColor(R.color.sfum9),
+                        getResources().getColor(R.color.sfum10),
+                        getResources().getColor(R.color.sfum11),
+                        getResources().getColor(R.color.sfum12)
+                };
+
+                colors_backgroundlistview = colors_temp;
+
+                viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                        if (position < (adapter.getCount() -1) && position < (colors_backgroundlistview.length - 1)) {
+
+                            pick_background.setBackgroundColor(
+
+                                    (Integer) argbEvaluator.evaluate(
+                                            positionOffset,
+                                            colors_backgroundlistview[position],
+                                            colors_backgroundlistview[position + 1]
+                                    )
+                            );
+                        }
+                        else {
+                            pick_background.setBackgroundColor(colors_backgroundlistview[colors_backgroundlistview.length - 1]);
+                        }
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
+
             }
 
             @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
 
             }
         });
+
+
 
 
     }

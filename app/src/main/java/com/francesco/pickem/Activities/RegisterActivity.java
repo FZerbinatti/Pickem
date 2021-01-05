@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         checkbox_lec = findViewById(R.id.checkbox_lec);
         checkbox_lck = findViewById(R.id.checkbox_lck);
         checkbox_lpl = findViewById(R.id.checkbox_lpl);
-        checkbox_lcs = findViewById(R.id.checkbox_lcs);
+        checkbox_lcs = findViewById(R.id.checkbox_cblol);
 
         checkbox_tcl = findViewById(R.id.checkbox_tcl);
         checkbox_cblol = findViewById(R.id.checkbox_cblol);
@@ -145,8 +145,8 @@ public class RegisterActivity extends AppCompatActivity {
                 if (checkbox_ljl.isChecked()){choosen_regions.add(getString(R.string.ljl));}
 
                 if (checkbox_pcs.isChecked()){choosen_regions.add(getString(R.string.pcs));}
-                if (checkbox_eum.isChecked()){choosen_regions.add(getString(R.string.eum));}
-                if (checkbox_lcsa.isChecked()){choosen_regions.add(getString(R.string.lcsa));}
+                if (checkbox_eum.isChecked()){choosen_regions.add(getString(R.string.eu_masters));}
+                if (checkbox_lcsa.isChecked()){choosen_regions.add(getString(R.string.lcs_academy));}
                 if (checkbox_lla.isChecked()){choosen_regions.add(getString(R.string.lla));}
 
                 if (username.isEmpty()||email.isEmpty()||password.isEmpty()||repeated_password.isEmpty()){
