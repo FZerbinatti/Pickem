@@ -14,9 +14,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
 import com.francesco.pickem.Annotation.NonNull;
@@ -49,6 +55,9 @@ public class PicksActivity extends AppCompatActivity  {
     ArrayList<MatchDetails> matchDetailsList;
     private String TAG ="PicksActivity";
     Context context;
+    ImageView pick_backgroundimage;
+    RequestOptions options;
+    ProgressBar pick_progressbar;
 
 
 
@@ -58,10 +67,14 @@ public class PicksActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_picks);
         recyclerView = findViewById(R.id.picksactivity_recyclerview);
 
+        pick_backgroundimage = findViewById(R.id.pick_backgroundimage);
+        pick_progressbar = findViewById(R.id.pick_progressbar);
+
         selectedRegions = new ArrayList<String>();
         displayRegions = new ArrayList<RegionDetails>();
 
         context = this;
+        pick_progressbar.setVisibility(View.VISIBLE);
         changeNavBarColor();
         setupBottomNavView();
         initializeLeagueSelection();
@@ -169,21 +182,7 @@ public class PicksActivity extends AppCompatActivity  {
         viewPager = findViewById(R.id.viewPager_picksActivity);
         pick_background = findViewById(R.id.pick_background);
 
-
-
         Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
-/*        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));
-        selectedRegions.add(new RegionDetails(1111111,R.drawable.logo_lck, "LCK", 3, "KOREA", "lck"));*/
 
         Log.d(TAG, "initializeLeagueSelection: UID: "+FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -269,43 +268,19 @@ public class PicksActivity extends AppCompatActivity  {
 
                 viewPager = findViewById(R.id.viewPager_picksActivity);
                 viewPager.setAdapter(adapter);
-                viewPager.setPadding(400, 0, 400, 0);
-
-                Integer[] colors_temp = {
-                        getResources().getColor(R.color.sfum1),
-                        getResources().getColor(R.color.sfum2),
-                        getResources().getColor(R.color.sfum3),
-                        getResources().getColor(R.color.sfum4),
-                        getResources().getColor(R.color.sfum5),
-                        getResources().getColor(R.color.sfum6),
-                        getResources().getColor(R.color.sfum7),
-                        getResources().getColor(R.color.sfum8),
-                        getResources().getColor(R.color.sfum9),
-                        getResources().getColor(R.color.sfum10),
-                        getResources().getColor(R.color.sfum11),
-                        getResources().getColor(R.color.sfum12)
-                };
-
-                colors_backgroundlistview = colors_temp;
+                viewPager.setPadding(410, 0, 400, 0);
 
                 viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                        RequestOptions options = new RequestOptions()
+                                .fitCenter()
 
-                        if (position < (adapter.getCount() -1) && position < (colors_backgroundlistview.length - 1)) {
+                                .error(R.drawable.ic_load);
 
-                            pick_background.setBackgroundColor(
+                        Glide.with(context).load(displayRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);
+                        String region_name = displayRegions.get(position).getName();
 
-                                    (Integer) argbEvaluator.evaluate(
-                                            positionOffset,
-                                            colors_backgroundlistview[position],
-                                            colors_backgroundlistview[position + 1]
-                                    )
-                            );
-                        }
-                        else {
-                            pick_background.setBackgroundColor(colors_backgroundlistview[colors_backgroundlistview.length - 1]);
-                        }
                     }
 
                     @Override
@@ -326,6 +301,8 @@ public class PicksActivity extends AppCompatActivity  {
 
             }
         });
+
+        pick_progressbar.setVisibility(View.GONE);
 
 
 

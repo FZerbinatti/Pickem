@@ -128,10 +128,10 @@
         android:id="@+id/textview_match_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/simplex"
+        android:fontFamily="@font/classicroman"
         android:text="17:00"
-        android:textColor="@color/colorAccent"
-        android:textSize="22sp"
+        android:textColor="@color/blue_light"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
         app:layout_constraintStart_toStartOf="@+id/logo_team_1"
         app:layout_constraintTop_toTopOf="parent" />

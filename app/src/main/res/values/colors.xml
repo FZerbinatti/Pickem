@@ -6,6 +6,7 @@
 
     <color name="toolbar_icons_color">#DEEDFF</color>
     <color name="background">#021C52</color>
+    <color name="background_opaque">#72021C52</color>
     <color name="tab_bar_icons_background">#809FC5</color>
     <color name="textfields_background">#6087AEFF</color>
     <color name="background_dark">#000A1E</color>
@@ -24,6 +25,7 @@
     <color name="material_watergreen">#64FFDA</color>
     <color name="material_lightgreen">#87FFA9</color>
     <color name="material_green">#B2FF59</color>
+    <color name="material_green2">#3E89FF00</color>
     <color name="material_yellow">#FFF59D</color>
 
     <!-- fade greys -->

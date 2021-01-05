@@ -117,26 +117,51 @@
         android:id="@+id/pick_background"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/background_dark"
         android:layout_marginBottom="35dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/line_separator2">
 
-        <ScrollView
+        <ImageView
+            android:id="@+id/pick_backgroundimage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/topper_pick_backgroundimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_opaque"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/picksactivity_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingBottom="25dp"
-                    android:id="@+id/picksactivity_recyclerview"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
+
                 </androidx.recyclerview.widget.RecyclerView>
 
 
@@ -151,17 +176,24 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/picksactivity_recyclerview"/>
+                    app:layout_constraintTop_toBottomOf="@id/picksactivity_recyclerview" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
-
-    </ScrollView>
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ProgressBar
+        android:id="@+id/pick_progressbar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
