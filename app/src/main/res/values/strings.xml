@@ -35,6 +35,7 @@
     // firebase children
     <string name="firebase_users">Users</string>
     <string name="firebase_regions">Regions</string>
+    <string name="firebase_teams">Teams</string>
     <string name="firebase_users_generealities">UsersGeneralities</string>
     <string name="firebase_user_notification">UserNotifications</string>
     <string name="firebase_user_notification_region">Regions</string>
@@ -47,13 +48,19 @@
     <string name="region_logo">image</string>
     <string name="region_name">name</string>
 
-    //firebase Regions ids
+    //firebase Regions ids:
     <string name="regions_id">id</string>
     <string name="regions_image">image</string>
     <string name="regions_name">name</string>
     <string name="regions_priority">priority</string>
     <string name="regions_region">region</string>
     <string name="regions_slug">slug</string>
+
+    //firebase Teams ids:
+    <string name="team_id">id</string>
+    <string name="team_code">code</string>
+    <string name="team_image">image</string>
+    <string name="team_name">name</string>
 
 
 

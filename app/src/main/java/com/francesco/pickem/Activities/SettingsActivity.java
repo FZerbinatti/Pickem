@@ -53,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private DatabaseReference user_preferences_reference;
 
+
     public static String REGION_SELECTED = "REGION_SELECTED";
 
     private String userID;
@@ -84,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
         settings_regions_listview = findViewById(R.id.settings_regions_listview);
         choosenRegionsfromDB = new ArrayList<>();
 
+
         settings_checkbox_lec = findViewById(R.id.checkbox_lec);
         settings_checkbox_lcs = findViewById(R.id.checkbox_lcs);
         settings_checkbox_lck = findViewById(R.id.checkbox_lck);
@@ -101,20 +103,21 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         context = this;
+
         setupBottomNavView();
         buttonActions();
         changeNavBarColor();
         saveGeneralSettings();
-        loadListview();
+
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
         userID = user.getUid();
         Log.d(TAG, "onCreate: userID: "+userID);
 
-        settings_progressbar.setVisibility(View.VISIBLE);
+        //settings_progressbar.setVisibility(View.VISIBLE);
 
-        loadSqliteData();
+
 
 /*        reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -151,19 +154,22 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void loadListview() {
+    private void loadListview(ArrayList<String> allRegions) {
+
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
-                getAllRegions() );
+                allRegions );
+
+
 
         settings_regions_listview.setAdapter(arrayAdapter);
 
         settings_regions_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String stringRegionSelected = getAllRegions().get(position);
+                String stringRegionSelected = allRegions.get(position);
                 Intent intent = new Intent(SettingsActivity.this, NotificationRegionActivity.class);
                 intent.putExtra(REGION_SELECTED, stringRegionSelected);
                 startActivity(intent);
@@ -173,7 +179,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void loadSqliteData() {
+    private void loadFirebaseData() {
 
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -286,73 +292,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void updateFirebaseRegionNotifications(UserGeneralities userGeneralities) {
 
-        ArrayList <String> newRegions = new ArrayList<>();
-        ArrayList <String> oldRegions = new ArrayList<>();
-        ArrayList <String> unchangedRegions = new ArrayList<>();
-
-        newRegions = userGeneralities.getChoosen_regions();
-        oldRegions = choosenRegionsfromDB;
-
-        Log.d(TAG, "updateFirebaseRegionNotifications: newRegions.seize():"+newRegions.size());
-        Log.d(TAG, "updateFirebaseRegionNotifications: oldRegions.seize():"+oldRegions.size());
-
-
-        // lista delle regioni non modificate
-        for  (int i=0; i<getAllRegions().size(); i++){
-            if (newRegions.contains(getAllRegions().get(i)) && oldRegions.contains(getAllRegions().get(i))){
-                unchangedRegions.add(getAllRegions().get(i));
-            }
-        }
-
-        //lista delle nuove regioni da aggiungere
-        for  (int i=0; i<unchangedRegions.size(); i++){
-            if (newRegions.contains(unchangedRegions.get(i))){
-                newRegions.remove(i);
-            }
-        }
-
-        //lista delle regioni da eliminare
-        for  (int i=0; i<unchangedRegions.size(); i++){
-            if (oldRegions.contains(unchangedRegions.get(i))){
-                oldRegions.remove(i);
-            }
-        }
-
-
-
-        //regions aggiunte : aggiungi regione e inizializzala
-        for (int i=0; i<newRegions.size(); i++){
-
-            RegionNotifications regionNotifications = new RegionNotifications(newRegions.get(i),0,0,1);
-            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(getString(R.string.firebase_user_notification))
-                    .child(getString(R.string.firebase_user_notification_region))
-                    .child(newRegions.get(i))
-                    .setValue(regionNotifications).addOnCompleteListener(task2 -> {
-                if (task2.isSuccessful()){
-                    Log.d(TAG, "ADDED: Notification Region ");
-                }else{
-                    Log.d(TAG, "ERROR: registered: Notification Region ");
-                }
-            });
-        }
-
-        //regioni eliminate: eliminale dal db
-        for (int i=0; i<oldRegions.size(); i++){
-
-            RegionNotifications regionNotifications = new RegionNotifications(oldRegions.get(i),0,0,1);
-            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(getString(R.string.firebase_user_notification))
-                    .child(getString(R.string.firebase_user_notification_region))
-                    .child(oldRegions.get(i))
-                    .removeValue();
-        }
-
-    }
 
     public void updateUserGeneralities (UserGeneralities userGeneralities){
 
@@ -392,6 +332,8 @@ public class SettingsActivity extends AppCompatActivity {
                 if (switch_notification.isChecked()){
                     Log.d(TAG, "onCreate: ON");
                     show_notifications_box.setVisibility(View.VISIBLE);
+                    settings_progressbar.setVisibility(View.VISIBLE);
+                    getAllRegions();
                 }else {
                     Log.d(TAG, "onCreate: OFF");
                     show_notifications_box.setVisibility(View.GONE);
@@ -405,6 +347,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if (switch_user_settings.isChecked()){
                     Log.d(TAG, "onCreate: ON");
                     show_user_box.setVisibility(View.VISIBLE);
+                    loadFirebaseData();
                 }else {
                     Log.d(TAG, "onCreate: OFF");
                     show_user_box.setVisibility(View.GONE);
@@ -488,24 +431,39 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public ArrayList <String> getAllRegions(){
+    public void  getAllRegions(){
+        Log.d(TAG, "getAllRegions: ");
 
         ArrayList<String> regions = new ArrayList<>();
 
-        regions.add(getString(R.string.lec));
-        regions.add(getString(R.string.lcs));
-        regions.add(getString(R.string.lpl));
-        regions.add(getString(R.string.lck));
-        regions.add(getString(R.string.tcl));
-        regions.add(getString(R.string.cblol));
-        regions.add(getString(R.string.opl));
-        regions.add(getString(R.string.ljl));
-        regions.add(getString(R.string.pcs));
-        regions.add(getString(R.string.eu_masters));
-        regions.add(getString(R.string.lcs_academy));
-        regions.add(getString(R.string.lla));
+        // load da firebase le regioni
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions));
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-        return  regions;
+                    // tutti i team di quella regione, prendi solo il nome
+                    String regionName = snapshot.getKey().toString();
+                    Log.d(TAG, "onDataChange: regionName: "+regionName);
+                    regions.add(regionName);
+
+
+                }
+                loadListview(regions);
+                settings_progressbar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        Log.d(TAG, "getAllRegions: regions.size(): "+regions.size());
+
+
+
     }
 
 

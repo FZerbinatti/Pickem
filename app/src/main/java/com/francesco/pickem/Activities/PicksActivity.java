@@ -200,7 +200,6 @@ public class PicksActivity extends AppCompatActivity  {
                     selectedRegions.add(regionDetails);
                     Log.d(TAG, "onDataChange: adding region to arraylist:"+regionDetails);
 
-
                 }
 
                 Log.d(TAG, "initializeLeagueSelection: selectedRegions.size(2)"+selectedRegions.size());

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomProgressBar"
+        parent="android:Widget.ProgressBar">
+        <item name="android:colorBackground">@color/blue_light</item>
+        <item name="android:colorAccent">@color/blue_light</item>
+        <item name="android:color">@color/blue_light</item>
+        <item name="android:minHeight">80dp</item>
+        <item name="android:maxHeight">80dp</item>
+    </style>
+
+    <style name="AppTheme" parent="android:Theme.Light" />
+</resources>

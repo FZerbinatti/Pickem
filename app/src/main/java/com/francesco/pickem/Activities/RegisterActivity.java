@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         checkbox_lec = findViewById(R.id.checkbox_lec);
         checkbox_lck = findViewById(R.id.checkbox_lck);
         checkbox_lpl = findViewById(R.id.checkbox_lpl);
-        checkbox_lcs = findViewById(R.id.checkbox_cblol);
+        checkbox_lcs = findViewById(R.id.checkbox_lcs);
 
         checkbox_tcl = findViewById(R.id.checkbox_tcl);
         checkbox_cblol = findViewById(R.id.checkbox_cblol);
