@@ -269,7 +269,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: passing this size: "+choosen_regions.size());
 
 
-                UserGeneralities userGeneralities = new UserGeneralities("", edittext_username.getText().toString(), choosen_regions);
+                UserGeneralities userGeneralities = new UserGeneralities("", edittext_username.getText().toString(), choosen_regions, "");
                 //updateFirebaseRegionNotifications(userGeneralities);
                 //updateFirebaseRegionNotifications(userGeneralities);
                 updateUserGeneralities(userGeneralities);

@@ -7,15 +7,18 @@ public class UserGeneralities {
     String email;
     String username;
     ArrayList <String> choosen_regions;
+    String id;
 
-    public UserGeneralities(String email, String username, ArrayList<String> choosen_regions) {
-        this.email = email;
-        this.username = username;
-        this.choosen_regions = choosen_regions;
-    }
 
     public UserGeneralities() {
 
+    }
+
+    public UserGeneralities(String email, String username, ArrayList<String> choosen_regions, String id) {
+        this.email = email;
+        this.username = username;
+        this.choosen_regions = choosen_regions;
+        this.id = id;
     }
 
     public String getEmail() {
@@ -40,5 +43,13 @@ public class UserGeneralities {
 
     public void setChoosen_regions(ArrayList<String> choosen_regions) {
         this.choosen_regions = choosen_regions;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
