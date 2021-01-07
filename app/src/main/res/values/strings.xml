@@ -62,6 +62,12 @@
     <string name="team_image">image</string>
     <string name="team_name">name</string>
 
+    //firebase notification regions
+    <string name="notification_no_choice_made">no_choice_made</string>
+    <string name="notification_first_match_otd">notification_first_match_otd</string>
+    <string name="notification_morning_reminder">notification_morning_reminder</string>
+
+
 
 
 

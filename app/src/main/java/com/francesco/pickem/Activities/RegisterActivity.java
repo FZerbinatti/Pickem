@@ -181,7 +181,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             for (int i=0; i<choosen_regions.size(); i++){
 
 
-                                                RegionNotifications regionNotifications = new RegionNotifications(choosen_regions.get(i),0,0,1);
+                                                RegionNotifications regionNotifications = new RegionNotifications(1,0,0,choosen_regions.get(i));
                                                 FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                                         .child(getString(R.string.firebase_user_notification))

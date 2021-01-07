@@ -274,7 +274,6 @@ public class PicksActivity extends AppCompatActivity  {
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                         RequestOptions options = new RequestOptions()
                                 .fitCenter()
-
                                 .error(R.drawable.ic_load);
 
                         Glide.with(context).load(displayRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);

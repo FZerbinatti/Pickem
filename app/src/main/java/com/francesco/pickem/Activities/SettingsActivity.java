@@ -115,42 +115,6 @@ public class SettingsActivity extends AppCompatActivity {
         userID = user.getUid();
         Log.d(TAG, "onCreate: userID: "+userID);
 
-        //settings_progressbar.setVisibility(View.VISIBLE);
-
-
-
-/*        reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                User userProfile = dataSnapshot.getValue(User.class);
-                if (userProfile !=null){
-                    String database_username = userProfile.username;
-                    edittext_username.setText(database_username);
-                    ArrayList <String> choosenRegions = new ArrayList<>();
-                    choosenRegions = userProfile.choosen_regions;
-                    if (choosenRegions.contains(getString(R.string.lec))){settings_checkbox_lec.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.lcs))){settings_checkbox_lcs.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.lpl))){settings_checkbox_lpl.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.lck))){settings_checkbox_lck.setChecked(true);}
-
-                    if (choosenRegions.contains(getString(R.string.tcl))){settings_checkbox_tcl.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.cblol))){settings_checkbox_cblol.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.opl))){settings_checkbox_opl.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.ljl))){settings_checkbox_ljl.setChecked(true);}
-
-                    if (choosenRegions.contains(getString(R.string.pcs))){settings_checkbox_pcs.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.eum))){settings_checkbox_eum.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.lcs_academy))){settings_checkbox_lcsa.setChecked(true);}
-                    if (choosenRegions.contains(getString(R.string.lla))){settings_checkbox_lla.setChecked(true);}
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-            }
-        });*/
 
     }
 

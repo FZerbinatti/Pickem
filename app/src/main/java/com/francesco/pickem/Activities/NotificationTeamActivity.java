@@ -3,8 +3,10 @@ package com.francesco.pickem.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.francesco.pickem.Models.TeamDetails;
@@ -35,8 +37,6 @@ public class NotificationTeamActivity extends AppCompatActivity {
         team_name = findViewById(R.id.notification_team_name);
 
 
-
-
         team_name.setText(teamSelectedExtra);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_teams))
@@ -46,13 +46,10 @@ public class NotificationTeamActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 teamDetails.setCode(dataSnapshot.child(getString(R.string.team_code)).getValue().toString());
                 teamDetails.setImage(dataSnapshot.child(getString(R.string.team_image)).getValue().toString());
                 teamDetails.setId(Integer.parseInt(dataSnapshot.child(getString(R.string.team_id)).getValue().toString()));
                 teamDetails.setName(dataSnapshot.child(getString(R.string.team_name)).getValue().toString());
-
-
 
             }
 
