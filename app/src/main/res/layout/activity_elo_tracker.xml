@@ -148,10 +148,14 @@
         app:layout_constraintStart_toStartOf="parent"
         android:background="@drawable/square_blue_box">
 
-        <ImageView
-            android:layout_width="match_parent"
+
+        <com.androidplot.xy.XYPlot
+            android:id="@+id/elotracker_graph"
+            style="@style/APDefacto.Dark"
+            android:layout_width="fill_parent"
             android:layout_height="300dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
