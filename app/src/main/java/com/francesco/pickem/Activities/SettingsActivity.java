@@ -363,7 +363,7 @@ public class SettingsActivity extends AppCompatActivity {
                         Animatoo.animateFade(context);
                         break;
                     case R.id.button_calendar:
-                        Intent intentCalendar= new Intent(context, Calendar.class);
+                        Intent intentCalendar= new Intent(context, CalendarActivity.class);
                         startActivity(intentCalendar);
                         Animatoo.animateFade(context);
                         break;
@@ -411,8 +411,6 @@ public class SettingsActivity extends AppCompatActivity {
                     String regionName = snapshot.getKey().toString();
                     Log.d(TAG, "onDataChange: regionName: "+regionName);
                     regions.add(regionName);
-
-
                 }
                 loadListview(regions);
                 settings_progressbar.setVisibility(View.GONE);
@@ -426,9 +424,5 @@ public class SettingsActivity extends AppCompatActivity {
 
         Log.d(TAG, "getAllRegions: regions.size(): "+regions.size());
 
-
-
     }
-
-
 }

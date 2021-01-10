@@ -4,7 +4,7 @@
         <shape android:shape="rectangle"  >
             <corners android:radius="50dip" />
             <stroke android:width="1dip"
-                android:color="#000000" />
+                android:color="@color/blue_light" />
             <gradient android:angle="-90"
                 android:startColor="@color/textfields_background"
                 android:endColor="@color/textfields_background"  />

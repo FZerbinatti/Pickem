@@ -19,10 +19,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+
+
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Adapters.Day_selection_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
 import com.francesco.pickem.Annotation.NonNull;
@@ -38,12 +46,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PicksActivity extends AppCompatActivity  {
 
-    ViewPager viewPager;
-    Region_selection_Adapter adapter;
+    ViewPager viewPager, viewPager_match_day;
+    Region_selection_Adapter adapterRegions;
+    Day_selection_Adapter adapterDays;
+
     RecyclerView_Picks_Adapter adapterRecycler;
     List<String> selectedRegions;
     ArrayList <RegionDetails> displayRegions;
@@ -58,6 +69,7 @@ public class PicksActivity extends AppCompatActivity  {
     ImageView pick_backgroundimage;
     RequestOptions options;
     ProgressBar pick_progressbar;
+    String selected_region_name;
 
 
 
@@ -72,6 +84,7 @@ public class PicksActivity extends AppCompatActivity  {
 
         selectedRegions = new ArrayList<String>();
         displayRegions = new ArrayList<RegionDetails>();
+        selected_region_name ="";
 
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
@@ -79,6 +92,9 @@ public class PicksActivity extends AppCompatActivity  {
         setupBottomNavView();
         initializeLeagueSelection();
         initRecyclerView();
+
+
+
 
     }
 
@@ -202,6 +218,10 @@ public class PicksActivity extends AppCompatActivity  {
 
                 }
 
+
+                //getAllMatchDaysForThisRegion(selectedRegions.get(0));
+
+
                 Log.d(TAG, "initializeLeagueSelection: selectedRegions.size(2)"+selectedRegions.size());
 
                 for (int i=0; i<selectedRegions.size(); i++){
@@ -217,7 +237,7 @@ public class PicksActivity extends AppCompatActivity  {
                             if (regionDetails!=null){
                                 displayRegions.add(regionDetails);
                             }
-                            adapter.notifyDataSetChanged();
+                            adapterRegions.notifyDataSetChanged();
                         }
 
                         @Override
@@ -227,46 +247,14 @@ public class PicksActivity extends AppCompatActivity  {
 
                     });
 
-
-/*                    referenceRegions.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-
-                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                Log.d(TAG, "onDataChange: snapshot.child(getString(R.string.regions_name)).getValue(String.class):"+snapshot.child(getString(R.string.regions_name)).getValue(String.class));
-
-                                RegionDetails regionDetails = new RegionDetails();
-                                regionDetails.setId(snapshot.child(getString(R.string.regions_id)).getValue(String.class));
-                                regionDetails.setImage(snapshot.child(getString(R.string.regions_image)).getValue(String.class));
-                                regionDetails.setName(snapshot.child(getString(R.string.regions_name)).getValue(String.class));
-
-                                regionDetails.setPriority(snapshot.child(getString(R.string.regions_priority)).getValue(Integer.class));
-
-                                regionDetails.setRegion(snapshot.child(getString(R.string.regions_region)).getValue(String.class));
-                                regionDetails.setSlug(snapshot.child(getString(R.string.regions_slug)).getValue(String.class));
-
-
-                                displayRegions.add(regionDetails);
-                                Log.d(TAG, "onDataChange: adding region to regionDetail:"+regionDetails.getName());
-
-
-                            }
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-                        }
-                    });*/
                 }
 
-                adapter = new Region_selection_Adapter(displayRegions, PicksActivity.this);
+                adapterRegions = new Region_selection_Adapter(displayRegions, PicksActivity.this);
 
                 Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
 
                 viewPager = findViewById(R.id.viewPager_picksActivity);
-                viewPager.setAdapter(adapter);
+                viewPager.setAdapter(adapterRegions);
                 viewPager.setPadding(410, 0, 400, 0);
 
                 viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -277,12 +265,14 @@ public class PicksActivity extends AppCompatActivity  {
                                 .error(R.drawable.ic_load);
 
                         Glide.with(context).load(displayRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);
-                        String region_name = displayRegions.get(position).getName();
-
+                        selected_region_name = displayRegions.get(position).getName();
+                        getAllMatchDaysForThisRegion(selected_region_name);
                     }
 
                     @Override
                     public void onPageSelected(int position) {
+                        selected_region_name = displayRegions.get(position).getName();
+
 
                     }
 
@@ -290,6 +280,8 @@ public class PicksActivity extends AppCompatActivity  {
                     public void onPageScrollStateChanged(int state) {
 
                     }
+
+
                 });
 
             }
@@ -307,6 +299,9 @@ public class PicksActivity extends AppCompatActivity  {
 
     }
 
+
+
+
     public void changeNavBarColor() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.background_dark));
@@ -314,5 +309,253 @@ public class PicksActivity extends AppCompatActivity  {
         }
     }
 
+    public String formNumberToDayweek(Integer dayofWeek){
+
+        String lunedi    = getString(R.string.lunedi);
+        String martedi   = getString(R.string.martedi  );
+        String mercoledi    = getString(R.string.mercoledi);
+        String giovedi  = getString(R.string.giovedi  );
+        String venerdi  = getString(R.string.venerdi  );
+        String sabato     = getString(R.string.sabato   );
+        String domenica     = getString(R.string.domenica   );
+
+
+        if (dayofWeek == 1){return lunedi;
+        }else if (dayofWeek == 2){return martedi;
+        }else if (dayofWeek == 3){return mercoledi;
+        }else if (dayofWeek == 4){return giovedi;
+        }else if (dayofWeek == 5){return venerdi;
+        }else if (dayofWeek == 6){return sabato;
+        }else {return  domenica; }
+
+
+
+/*        if (dayofWeek == 1){return  getApplicationContext().getResources().getString(R.string.lunedi);
+        }else if (dayofWeek == 2){return  getResources().getString(R.string.martedi);
+        }else if (dayofWeek == 3){return  getResources().getString(R.string.mercoledi);
+        }else if (dayofWeek == 4){return  getResources().getString(R.string.giovedi);
+        }else if (dayofWeek == 5){return  getResources().getString(R.string.venerdi);
+        }else if (dayofWeek == 6){return  getResources().getString(R.string.sabato);
+        }else {return  this.getString(R.string.domenica); }*/
+
+    }
+
+    public String formNumberToMonth(String month_number){
+
+        if (month_number.equals("1")){return        getResources().getString(R.string.gennaio);
+        }else if (month_number.equals("2")){return  getResources().getString(R.string.febbraio);
+        }else if (month_number.equals("3")){return  getResources().getString(R.string.marzo);
+        }else if (month_number.equals("4")){return  getResources().getString(R.string.aprile);
+        }else if (month_number.equals("5")){return  getResources().getString(R.string.maggio);
+        }else if (month_number.equals("6")){return  getResources().getString(R.string.giugno);
+        }else if (month_number.equals("7")){return  getResources().getString(R.string.luglio);
+        }else if (month_number.equals("8")){return  getResources().getString(R.string.agosto);
+        }else if (month_number.equals("9")){return  getResources().getString(R.string.settembre);
+        }else if (month_number.equals("10")){return  getResources().getString(R.string.ottobre);
+        }else if (month_number.equals("11")){return  getResources().getString(R.string.novembre);
+        }else if (month_number.equals("12")){return this.getString(R.string.dicembre); }
+        else  return "error";
+
+    }
+
+
+
+
+
+    private void loadMatchDays(ArrayList<String> matchDays, Integer selectedPage) {
+        Log.d(TAG, "loadMatchDays: matchDays: " +matchDays.size());
+        for (int i=0; i< matchDays.size();i++){
+            Log.d(TAG, "loadMatchDays: "+matchDays.get(i));
+        }
+
+        viewPager_match_day = findViewById(R.id.viewPager_match_day);
+//interpol
+                adapterDays = new Day_selection_Adapter((matchDays), PicksActivity.this);
+
+                Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
+
+                viewPager_match_day.setAdapter(adapterDays);
+                viewPager_match_day.setPadding(200, 0, 200, 0);
+
+                viewPager_match_day.setCurrentItem(selectedPage);
+
+                viewPager_match_day.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                        String day_selected = matchDays.get(position);
+                        Log.d(TAG, "onPageScrolled: id day selected: "+day_selected);
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                });
+
+        pick_progressbar.setVisibility(View.GONE);
+
+    }
+
+    public Integer selectMatchDay(ArrayList<String> matchDays) throws ParseException {
+        //in base agli ID dell'array list, trova la data sucessiva o coincidente a quella attuale
+        Integer itemPosition=0;
+
+        for (int i=0; i< matchDays.size();i++){
+            Log.d(TAG, "loadMatchDays: "+matchDays.get(i));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date strDate = sdf.parse(matchDays.get(i));
+
+
+            Log.d(TAG, "selectMatchDay: System.currentTimeMillis(): "+System.currentTimeMillis());;
+
+            long matchTimeMillis = strDate.getTime();
+
+            Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
+            if (System.currentTimeMillis() <= matchTimeMillis) {
+                itemPosition = i-1;
+                return itemPosition;
+            }
+
+        }
+
+       return 0;
+    }
+
+    //1610203262423 now
+    //1610060400000 08 gen
+
+    //1610203262423 now
+    //1612047600000 31gen
+
+
+
+    public void getAllMatchDaysForThisRegion(String selected_region){
+        Log.d(TAG, "getAllMatchDays: selected_region: "+selected_region);
+        Calendar calendar = Calendar.getInstance();
+        String year = String.valueOf(calendar.get(Calendar.YEAR));
+
+        ArrayList<String> matchDays = new ArrayList<>();
+        ArrayList<String> matchDaysID = new ArrayList<>();
+
+        // load da firebase le regioni
+        Log.d(TAG, "getAllMatchDays: path: "+getString(R.string.match)+"/"+ selected_region +"/"+ selected_region + year);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.match))
+                .child(selected_region)
+                .child(selected_region + year);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    // prendi tutti i giorni disponibili per quell'anno per quelal regione
+
+                    String matchDayDetails = (snapshot.getKey().toString());
+
+                    Log.d(TAG, "onDataChange: regionName: "+matchDayDetails);
+                    matchDays.add(fromIDtoStringDate(matchDayDetails));
+                    matchDaysID.add(matchDayDetails);
+
+
+                }
+                Log.d(TAG, "onDataChange: matchDays.size()"+matchDays.size());
+                try {
+                    loadMatchDays(matchDays,selectMatchDay(matchDaysID) );
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                pick_progressbar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void  testDays(){
+        Log.d(TAG, "testDays: ");
+
+        ArrayList<String> days = new ArrayList<>();
+
+        // load da firebase le regioni
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("TestMatch")
+                .child("LEC")
+                .child("LEC2021");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    // tutti i team di quella regione, prendi solo il nome
+                    String dayName = snapshot.getKey().toString();
+                    Log.d(TAG, "onDataChange: regionName: "+dayName);
+                    days.add(dayName);
+                }
+
+                Log.d(TAG, "onDataChange: days gathered: "+days.size());
+
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+        Log.d(TAG, "onDataChange: days gathered: "+days.size());
+
+    }
+
+    public String fromIDtoStringDate(String id){
+        Log.d(TAG, "fromIDtoStringDate: id:"+id);
+
+        String[] dateStrings = id.split("-");
+
+        int year = 0;
+        int month = 0;
+        int day = 0;
+
+        Date date = new Date();
+
+        if (dateStrings.length == 3) {
+
+            year = Integer.parseInt(dateStrings[0]);
+            month = Integer.parseInt(dateStrings[1]);
+            day = Integer.parseInt(dateStrings[2]);
+        }
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            date = dateFormat.parse(id);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+        String stringDay = formNumberToDayweek(dayOfWeek);
+
+        Log.d(TAG, "fromIDtoStringDate: String.valueOf(month): "+String.valueOf(month));
+        String stringMonth = formNumberToMonth(String.valueOf(month));
+
+        Log.d(TAG, "fromIDtoStringDate: "+stringDay);
+        Log.d(TAG, "fromIDtoStringDate: "+ stringMonth );
+        Log.d(TAG, "fromIDtoStringDate: "+ day);
+
+        return stringDay + " " + stringMonth + " " + day;
+    }
 
 }

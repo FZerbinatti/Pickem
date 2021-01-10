@@ -56,11 +56,12 @@
                     android:id="@+id/register_username"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:hint="@string/enter_an_username"
+
                     android:layout_marginHorizontal="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/square_round_corners"
                     android:fontFamily="@font/simplex"
-                    android:hint="@string/enter_an_username"
                     android:inputType="textEmailAddress"
                     android:paddingVertical="10dp"
                     android:selectAllOnFocus="true"
