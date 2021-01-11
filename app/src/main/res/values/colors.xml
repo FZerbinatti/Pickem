@@ -24,6 +24,16 @@
     <color name="menu_names">#195bdf</color>
     <color name="league_name">#6A86A3</color>
 
+    //blue palette
+    <color name="b1">#edf2fb</color>
+    <color name="b2">#e2eafc</color>
+    <color name="b3">#d7e3fc</color>
+    <color name="b4">#ccdbfd</color>
+    <color name="b5">#c1d3fe</color>
+    <color name="b6">#b6ccfe</color>
+    <color name="b7">#abc4ff</color>
+
+
     <color name="material_watergreen">#64FFDA</color>
     <color name="material_lightgreen">#87FFA9</color>
     <color name="material_green">#B2FF59</color>

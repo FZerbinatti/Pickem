@@ -1,5 +1,6 @@
 package com.francesco.pickem.Activities;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,30 +8,39 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 
-import com.androidplot.util.PixelUtils;
-import com.androidplot.xy.CatmullRomInterpolator;
-import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.SimpleXYSeries;
-import com.androidplot.xy.XYGraphWidget;
-import com.androidplot.xy.XYPlot;
-import com.androidplot.xy.XYSeries;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Adapters.EloTrackerRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
+import com.francesco.pickem.Models.Elo;
 import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.RecyclerItemClickListener;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,14 +50,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.FieldPosition;
-import java.text.Format;
-import java.text.ParsePosition;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 
-public class EloTrackerActivity extends AppCompatActivity {
+import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
+
+public class EloTrackerActivity extends AppCompatActivity  implements OnChartGestureListener, OnChartValueSelectedListener {
 
     Context context;
     ImageButton button_add_elotracker;
@@ -59,9 +67,11 @@ public class EloTrackerActivity extends AppCompatActivity {
     private String userID;
     private String TAG = "EloTRackerActivity";
     ProgressBar elotrack_progressbar;
-    private XYPlot elotracker_graph;
-
+    private BarChart chart;
+    private SeekBar seekBarX, seekBarY;
+    LineChart mChart;
     ArrayList<EloTracker> elotracker_list;
+    EloActivity eloActivity;
 
 
     @Override
@@ -72,18 +82,28 @@ public class EloTrackerActivity extends AppCompatActivity {
         addElo();
         recycler_eloTracker = findViewById(R.id.recycler_eloTracker);
         elotrack_progressbar = findViewById(R.id.elotrack_progressbar);
-        elotracker_graph = (XYPlot) findViewById(R.id.elotracker_graph);
+        //elotracker_graph = (XYPlot) findViewById(R.id.elotracker_graph);
         elotrack_progressbar.setVisibility(View.VISIBLE);
+        mChart = findViewById(R.id.chart1);
+        eloActivity = new EloActivity();
 
         setupBottomNavView();
         loadFirebaseDataEloTracker();
-        //loadGraph();
+
+
+        loadGraph(elotracker_list);
+
+
+
 
 
     }
 
 
     private void loadFirebaseDataEloTracker() {
+
+
+
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
@@ -95,6 +115,9 @@ public class EloTrackerActivity extends AppCompatActivity {
 
         elotracker_list = new ArrayList<>();
 
+        if (elotracker_list.size()>0){
+            elotracker_list.clear();
+        }
 
         // load da firebase le regioni
         FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
@@ -113,6 +136,7 @@ public class EloTrackerActivity extends AppCompatActivity {
 
                 }
                 loadListview(elotracker_list);
+                loadGraph(elotracker_list);
 
 
 
@@ -155,7 +179,7 @@ public class EloTrackerActivity extends AppCompatActivity {
                 })
         );
 
-        //loadGraph();
+       // loadGraph(eloTrackerArrayList);
 
 
 
@@ -213,82 +237,167 @@ public class EloTrackerActivity extends AppCompatActivity {
 
     }
 
-    private void loadGraph() {
+    private void loadGraph(ArrayList<EloTracker> eloTrackerArrayList) {
 
-        Log.d(TAG, "loadListview: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
-        // create a couple arrays of y-values to plot:
-        Number[] domainLabels = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        Number[] series2Numbers = {800, 842, 855, 810, 840, 855, 867, 880, 942, 988};
-
-        Number [] domainEloNumbers = new Number[elotracker_list.size()];
-        Number [] eloNumbers = new Number[elotracker_list.size()];
-
+        String [] dates = new String[]{};
+        ArrayList<String> arrayOfDates = new ArrayList<>();
+        ArrayList<Entry> eloValues = new ArrayList<>();
 
         for (int i=0; i< elotracker_list.size(); i++){
-            eloNumbers[i] = (fromEloLpsToInteger(elotracker_list.get(i).getLps(), elotracker_list.get(i).getElo()));
-            Log.d(TAG, "loadGraph: eloNumbers[i]: "+eloNumbers[i]);
-            domainEloNumbers[i] = i;
-            Log.d(TAG, "loadGraph: domainEloNumbers[i]:"+domainEloNumbers[i]);
+            eloValues.add(new Entry(i,fromEloLpsToInteger(elotracker_list.get(i).getLps(), elotracker_list.get(i).getElo())));
+            arrayOfDates.add(elotracker_list.get(i).getDate());
+        }
+/*        chart.setOnChartValueSelectedListener((OnChartValueSelectedListener) this);
+
+        chart.setDrawBarShadow(false);
+        chart.setDrawValueAboveBar(true);
+
+        chart.getDescription().setEnabled(false);
+        chart.setMaxVisibleValueCount(60);
+        // scaling can now only be done on x- and y-axis separately
+        chart.setPinchZoom(false);
+
+        chart.setDrawGridBackground(false);
+        // chart.setDrawYLabels(false);*/
+/*        seekBarX = findViewById(R.id.seekBar1);
+        seekBarY = findViewById(R.id.seekBar2);*/
+
+
+/*        seekBarY.setOnSeekBarChangeListener((SeekBar.OnSeekBarChangeListener) this);
+        seekBarX.setOnSeekBarChangeListener((SeekBar.OnSeekBarChangeListener) this);*/
+
+
+        LineDataSet set1= new LineDataSet(eloValues, "Elo graph");
+
+        set1.setFillAlpha(110);
+
+        set1.setColor(context.getColor(R.color.menu_background));
+        set1.setValueTextSize(12f);
+        set1.setValueTextColor(context.getColor(R.color.transparent));
+
+        set1.notifyDataSetChanged();
+        mChart.setOnChartGestureListener(EloTrackerActivity.this);
+        mChart.setOnChartValueSelectedListener(EloTrackerActivity.this);
+
+        mChart.setDragEnabled(false);
+        mChart.setScaleEnabled(true);
+
+
+        mChart.getXAxis().setTextColor(Color.WHITE);
+
+
+        YAxis leftAxis = mChart.getAxisLeft();
+        ArrayList <String> allElos = eloActivity.getAllElos(context);
+
+
+        for (int i=0; i< allElos.size(); i++){
+
+            LimitLine eloLimit = new LimitLine(fromEloLpsToInteger(0,allElos.get(i)) , allElos.get(i));
+            eloLimit.setLineWidth(1f);
+            eloLimit.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_BOTTOM);
+            eloLimit.setLineColor(context.getResources().getColor(R.color.blue_light));
+            eloLimit.setTextColor(context.getResources().getColor(R.color.blue_light));
+
+
+
+
+
+
+            leftAxis.addLimitLine(eloLimit);
+
         }
 
-
-        // turn the above arrays into XYSeries':
-        // (Y_VALS_ONLY means use the element index as the x value)
-
-        XYSeries series2 = new SimpleXYSeries(
-                //Arrays.asList(series2Numbers), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Series2");
-                 Arrays.asList(eloNumbers), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Series2");
-
-        // create formatters to use for drawing a series using LineAndPointRenderer
-        // and configure them from xml:
-
-        LineAndPointFormatter series2Format =
-                //new LineAndPointFormatter(this, R.xml.line_point_formatter_with_labels_2);
-               series2Format = new LineAndPointFormatter(Color.RED, Color.GREEN, Color.BLUE, null);
-
-        // add an "dash" effect to the series2 line:
-        series2Format.getLinePaint().setPathEffect(new DashPathEffect(new float[] {
-
-                // always use DP when specifying pixel sizes, to keep things consistent across devices:
-                PixelUtils.dpToPix(20),
-                PixelUtils.dpToPix(15)}, 0));
-
-        // just for fun, add some smoothing to the lines:
-        // see: http://androidplot.com/smooth-curves-and-androidplot/
+        //trasformare arrayStrin in String[]
 
 
-        series2Format.setInterpolationParams(
-                new CatmullRomInterpolator.Params(100, CatmullRomInterpolator.Type.Centripetal));
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
 
-        // add a new series' to the xyplot:
+        LineData data = new LineData(dataSets);
 
-        elotracker_graph.addSeries(series2, series2Format);
+/*        XAxis xAxis = mChart.getXAxis();
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(arrayOfDates));
+        xAxis.setGranularity(1);
+        xAxis.setTextColor(Color.WHITE);*/
 
-        elotracker_graph.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
-            @Override
-            public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-                int i = Math.round(((Number) obj).floatValue());
-                Log.d(TAG, "format: domainLabels[i]"+domainLabels[i]);
-                //return toAppendTo.append(domainLabels[i]);
-                return toAppendTo.append(domainEloNumbers[i]);
-            }
-            @Override
-            public Object parseObject(String source, ParsePosition pos) {
-                return null;
-            }
-        });
+        mChart.setData(data);
+        mChart.invalidate();
+
+        //togliere numeri sul graph, metti barre per gli elos
+
 
 
     }
-    
+
+/*    public class MyXAxisValueFormatter extends IndexAxisValueFormatter {
+        private ArrayList<String> mValues;
+
+        public MyXAxisValueFormatter(ArrayList<String> mValues) {
+            this.mValues = mValues;
+        }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return mValues.get((int) value);
+        }
+    }*/
+
     public Integer fromEloLpsToInteger( Integer lps, String elo){
+        Log.d(TAG, "fromEloLpsToInteger:elo:"+elo);
+        Integer eloPoints = lps + eloActivity.getEloPoints(elo, context);
+        Log.d(TAG, "fromEloLpsToInteger: eloPoints: "+eloPoints);
         
-        if (elo.equals("Challenger")){
-            return  1000+lps;
-        }
-        
-        return 0;
+        return eloPoints;
     }
 
+    @Override
+    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartLongPressed(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartDoubleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartSingleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+    }
+
+    @Override
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+    }
+
+    @Override
+    public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+    }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
+
+    }
 }

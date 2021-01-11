@@ -8,13 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.francesco.pickem.Models.Elo;
 import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +36,7 @@ public class NewTrackEloDay extends AppCompatActivity {
     private String TAG ="NewTrackEloActivity: ";
     private int mYear, mMonth, mDay, mHour, mMinute;
     Context context;
+    EloActivity eloService;
 
     TextView add_eloday_date;
     EditText add_eloday_wins, add_eloday_losses, add_eloday_lps;
@@ -54,6 +55,9 @@ public class NewTrackEloDay extends AppCompatActivity {
         button_save_today_elotracking = findViewById(R.id.button_save_today_elotracking);
         add_eloday_spinner = findViewById(R.id.add_eloday_spinner);
         context = this;
+        eloService = new EloActivity();
+
+        fillSpinner();
 
         /*ArrayList <Elo> listOfElos = new ArrayList<>();
         listOfElos.add()
@@ -124,7 +128,8 @@ public class NewTrackEloDay extends AppCompatActivity {
                             Log.d(TAG, "ERROR: registered: Notification Region "+elotracker_id);
                         }
                     });
-
+                    Intent intent = new Intent(NewTrackEloDay.this, EloTrackerActivity.class);
+                    startActivity(intent);
                     finish();
                 }
 
@@ -140,6 +145,16 @@ public class NewTrackEloDay extends AppCompatActivity {
 
 
 
+
+    }
+
+    private void fillSpinner() {
+
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(this, R.layout.spinner_item, eloService.getAllElos(context));
+        //adapter.setDropDownViewResource( android.R.layout.simple_spinner_item);
+
+        add_eloday_spinner.setAdapter(adapter);
 
     }
 

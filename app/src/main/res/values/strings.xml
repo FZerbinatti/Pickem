@@ -94,36 +94,34 @@
     <string name="split1">S1</string>
 
     // Elos for elo tracker
-        <string-array name="elos">
-            <item>Challenger</item>
-            <item>Grandmaster</item>
-            <item>Master </item>
-            <item>Diamond 1</item>
-            <item>Diamond 2</item>
-            <item>Diamond 3</item>
-            <item>Diamond 4</item>
-            <item>Plat 1</item>
-            <item>Plat 2</item>
-            <item>Plat 3</item>
-            <item>Plat 4</item>
-            <item>Gold 1</item>
-            <item>Gold 2</item>
-            <item>Gold 3</item>
-            <item>Gold 4</item>
-            <item>Silver 1</item>
-            <item>Silver 2</item>
-            <item>Silver 3</item>
-            <item>Silver 4</item>
-            <item>Bronze 1</item>
-            <item>Bronze 2</item>
-            <item>Bronze 3</item>
-            <item>Bronze 4</item>
-            <item>Iron 1</item>
-            <item>Iron 2</item>
-            <item>Iron 3</item>
-            <item>Iron 4</item>
+    <string name="Challenger">Challenger</string>
+    <string name="Grandmaster">Grandmaster</string>
+    <string name="Master">Master</string>
+    <string name="Diamond_1">Diamond 1</string>
+    <string name="Diamond_2">Diamond 2</string>
+    <string name="Diamond_3">Diamond 3</string>
+    <string name="Diamond_4">Diamond 4</string>
+    <string name="Platinum_1">Platinum 1</string>
+    <string name="Platinum_2">Platinum 2</string>
+    <string name="Platinum_3">Platinum 3</string>
+    <string name="Platinum_4">Platinum 4</string>
+    <string name="Gold_1">Gold 1</string>
+    <string name="Gold_2">Gold 2</string>
+    <string name="Gold_3">Gold 3</string>
+    <string name="Gold_4">Gold 4</string>
+    <string name="Silver_1">Silver 1</string>
+    <string name="Silver_2">Silver 2</string>
+    <string name="Silver_3">Silver 3</string>
+    <string name="Silver_4">Silver 4</string>
+    <string name="Bronze_1">Bronze 1</string>
+    <string name="Bronze_2">Bronze 2</string>
+    <string name="Bronze_3">Bronze 3</string>
+    <string name="Bronze_4">Bronze 4</string>
+    <string name="Iron_1">Iron 1</string>
+    <string name="Iron_2">Iron 2</string>
+    <string name="Iron_3">Iron 3</string>
+    <string name="Iron_4">Iron 4</string>
 
-        </string-array>
 
     //Elotracker stuff
     <string name="elotracker_id">elotracker_id</string>
@@ -132,8 +130,6 @@
     <string name="elotracker_losses">elotracker_losses</string>
     <string name="elotracker_elo">elotracker_elo</string>
     <string name="elotracker_lps">elotracker_lps</string>
-
-
 
 
 </resources>
