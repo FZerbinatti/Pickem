@@ -90,12 +90,12 @@
                 android:textSize="18sp"
                 android:layout_marginEnd="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/checkbox_at_match_start"
+                app:layout_constraintEnd_toStartOf="@+id/checkbox_team_morning_reminder"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <CheckBox
-                android:id="@+id/checkbox_at_match_start"
+                android:id="@+id/checkbox_team_morning_reminder"
                 android:layout_width="30dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="10dp"
@@ -132,7 +132,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <CheckBox
-                android:id="@+id/checkbox_morning_reminder"
+                android:id="@+id/checkbox_as_team_plays"
                 android:layout_width="30dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="10dp"
@@ -189,7 +189,7 @@
             app:layout_constraintTop_toBottomOf="@id/cc10">
 
             <Button
-                android:id="@+id/button_save_notification_settings"
+                android:id="@+id/button_save_notification_settings_teams"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
@@ -209,10 +209,40 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" >
+
+        <ImageView
+            android:id="@+id/imageview_notification_team"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/r_topper_pick_backgroundimage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_opaque"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <ProgressBar
         android:id="@+id/notifications_teams_progressbar"
         android:indeterminateDrawable="@drawable/custom_progressbar"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

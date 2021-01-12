@@ -52,27 +52,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView2">
 
-                <EditText
-                    android:id="@+id/register_username"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/enter_an_username"
 
-                    android:layout_marginHorizontal="40dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/square_round_corners"
-                    android:fontFamily="@font/simplex"
-                    android:inputType="textEmailAddress"
-                    android:paddingVertical="10dp"
-                    android:selectAllOnFocus="true"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/white"
-                    android:textSize="@dimen/edittexts_textsize"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/register_email"
@@ -94,7 +74,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/register_username" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/register_password"

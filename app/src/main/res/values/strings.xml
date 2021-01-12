@@ -6,9 +6,10 @@
     <string name="enter_an_email">Enter an Email</string>
     <string name="enter_a_password">Enter a Password</string>
     <string name="repeat_password">Repeat Password</string>
-    <string name="username">Username</string>
+    <string name="summoner_name">summoner_name</string>
     <string name="password">Password</string>
     <string name="email">email</string>
+    <string name="summoner_server">summoner_server</string>
 
     <string name="reset">Reset</string>
     <string name="new_password">New Password</string>
@@ -56,6 +57,7 @@
     // firebase children
     <string name="firebase_users">Users</string>
     <string name="firebase_regions">Regions</string>
+    <string name="firebase_servers">Servers</string>
     <string name="firebase_teams">Teams</string>
     <string name="firebase_users_generealities">UsersGeneralities</string>
     <string name="firebase_users_elotracker">UsersEloTracker</string>
@@ -88,6 +90,10 @@
     <string name="notification_no_choice_made">no_choice_made</string>
     <string name="notification_first_match_otd">notification_first_match_otd</string>
     <string name="notification_morning_reminder">notification_morning_reminder</string>
+
+    //firebase notification teams
+    <string name="notification_team_as_team_plays">notification_team_as_team_plays</string>
+    <string name="notification_team_morning_reminder">notification_team_morning_reminder</string>
 
     //firebase Matches
     <string name="match">TestMatch</string>

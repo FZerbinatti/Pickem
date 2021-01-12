@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class RegisterActivity extends AppCompatActivity {
     TextView go_to_login;
     private FirebaseAuth mAuth;
-    EditText register_username, register_email, register_password, register_repeat_password;
+    EditText  register_email, register_password, register_repeat_password;
     CheckBox checkbox_lec,checkbox_lck,checkbox_lpl,checkbox_lcs,checkbox_tcl,checkbox_cblol;
     CheckBox checkbox_opl,checkbox_ljl,checkbox_pcs,checkbox_eum,checkbox_lcsa,checkbox_lla;
     private  static String TAG ="RegisterActivity: ";
@@ -55,7 +55,6 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         go_to_login = findViewById(R.id.go_to_login);
-        register_username = findViewById(R.id.register_username);
         register_email = findViewById(R.id.register_email);
         register_password = findViewById(R.id.register_password);
         register_repeat_password = findViewById(R.id.register_repeat_password);
@@ -128,7 +127,6 @@ public class RegisterActivity extends AppCompatActivity {
         button_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = register_username.getText().toString();
                 String email = register_email.getText().toString();
                 String password = register_password.getText().toString();
                 String repeated_password = register_repeat_password.getText().toString();
@@ -149,9 +147,8 @@ public class RegisterActivity extends AppCompatActivity {
                 if (checkbox_lcsa.isChecked()){choosen_regions.add(getString(R.string.lcs_academy));}
                 if (checkbox_lla.isChecked()){choosen_regions.add(getString(R.string.lla));}
 
-                if (username.isEmpty()||email.isEmpty()||password.isEmpty()||repeated_password.isEmpty()){
+                if (email.isEmpty()||password.isEmpty()||repeated_password.isEmpty()){
                     Toast.makeText(RegisterActivity.this, "Fill all the fields!", Toast.LENGTH_SHORT).show();
-                    if  (username.isEmpty()){register_username.setError("Username Required"); register_username.requestFocus();}else
                     if  (email.isEmpty()){register_email.setError("Email Required"); register_email.requestFocus();}
                 }else if (!password.equals(repeated_password)){
                     Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
@@ -170,7 +167,7 @@ public class RegisterActivity extends AppCompatActivity {
                     mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
 
                         if (task.isSuccessful()){
-                            UserGeneralities user = new UserGeneralities( email, username, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            UserGeneralities user = new UserGeneralities( email, "null", "null", choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid());
                             FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .child(getString(R.string.firebase_users_generealities))

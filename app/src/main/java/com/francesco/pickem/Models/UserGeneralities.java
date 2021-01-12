@@ -5,7 +5,8 @@ import java.util.ArrayList;
 public class UserGeneralities {
 
     String email;
-    String username;
+    String summoner_name;
+    String server;
     ArrayList <String> choosen_regions;
     String id;
 
@@ -14,9 +15,10 @@ public class UserGeneralities {
 
     }
 
-    public UserGeneralities(String email, String username, ArrayList<String> choosen_regions, String id) {
+    public UserGeneralities(String email, String summoner_name, String server, ArrayList<String> choosen_regions, String id) {
         this.email = email;
-        this.username = username;
+        this.summoner_name = summoner_name;
+        this.server = server;
         this.choosen_regions = choosen_regions;
         this.id = id;
     }
@@ -29,12 +31,12 @@ public class UserGeneralities {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getSummoner_name() {
+        return summoner_name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setSummoner_name(String summoner_name) {
+        this.summoner_name = summoner_name;
     }
 
     public ArrayList<String> getChoosen_regions() {
@@ -51,5 +53,13 @@ public class UserGeneralities {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 }

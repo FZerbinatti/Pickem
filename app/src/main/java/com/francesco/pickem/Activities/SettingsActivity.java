@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
@@ -53,6 +55,12 @@ public class SettingsActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private DatabaseReference user_preferences_reference;
 
+    EditText edittext_summoner_name;
+    Spinner spinner_choose_server;
+    Button button_save_elotracker_info;
+    SwitchCompat switch_elotracker;
+    ConstraintLayout show_elotracker_box;
+
 
     public static String REGION_SELECTED = "REGION_SELECTED";
 
@@ -61,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
     RegionNotifications setnot_object;
     ProgressBar settings_progressbar;
 
-    EditText edittext_username;
+    EditText edittext_emailaddress;
     ListView settings_regions_listview;
     //CheckBox checkbox_at_match_start, five_mins_before, checkbox_morning_reminder, not_picked;
     CheckBox settings_checkbox_lec,settings_checkbox_lck,settings_checkbox_lpl,settings_checkbox_lcs,settings_checkbox_tcl,settings_checkbox_cblol;
@@ -78,13 +86,21 @@ public class SettingsActivity extends AppCompatActivity {
         show_notifications_box = findViewById(R.id.show_notifications_box);
         show_user_box = findViewById(R.id.show_notifications_boxx);
         button_logout = findViewById(R.id.button_logout);
-        edittext_username = findViewById(R.id.edittext_username);
+        edittext_emailaddress = findViewById(R.id.edittext_emailaddress);
         button_save_settings_account = findViewById(R.id.button_save_settings_account);
         firebaseAuth = FirebaseAuth.getInstance();
         settings_progressbar = findViewById(R.id.settings_progressbar);
         settings_regions_listview = findViewById(R.id.settings_regions_listview);
         choosenRegionsfromDB = new ArrayList<>();
 
+        edittext_emailaddress.setFocusable(false);
+        edittext_emailaddress.setTextColor(Color.GRAY);
+
+        edittext_summoner_name = findViewById(R.id.edittext_summoner_name);
+        spinner_choose_server= findViewById(R.id.spinner_choose_server);
+        button_save_elotracker_info = findViewById(R.id.button_save_elotracker_info);
+        switch_elotracker = findViewById(R.id.switch_elotracker);
+        show_elotracker_box = findViewById(R.id.show_elotracker_box);
 
         settings_checkbox_lec = findViewById(R.id.checkbox_lec);
         settings_checkbox_lcs = findViewById(R.id.checkbox_lcs);
@@ -108,6 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
         buttonActions();
         changeNavBarColor();
         saveGeneralSettings();
+        saveEloTracker();
 
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -119,7 +136,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void loadListview(ArrayList<String> allRegions) {
-
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
@@ -157,8 +173,10 @@ public class SettingsActivity extends AppCompatActivity {
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
                 if (userProfile !=null){
-                    String database_username = userProfile.getUsername();
-                    edittext_username.setText(database_username);
+
+                    String database_email = userProfile.getEmail();
+
+                    edittext_emailaddress.setText(database_email);
 
                     choosenRegionsfromDB = userProfile.getChoosen_regions();
                     if (choosenRegionsfromDB.contains(getString(R.string.lec))){settings_checkbox_lec.setChecked(true);}
@@ -239,7 +257,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: passing this size: "+choosen_regions.size());
 
 
-                UserGeneralities userGeneralities = new UserGeneralities("", edittext_username.getText().toString(), choosen_regions, "");
+                UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", choosen_regions, "");
                 //updateFirebaseRegionNotifications(userGeneralities);
                 //updateFirebaseRegionNotifications(userGeneralities);
                 updateUserGeneralities(userGeneralities);
@@ -259,6 +277,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     public void updateUserGeneralities (UserGeneralities userGeneralities){
+
 
         //remove all old regions
                 FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
@@ -289,6 +308,19 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     private void buttonActions() {
+
+        switch_elotracker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (switch_elotracker.isChecked()){
+                    show_elotracker_box.setVisibility(View.VISIBLE);
+                    getAllServers();
+                }else {
+                    Log.d(TAG, "onCreate: OFF");
+                    show_elotracker_box.setVisibility(View.GONE);
+                }
+            }
+        });
 
         switch_notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -425,4 +457,78 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(TAG, "getAllRegions: regions.size(): "+regions.size());
 
     }
+
+    public void  getAllServers(){
+        Log.d(TAG, "getAllServers: ");
+        ArrayList<String> servers = new ArrayList<>();
+
+        // load da firebase i servers
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_servers));
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    String serverName = snapshot.getKey().toString();
+                    Log.d(TAG, "onDataChange: regionName: "+serverName);
+                    servers.add(serverName);
+                }
+                settings_progressbar.setVisibility(View.GONE);
+                Log.d(TAG, "onDataChange: "+servers.size());
+                loadSpinner(servers);
+
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    private void loadSpinner(ArrayList<String> allServers) {
+        Log.d(TAG, "loadSpinner: "+allServers.size());
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(this, R.layout.spinner_item, allServers);
+        spinner_choose_server.setAdapter(adapter);
+        spinner_choose_server.setSelection(2);
+
+    }
+
+    private void saveEloTracker(){
+
+        button_save_elotracker_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: ");
+
+        String summonerName = edittext_summoner_name.getText().toString();
+        String summoner_server = spinner_choose_server.getSelectedItem().toString();
+
+                Log.d(TAG, "onClick: summonerName: "+summonerName);
+                Log.d(TAG, "onClick: summoner_server"+summoner_server);
+
+        if (summonerName.isEmpty()){edittext_summoner_name.setError("Please Insert your Summoner Name");}else
+            if (summoner_server.isEmpty()){
+                Toast.makeText(context, "Select Your Region Server!", Toast.LENGTH_SHORT).show();
+                }else {
+
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(getString(R.string.firebase_users_generealities));
+
+                            reference.child(getString(R.string.summoner_name)).setValue(summonerName);
+                            reference.child(getString(R.string.summoner_server)).setValue(summoner_server);
+
+                Log.d(TAG, "onClick: DONE ");
+
+
+                }
+            }
+        });
+    }
+
+
 }

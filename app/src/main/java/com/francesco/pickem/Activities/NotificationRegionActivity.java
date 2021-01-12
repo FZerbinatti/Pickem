@@ -154,16 +154,6 @@ public class NotificationRegionActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-/*                // se nessuno dei 3 checkbox è attivo elimina la regione dalle notifiche
-                if (!checkbox_at_match_start.isChecked() && !checkbox_morning_reminder.isChecked() && !checkbox_not_picked.isChecked() ){
-                    FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .child(getString(R.string.firebase_user_notification))
-                            .child(getString(R.string.firebase_user_notification_region))
-                            .child(regionSelectedExtra)
-                            .removeValue();
-                }else */
-
                 DatabaseReference notificationRegionReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(getString(R.string.firebase_user_notification))
@@ -273,8 +263,10 @@ public class NotificationRegionActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String stringTeamSelected = allTeamsForThiRegion.get(position);
+                Log.d(TAG, "onItemClick: stringTeamSelected: "+stringTeamSelected);
                 Intent intent = new Intent(NotificationRegionActivity.this, NotificationTeamActivity.class);
                 intent.putExtra(TEAM_SELECTED, stringTeamSelected);
+                intent.putExtra(REGION_SELECTED, regionSelectedExtra);
                 startActivity(intent);
 
             }

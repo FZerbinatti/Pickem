@@ -7,9 +7,8 @@
     android:paddingHorizontal="30dp"
     android:layout_marginTop="20dp"
     android:textSize="22sp"
-    android:gravity="left"
+    android:gravity="center"
     android:text="Test"
     android:fontFamily="@font/classicroman"
     android:textColor="@color/white"
-    android:padding="5dip"
     />

@@ -3,14 +3,14 @@ package com.francesco.pickem.Models;
 public class TeamDetails {
 
     private String code;
-    private int id;
+    private String id;
     private String name;
     private String image;
 
     public TeamDetails() {
     }
 
-    public TeamDetails(String code, int id, String name, String image) {
+    public TeamDetails(String code, String id, String name, String image) {
         this.code = code;
         this.id = id;
         this.name = name;
@@ -25,11 +25,11 @@ public class TeamDetails {
         this.code = code;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
