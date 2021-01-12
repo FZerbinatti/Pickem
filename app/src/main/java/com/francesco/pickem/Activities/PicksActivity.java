@@ -238,6 +238,7 @@ public class PicksActivity extends AppCompatActivity  {
                                 displayRegions.add(regionDetails);
                             }
                             adapterRegions.notifyDataSetChanged();
+                            pick_progressbar.setVisibility(View.GONE);
                         }
 
                         @Override
@@ -292,7 +293,7 @@ public class PicksActivity extends AppCompatActivity  {
             }
         });
 
-        pick_progressbar.setVisibility(View.GONE);
+
 
 
 
@@ -399,7 +400,7 @@ public class PicksActivity extends AppCompatActivity  {
                     }
                 });
 
-        pick_progressbar.setVisibility(View.GONE);
+
 
     }
 
@@ -472,7 +473,7 @@ public class PicksActivity extends AppCompatActivity  {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-                pick_progressbar.setVisibility(View.GONE);
+
             }
 
             @Override

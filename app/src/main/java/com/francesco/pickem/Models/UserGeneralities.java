@@ -6,7 +6,7 @@ public class UserGeneralities {
 
     String email;
     String summoner_name;
-    String server;
+    String summoner_server;
     ArrayList <String> choosen_regions;
     String id;
 
@@ -15,12 +15,21 @@ public class UserGeneralities {
 
     }
 
-    public UserGeneralities(String email, String summoner_name, String server, ArrayList<String> choosen_regions, String id) {
+
+    public UserGeneralities(String email, String summoner_name, String summoner_server, ArrayList<String> choosen_regions, String id) {
         this.email = email;
         this.summoner_name = summoner_name;
-        this.server = server;
+        this.summoner_server = summoner_server;
         this.choosen_regions = choosen_regions;
         this.id = id;
+    }
+
+    public String getSummoner_server() {
+        return summoner_server;
+    }
+
+    public void setSummoner_server(String summoner_server) {
+        this.summoner_server = summoner_server;
     }
 
     public String getEmail() {
@@ -55,11 +64,5 @@ public class UserGeneralities {
         this.id = id;
     }
 
-    public String getServer() {
-        return server;
-    }
 
-    public void setServer(String server) {
-        this.server = server;
-    }
 }

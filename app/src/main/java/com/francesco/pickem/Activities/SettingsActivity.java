@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Annotation.NonNull;
+import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.R;
@@ -76,6 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
     CheckBox settings_checkbox_opl,settings_checkbox_ljl,settings_checkbox_pcs,settings_checkbox_eum,settings_checkbox_lcsa,settings_checkbox_lla;
 
     ArrayList <String> choosenRegionsfromDB;
+    ArrayList<String> servers ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
         button_save_elotracker_info = findViewById(R.id.button_save_elotracker_info);
         switch_elotracker = findViewById(R.id.switch_elotracker);
         show_elotracker_box = findViewById(R.id.show_elotracker_box);
+        ArrayList<String> servers = new ArrayList<>();
 
         settings_checkbox_lec = findViewById(R.id.checkbox_lec);
         settings_checkbox_lcs = findViewById(R.id.checkbox_lcs);
@@ -315,6 +318,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if (switch_elotracker.isChecked()){
                     show_elotracker_box.setVisibility(View.VISIBLE);
                     getAllServers();
+                    loadFirebaseEloTrackingData();
                 }else {
                     Log.d(TAG, "onCreate: OFF");
                     show_elotracker_box.setVisibility(View.GONE);
@@ -460,7 +464,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void  getAllServers(){
         Log.d(TAG, "getAllServers: ");
-        ArrayList<String> servers = new ArrayList<>();
+        servers= new ArrayList<>();
 
         // load da firebase i servers
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_servers));
@@ -524,10 +528,59 @@ public class SettingsActivity extends AppCompatActivity {
 
                 Log.d(TAG, "onClick: DONE ");
 
+                show_elotracker_box.setVisibility(View.GONE);
+                switch_elotracker.setChecked(false);
+
 
                 }
             }
         });
+    }
+
+    private void loadFirebaseEloTrackingData() {
+
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+        userID = user.getUid();
+
+
+        Log.d(TAG, "onCreate: userID: "+userID);
+        reference.child(userID).child(getString(R.string.firebase_users_generealities)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
+                if (userProfile !=null){
+
+                    String summoner_name = userProfile.getSummoner_name();
+                    edittext_summoner_name.setText(summoner_name);
+
+                    String server_name = userProfile.getSummoner_server();
+
+                    for (int i=0; i<servers.size(); i++){
+                        Log.d(TAG, "onDataChange: server_name:"+server_name);
+                        Log.d(TAG, "onDataChange: servers.get(i)"+servers.get(i));
+                        if (servers.get(i).equals(server_name)){
+                            spinner_choose_server.setSelection(i, true);
+                            break;
+                        }
+                    }
+
+
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        settings_progressbar.setVisibility(View.INVISIBLE);
+
+
     }
 
 
