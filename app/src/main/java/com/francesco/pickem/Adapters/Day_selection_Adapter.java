@@ -14,6 +14,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.PicksActivity;
+import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDayDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.R;
@@ -27,14 +28,14 @@ import java.util.Date;
 
 public class Day_selection_Adapter extends PagerAdapter {
 
-    private ArrayList<String> matchDaysList;
+    private ArrayList<FullDate> matchDaysList;
     private LayoutInflater layoutInflater;
     private Context context;
     private String TAG ="Adapter ";
     PicksActivity picksActivity = new PicksActivity();
 
 
-    public Day_selection_Adapter(ArrayList<String> matchDaysList, Context context) {
+    public Day_selection_Adapter(ArrayList<FullDate> matchDaysList, Context context) {
         this.matchDaysList = matchDaysList;
         this.context = context;
     }
@@ -61,7 +62,7 @@ public class Day_selection_Adapter extends PagerAdapter {
 
         textViewDay = view.findViewById(R.id.match_day_textview);
 
-        textViewDay.setText(((matchDaysList.get(position))));
+        textViewDay.setText(((matchDaysList.get(position)).getCoolDate()));
 
         container.addView(view, 0);
         return view;

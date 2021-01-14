@@ -13,23 +13,28 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.francesco.pickem.Models.MatchDetails;
+import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerView_Picks_Adapter.ViewHolder> {
 
     private Context context;
-    private List<MatchDetails> matchDetailsList;
+    private List<DisplayMatch> displayMatchDetailsList;
     private String TAG ="Adapter RecyclerVIew";
     RecyclerViewClickListener clickListener;
 
 
 
-    public RecyclerView_Picks_Adapter(Context context, List<MatchDetails> matchDetailsList) {
+    public RecyclerView_Picks_Adapter(Context context, List<DisplayMatch> displayMatchDetailsList) {
         this.context = context;
-        this.matchDetailsList = matchDetailsList;
+        this.displayMatchDetailsList = displayMatchDetailsList;
 
     }
 
@@ -47,17 +52,14 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
 
-        String team1LogoURL = matchDetailsList.get(i).getUrlLogoTeam1();
-        String team2LogoURL = matchDetailsList.get(i).getUrlLogoTeam2();
-        String match_time = matchDetailsList.get(i).getMatch_time();
-        String match_date = matchDetailsList.get(i).getMatch_date();
-        Integer match_ID = matchDetailsList.get(i).getMatch_id();
-        Integer match_prediction = matchDetailsList.get(i).getMatch_prediction();
-        Integer match_winner = matchDetailsList.get(i).getMatch_winner();
-
-
-        Log.d(TAG, "onBindViewHolder: team1LogoURL: "+team1LogoURL);
-        Log.d(TAG, "onBindViewHolder: team2LogoURL: "+team2LogoURL);
+        String team1 = displayMatchDetailsList.get(i).getTeam1();
+        String team2 = displayMatchDetailsList.get(i).getTeam2();
+        String match_time = displayMatchDetailsList.get(i).getTime();
+        String match_date = displayMatchDetailsList.get(i).getDate();
+        String match_ID = displayMatchDetailsList.get(i).getId();
+        String match_prediction = displayMatchDetailsList.get(i).getPrediction();
+        String match_winner = displayMatchDetailsList.get(i).getWinner();
+        String region = displayMatchDetailsList.get(i).getRegion();
 
 
         RequestOptions options = new RequestOptions()
@@ -65,16 +67,54 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .placeholder(R.drawable.logo_lec)
                 .error(R.drawable.logo_lck);
 
-        Glide.with(context).load(team1LogoURL).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
-        Glide.with(context).load(team2LogoURL).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+        Log.d(TAG, "onBindViewHolder: region:"+region);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Teams")
+                .child(region);
+
+                reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                String teamImage = dataSnapshot.getValue(String.class);
+                if (teamImage!= null){
+                    Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+
+        reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                String teamImage = dataSnapshot.getValue(String.class);
+                if (teamImage!= null){
+                    Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+
+
         viewHolder.textview_match_timer.setText(match_time);
 
         // se non ha scelto e il match è concluso
 
-        if(match_winner == -1)  {
+        if(match_winner.equals("null"))  {
             viewHolder.image_team_1.setEnabled(true);
             viewHolder.image_team_2.setEnabled(true);
-                if (match_prediction==1){
+                if (match_prediction.equals(team1)){
                     viewHolder.opacity_team_1.setVisibility(View.GONE);
                     viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
                 }else {
@@ -85,28 +125,28 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             viewHolder.image_team_1.setEnabled(false);
             viewHolder.image_team_2.setEnabled(false);
 
-                if (match_winner ==1 && match_prediction ==1){
+                if (match_winner.equals(team1) && match_prediction.equals(team1)){
                     viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
                     viewHolder.opacity_team_1.setVisibility(View.GONE);
                     viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                }else if (match_winner==1 &&  match_prediction ==2){
+                }else if (match_winner.equals(team1) &&  match_prediction.equals(team2)){
                     viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
                     viewHolder.opacity_team_2.setVisibility(View.GONE);
                     viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                }else if (match_winner ==2 && match_prediction ==2){
+                }else if (match_winner.equals(team2) && match_prediction.equals(team2)){
                     viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
                     viewHolder.opacity_team_2.setVisibility(View.GONE);
                     viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                }else if (match_winner==2 &&  match_prediction ==1){
+                }else if (match_winner.equals(team2) &&  match_prediction.equals(team1)){
                     viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
                     viewHolder.opacity_team_1.setVisibility(View.GONE);
                     viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-                }else if (match_prediction==-1){
+                }else if (match_prediction.equals("null")){
                     viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
                     viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                    if (match_winner==1){
+                    if (match_winner.equals(team1)){
                         viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                    }else if(match_winner ==2){
+                    }else if(match_winner.equals(team2)){
                         viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
 
                     }
@@ -119,7 +159,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     @Override
     public int getItemCount() {
-        return matchDetailsList.size();
+        return displayMatchDetailsList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder  {
@@ -177,5 +217,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
 
     }
+
+
 }
 

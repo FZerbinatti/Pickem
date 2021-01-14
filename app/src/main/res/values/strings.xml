@@ -59,6 +59,7 @@
     <string name="firebase_regions">Regions</string>
     <string name="firebase_servers">Servers</string>
     <string name="firebase_teams">Teams</string>
+    <string name="firebase_testMatch">TestMatch</string>
     <string name="firebase_users_generealities">UsersGeneralities</string>
     <string name="firebase_users_elotracker">UsersEloTracker</string>
     <string name="firebase_user_notification">UserNotifications</string>
