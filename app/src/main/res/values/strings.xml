@@ -61,6 +61,7 @@
     <string name="firebase_teams">Teams</string>
     <string name="firebase_testMatch">TestMatch</string>
     <string name="firebase_users_generealities">UsersGeneralities</string>
+    <string name="firebase_users_picks">UserPicks</string>
     <string name="firebase_users_elotracker">UsersEloTracker</string>
     <string name="firebase_user_notification">UserNotifications</string>
     <string name="firebase_user_notification_region">Regions</string>

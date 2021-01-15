@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +30,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     private List<DisplayMatch> displayMatchDetailsList;
     private String TAG ="Adapter RecyclerVIew";
     RecyclerViewClickListener clickListener;
+    DisplayMatch thisMatch;
 
 
 
@@ -45,6 +47,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         View view;
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         view = layoutInflater.inflate(R.layout.pick_recyciclervirew_item, viewGroup,false);
+        thisMatch = new DisplayMatch();
 
         return new ViewHolder(view);
     }
@@ -60,12 +63,20 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String match_prediction = displayMatchDetailsList.get(i).getPrediction();
         String match_winner = displayMatchDetailsList.get(i).getWinner();
         String region = displayMatchDetailsList.get(i).getRegion();
+        String split = displayMatchDetailsList.get(i).getSplit();
+        String year = displayMatchDetailsList.get(i).getYear();
+
+        thisMatch.setSplit(split);
+        thisMatch.setYear(year);
+        thisMatch.setRegion(region);
+        thisMatch.setId(match_ID);
+
 
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .placeholder(R.drawable.logo_lec)
-                .error(R.drawable.logo_lck);
+                .placeholder(R.drawable.ic_loading)
+                .error(R.drawable.ic_loading_error);
 
         Log.d(TAG, "onBindViewHolder: region:"+region);
 
@@ -86,7 +97,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }
 
-
         });
 
         reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -103,57 +113,62 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }
 
-
         });
 
 
         viewHolder.textview_match_timer.setText(match_time);
 
         // se non ha scelto e il match è concluso
+        //getUserPick(thisMatch);
 
-        if(match_winner.equals("null"))  {
-            viewHolder.image_team_1.setEnabled(true);
-            viewHolder.image_team_2.setEnabled(true);
-                if (match_prediction.equals(team1)){
-                    viewHolder.opacity_team_1.setVisibility(View.GONE);
-                    viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                }else {
-                    viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_2.setVisibility(View.GONE);
-                }
+        if (match_prediction.equals("")||match_prediction.equals("null")){
+            viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+            viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
         }else {
-            viewHolder.image_team_1.setEnabled(false);
-            viewHolder.image_team_2.setEnabled(false);
 
-                if (match_winner.equals(team1) && match_prediction.equals(team1)){
-                    viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_1.setVisibility(View.GONE);
-                    viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                }else if (match_winner.equals(team1) &&  match_prediction.equals(team2)){
-                    viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_2.setVisibility(View.GONE);
-                    viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                }else if (match_winner.equals(team2) && match_prediction.equals(team2)){
-                    viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_2.setVisibility(View.GONE);
-                    viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                }else if (match_winner.equals(team2) &&  match_prediction.equals(team1)){
-                    viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_1.setVisibility(View.GONE);
-                    viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-                }else if (match_prediction.equals("null")){
-                    viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                    if (match_winner.equals(team1)){
+            if(match_winner.equals("null"))  {
+                viewHolder.image_team_1.setEnabled(true);
+                viewHolder.image_team_2.setEnabled(true);
+                    if (match_prediction.equals(team1)){
+                        viewHolder.opacity_team_1.setVisibility(View.GONE);
+                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                    }else {
+                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_2.setVisibility(View.GONE);
+                    }
+            }else {
+                viewHolder.image_team_1.setEnabled(false);
+                viewHolder.image_team_2.setEnabled(false);
+
+                    if (match_winner.equals(team1) && match_prediction.equals(team1)){
+                        viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_1.setVisibility(View.GONE);
+                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                    }else if (match_winner.equals(team1) &&  match_prediction.equals(team2)){
+                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_2.setVisibility(View.GONE);
                         viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                    }else if(match_winner.equals(team2)){
+                    }else if (match_winner.equals(team2) && match_prediction.equals(team2)){
+                        viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_2.setVisibility(View.GONE);
+                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                    }else if (match_winner.equals(team2) &&  match_prediction.equals(team1)){
+                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_1.setVisibility(View.GONE);
                         viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+                    }else if (match_prediction.equals("null")){
+                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                        if (match_winner.equals(team1)){
+                            viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+                        }else if(match_winner.equals(team2)){
+                            viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
 
+                        }
                     }
                 }
+
             }
-
-
 
     }
 
@@ -217,6 +232,51 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
 
     }
+
+    public void updateUserPick (DisplayMatch displayMatch){
+        //remove all old regions
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("UserPicks")
+                .child(displayMatch.getRegion())
+                .child(displayMatch.getYear())
+                .child(displayMatch.getSplit())
+                .child(displayMatch.getId())
+                .setValue(displayMatch.getPrediction());
+
+    }
+
+/*    public String getUserPick (DisplayMatch displayMatch){
+
+
+        //remove all old regions
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("UserPicks")
+                .child(displayMatch.getRegion())
+                .child(displayMatch.getYear())
+                .child(displayMatch.getSplit())
+                .child(displayMatch.getId());
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                String matchPrediction = dataSnapshot.getValue(String.class);
+                if (matchPrediction != null){
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return "";
+
+    }*/
 
 
 }
