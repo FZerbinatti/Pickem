@@ -70,8 +70,11 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         thisMatch.setYear(year);
         thisMatch.setRegion(region);
         thisMatch.setId(match_ID);
-
-
+        thisMatch.setWinner(match_winner);
+        thisMatch.setTeam1(team1);
+        thisMatch.setTeam2(team2);
+        thisMatch.setDate(match_date);
+        thisMatch.setTime(match_time);
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -119,56 +122,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         viewHolder.textview_match_timer.setText(match_time);
 
         // se non ha scelto e il match è concluso
-        //getUserPick(thisMatch);
+        getUserPick(thisMatch, viewHolder);
 
-        if (match_prediction.equals("")||match_prediction.equals("null")){
-            viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-            viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-        }else {
 
-            if(match_winner.equals("null"))  {
-                viewHolder.image_team_1.setEnabled(true);
-                viewHolder.image_team_2.setEnabled(true);
-                    if (match_prediction.equals(team1)){
-                        viewHolder.opacity_team_1.setVisibility(View.GONE);
-                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                    }else {
-                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_2.setVisibility(View.GONE);
-                    }
-            }else {
-                viewHolder.image_team_1.setEnabled(false);
-                viewHolder.image_team_2.setEnabled(false);
-
-                    if (match_winner.equals(team1) && match_prediction.equals(team1)){
-                        viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_1.setVisibility(View.GONE);
-                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                    }else if (match_winner.equals(team1) &&  match_prediction.equals(team2)){
-                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_2.setVisibility(View.GONE);
-                        viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                    }else if (match_winner.equals(team2) && match_prediction.equals(team2)){
-                        viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_2.setVisibility(View.GONE);
-                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                    }else if (match_winner.equals(team2) &&  match_prediction.equals(team1)){
-                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_1.setVisibility(View.GONE);
-                        viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-                    }else if (match_prediction.equals("null")){
-                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                        if (match_winner.equals(team1)){
-                            viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                        }else if(match_winner.equals(team2)){
-                            viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-
-                        }
-                    }
-                }
-
-            }
 
     }
 
@@ -209,6 +165,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             image_team_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    thisMatch.setPrediction(thisMatch.getTeam1());
+                    updateUserPick(thisMatch);
                     opacity_team_2.setVisibility(View.VISIBLE);
                     opacity_team_1.setVisibility(View.INVISIBLE);
                     icon_waiting_for_save_team1.setVisibility(View.VISIBLE);
@@ -219,6 +178,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             image_team_2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    thisMatch.setPrediction(thisMatch.getTeam2());
+                    updateUserPick(thisMatch);
                     opacity_team_1.setVisibility(View.VISIBLE);
                     opacity_team_2.setVisibility(View.INVISIBLE);
                     icon_waiting_for_save_team1.setVisibility(View.INVISIBLE);
@@ -246,9 +208,11 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     }
 
-/*    public String getUserPick (DisplayMatch displayMatch){
+    public String getUserPick (DisplayMatch displayMatch, ViewHolder viewHolder){
 
-
+        String match_winner = displayMatch.getWinner();
+        String team1 = displayMatch.getTeam1();
+        String team2 = displayMatch.getTeam2();
         //remove all old regions
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -261,8 +225,56 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                String matchPrediction = dataSnapshot.getValue(String.class);
-                if (matchPrediction != null){
+                String match_prediction = dataSnapshot.getValue(String.class);
+                if (match_prediction != null){
+
+                    if (match_prediction.equals("")||match_prediction.equals("null")){
+                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                    }else {
+
+                        if(match_winner.equals("null"))  {
+                            viewHolder.image_team_1.setEnabled(true);
+                            viewHolder.image_team_2.setEnabled(true);
+                            if (match_prediction.equals(team1)){
+                                viewHolder.opacity_team_1.setVisibility(View.GONE);
+                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                            }else {
+                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                viewHolder.opacity_team_2.setVisibility(View.GONE);
+                            }
+                        }else {
+                            viewHolder.image_team_1.setEnabled(false);
+                            viewHolder.image_team_2.setEnabled(false);
+
+                            if (match_winner.equals(team1) && match_prediction.equals(team1)){
+                                viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
+                                viewHolder.opacity_team_1.setVisibility(View.GONE);
+                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                            }else if (match_winner.equals(team1) &&  match_prediction.equals(team2)){
+                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                viewHolder.opacity_team_2.setVisibility(View.GONE);
+                                viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+                            }else if (match_winner.equals(team2) && match_prediction.equals(team2)){
+                                viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
+                                viewHolder.opacity_team_2.setVisibility(View.GONE);
+                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                            }else if (match_winner.equals(team2) &&  match_prediction.equals(team1)){
+                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                                viewHolder.opacity_team_1.setVisibility(View.GONE);
+                                viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+                            }else if (match_prediction.equals("null")){
+                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                if (match_winner.equals(team1)){
+                                    viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+                                }else if(match_winner.equals(team2)){
+                                    viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+
+                    }
 
                 }
             }
@@ -276,7 +288,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         return "";
 
-    }*/
+    }
 
 
 }
