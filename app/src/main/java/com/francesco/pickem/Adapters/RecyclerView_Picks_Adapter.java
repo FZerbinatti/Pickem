@@ -49,11 +49,14 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         view = layoutInflater.inflate(R.layout.pick_recyciclervirew_item, viewGroup,false);
         thisMatch = new DisplayMatch();
 
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+
+
 
         String team1 = displayMatchDetailsList.get(i).getTeam1();
         String team2 = displayMatchDetailsList.get(i).getTeam2();
@@ -65,6 +68,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String region = displayMatchDetailsList.get(i).getRegion();
         String split = displayMatchDetailsList.get(i).getSplit();
         String year = displayMatchDetailsList.get(i).getYear();
+
+        Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
 
         thisMatch.setSplit(split);
         thisMatch.setYear(year);
@@ -124,8 +129,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         // se non ha scelto e il match è concluso
         getUserPick(thisMatch, viewHolder);
 
-
-
     }
 
     @Override
@@ -141,8 +144,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         private ImageView opacity_team_2;
         private TextView textview_match_timer;
 
-        private ImageView icon_prediction_correct_team1, icon_prediction_wrong_team1, icon_waiting_for_save_team1;
-        private ImageView icon_prediction_correct_team2, icon_prediction_wrong_team2, icon_waiting_for_save_team2;
+        private ImageView icon_prediction_correct_team1, icon_prediction_wrong_team1;
+        private ImageView icon_prediction_correct_team2, icon_prediction_wrong_team2;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -156,35 +159,34 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             icon_prediction_correct_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team1);
             icon_prediction_wrong_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team1);
-            icon_waiting_for_save_team1 = (ImageView) itemView.findViewById(R.id.icon_waiting_for_save_team1);
             icon_prediction_correct_team2 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team2);
             icon_prediction_wrong_team2 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team2);
-            icon_waiting_for_save_team2 = (ImageView) itemView.findViewById(R.id.icon_waiting_for_save_team2);
+
 
 
             image_team_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    DisplayMatch displayMatchClicked = displayMatchDetailsList.get(getAdapterPosition());
+                    displayMatchClicked.setPrediction(displayMatchDetailsList.get(getAdapterPosition()).getTeam1());
 
-                    thisMatch.setPrediction(thisMatch.getTeam1());
-                    updateUserPick(thisMatch);
+                    updateUserPick(displayMatchClicked);
                     opacity_team_2.setVisibility(View.VISIBLE);
                     opacity_team_1.setVisibility(View.INVISIBLE);
-                    icon_waiting_for_save_team1.setVisibility(View.VISIBLE);
-                    icon_waiting_for_save_team2.setVisibility(View.INVISIBLE);
+
                 }
             });
 
             image_team_2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    DisplayMatch displayMatchClicked = displayMatchDetailsList.get(getAdapterPosition());
+                    displayMatchClicked.setPrediction(displayMatchDetailsList.get(getAdapterPosition()).getTeam2());
 
-                    thisMatch.setPrediction(thisMatch.getTeam2());
-                    updateUserPick(thisMatch);
+                    updateUserPick(displayMatchClicked);
                     opacity_team_1.setVisibility(View.VISIBLE);
                     opacity_team_2.setVisibility(View.INVISIBLE);
-                    icon_waiting_for_save_team1.setVisibility(View.INVISIBLE);
-                    icon_waiting_for_save_team2.setVisibility(View.VISIBLE);
+
                 }
             });
 
@@ -196,7 +198,10 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     }
 
     public void updateUserPick (DisplayMatch displayMatch){
-        //remove all old regions
+
+        Log.d(TAG, "updateUserPick: "+thisMatch.getId());
+
+        Log.d(TAG, "updateUserPick: "+displayMatch.getId());
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("UserPicks")
