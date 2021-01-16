@@ -59,7 +59,6 @@
     <string name="firebase_regions">Regions</string>
     <string name="firebase_servers">Servers</string>
     <string name="firebase_teams">Teams</string>
-    <string name="firebase_testMatch">TestMatch</string>
     <string name="firebase_users_generealities">UserGeneralities</string>
     <string name="firebase_users_picks">UserPicks</string>
     <string name="firebase_users_elotracker">UserEloTracker</string>
@@ -67,6 +66,10 @@
     <string name="firebase_user_notification_region">Regions</string>
     <string name="firebase_user_notification_teams">Teams</string>
     <string name="firebase_user_choosen_regions">choosen_regions</string>
+
+    //TestMatch è  di prova, Matches di deploy
+    <string name="firebase_Matches">Matches</string>
+    <!--<string name="firebase_testMatch">TestMatch</string>-->
 
     //json names for regions.json
     <string name="region_ID">id</string>
@@ -98,7 +101,6 @@
     <string name="notification_team_morning_reminder">notification_team_morning_reminder</string>
 
     //firebase Matches
-    <string name="match">TestMatch</string>
     <string name="split1">S1</string>
 
     // Elos for elo tracker

@@ -94,28 +94,18 @@ public class PicksActivity extends AppCompatActivity  {
         no_match_found= findViewById(R.id.no_match_found);
         viewPager_match_day = findViewById(R.id.viewPager_match_day);
 
-
         selected_region_name ="";
-        String day_selected = "";
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
-
-
         split = "S1";
-
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
-
         changeNavBarColor();
         setupBottomNavView();
 
-        // 1) tira giù le Region scelte, seleziona la prima [region_selected]
         downloadSelectedRegions();
-        // 2) della Region scelta, tira giù gli ID dello split corrente, seleziona il gioro corrente o la data prossima piu vicina [day_selected]
 
-        // 3) carica i dati della data selezionata
-        //loadRecyclerView(allMatchesForThisDate(allFullDates));
 
     }
 
@@ -267,9 +257,8 @@ public class PicksActivity extends AppCompatActivity  {
                         .error(R.drawable.ic_load);
 
                 Glide.with(context).load(userSelectedRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);
+                //selected_region_name="";
 
-                //selected_region_name = displayRegions.get(position).getName();
-                //getAllMatchDaysForThisRegion(selected_region_name);
 
             }
 
@@ -294,7 +283,7 @@ public class PicksActivity extends AppCompatActivity  {
     public void loadSplitMatchesForThisRegion(String selected_region){
 
         Log.d(TAG, "getAllMatchDays: selected_region: "+selected_region);
-        String firebase_section = getString(R.string.match);
+        String firebase_section = getString(R.string.firebase_Matches);
 
         allFullDates = new ArrayList<>();
 
@@ -304,6 +293,8 @@ public class PicksActivity extends AppCompatActivity  {
                 .child(selected_region)
                 .child(selected_region + year)
                 .child(selected_region + year+split);
+
+
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -487,7 +478,7 @@ public class PicksActivity extends AppCompatActivity  {
 
         for (int i =0; i < loadThisMatchesID.size(); i++){
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.match))
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
                     .child(selected_region_name)
                     .child(selected_region_name + year)
                     .child(selected_region_name + year + split)

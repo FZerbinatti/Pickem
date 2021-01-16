@@ -95,6 +95,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 String teamImage = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
                 if (teamImage!= null){
                     Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
                 }
@@ -111,6 +112,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 String teamImage = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
                 if (teamImage!= null){
                     Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
                 }
