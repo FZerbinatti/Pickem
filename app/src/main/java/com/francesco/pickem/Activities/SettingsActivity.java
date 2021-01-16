@@ -4,6 +4,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,27 +14,31 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
-import com.francesco.pickem.Models.TeamNotification;
+import com.francesco.pickem.Models.SimpleRegion;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
+import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,11 +62,16 @@ public class SettingsActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private DatabaseReference user_preferences_reference;
 
+    RecyclerView settings_recycler_regioni;
+    ListView settings_regions_listview;
+    ScrollView parentScrollListener;
+
     EditText edittext_summoner_name;
     Spinner spinner_choose_server;
     Button button_save_elotracker_info;
     SwitchCompat switch_elotracker;
     ConstraintLayout show_elotracker_box;
+    ArrayList <String> finalRegionChoosen;
 
 
     public static String REGION_SELECTED = "REGION_SELECTED";
@@ -71,13 +82,14 @@ public class SettingsActivity extends AppCompatActivity {
     ProgressBar settings_progressbar;
 
     EditText edittext_emailaddress;
-    ListView settings_regions_listview;
-    //CheckBox checkbox_at_match_start, five_mins_before, checkbox_morning_reminder, not_picked;
-    CheckBox settings_checkbox_lec,settings_checkbox_lck,settings_checkbox_lpl,settings_checkbox_lcs,settings_checkbox_tcl,settings_checkbox_cblol;
-    CheckBox settings_checkbox_opl,settings_checkbox_ljl,settings_checkbox_pcs,settings_checkbox_eum,settings_checkbox_lcsa,settings_checkbox_lla;
 
-    ArrayList <String> choosenRegionsfromDB;
+    ArrayList <String> UserChoosenRegionsfromDB;
     ArrayList<String> servers ;
+    ArrayList<SimpleRegion> user_choosen_regions;
+    ArrayList<SimpleRegion> full_list_withUserChoiche;
+    ArrayList<String> finalRegions;
+    SimpleRegionRecyclerViewAdapter adapter;
+    ArrayList<String> choosen_regions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +105,10 @@ public class SettingsActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         settings_progressbar = findViewById(R.id.settings_progressbar);
         settings_regions_listview = findViewById(R.id.settings_regions_listview);
-        choosenRegionsfromDB = new ArrayList<>();
+        settings_recycler_regioni = findViewById(R.id.settings_recyclerview_regioni);
+        parentScrollListener = findViewById(R.id.parentScrollListener);
+
+        UserChoosenRegionsfromDB = new ArrayList<>();
 
         edittext_emailaddress.setFocusable(false);
         edittext_emailaddress.setTextColor(Color.GRAY);
@@ -105,20 +120,37 @@ public class SettingsActivity extends AppCompatActivity {
         show_elotracker_box = findViewById(R.id.show_elotracker_box);
         ArrayList<String> servers = new ArrayList<>();
 
-        settings_checkbox_lec = findViewById(R.id.checkbox_lec);
-        settings_checkbox_lcs = findViewById(R.id.checkbox_lcs);
-        settings_checkbox_lck = findViewById(R.id.checkbox_lck);
-        settings_checkbox_lpl = findViewById(R.id.checkbox_lpl);
 
-        settings_checkbox_tcl = findViewById(R.id.checkbox_tcl);
-        settings_checkbox_cblol = findViewById(R.id.checkbox_cblol);
-        settings_checkbox_opl = findViewById(R.id.checkbox_opl);
-        settings_checkbox_ljl = findViewById(R.id.checkbox_ljl);
 
-        settings_checkbox_pcs = findViewById(R.id.checkbox_pcs);
-        settings_checkbox_eum = findViewById(R.id.checkbox_eum);
-        settings_checkbox_lcsa = findViewById(R.id.checkbox_lcsa);
-        settings_checkbox_lla = findViewById(R.id.checkbox_lla);
+        parentScrollListener.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event) {
+
+                findViewById(R.id.settings_regions_listview).getParent().requestDisallowInterceptTouchEvent(false);
+                findViewById(R.id.settings_recyclerview_regioni).getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            }
+        });
+        settings_regions_listview.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event)
+            {
+
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        settings_recycler_regioni.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event)
+            {
+
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
 
 
         context = this;
@@ -162,43 +194,130 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    private void loadListviewChooseRegions(ArrayList<SimpleRegion> all_regions, ArrayList <String> onlyUserChoosenRegions) {
+
+        Log.d(TAG, "loadListviewChooseRegions: "+ all_regions.size());
+        settings_progressbar.setVisibility(View.GONE);
+
+        finalRegions = new ArrayList<>();
+        for (int i=0; i<onlyUserChoosenRegions.size();i++){
+            finalRegions.add(onlyUserChoosenRegions.get(i));
+        }
+
+        // set up the RecyclerView
+
+        settings_recycler_regioni.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new SimpleRegionRecyclerViewAdapter(getApplicationContext(), all_regions);
+        settings_recycler_regioni.setAdapter(adapter);
+
+
+
+        settings_recycler_regioni.addOnItemTouchListener(
+                new RecyclerItemClickListener(context, settings_recycler_regioni , new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        Log.d(TAG, "onLongItemClick: ");
+                        // do whatever
+                        if (all_regions.get(position).getChecked()){
+                            all_regions.get(position).setChecked(false);
+                            adapter.notifyDataSetChanged();
+                            //Log.d(TAG, "onLongItemClick: false");
+                            if (finalRegions.contains(all_regions.get(position).getName())){
+                                finalRegions.remove(all_regions.get(position).getName());
+                            }
+                        }else {
+                            all_regions.get(position).setChecked(true);
+                            //Log.d(TAG, "onLongItemClick: true");
+                            adapter.notifyDataSetChanged();
+                            finalRegions.add(all_regions.get(position).getName());
+                        }
+
+                        Log.d(TAG, "onLongItemClick: "+all_regions.get(position).getName()+":"+all_regions.get(position).getChecked());
+
+
+                    }
+                })
+        );
+
+
+
+
+
+    }
+
+    private void updateChoosenRegion(String stringRegionSelected, Boolean booleanRegionSelected){
+
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getResources().getString(R.string.firebase_users_generealities))
+                .child(getResources().getString(R.string.firebase_user_choosen_regions))
+                .setValue(stringRegionSelected);
+    }
+
     private void loadFirebaseData() {
 
-
         user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+
         userID = user.getUid();
+        user_choosen_regions = new ArrayList<>();
+        full_list_withUserChoiche = new ArrayList<>();
+        ArrayList<String> all_databaseRegions = new ArrayList<>();
 
-
-        Log.d(TAG, "onCreate: userID: "+userID);
-        reference.child(userID).child(getString(R.string.firebase_users_generealities)).addListenerForSingleValueEvent(new ValueEventListener() {
+        // load da firebase le regioni
+        DatabaseReference datareference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions));
+        datareference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
-                if (userProfile !=null){
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
-                    String database_email = userProfile.getEmail();
-
-                    edittext_emailaddress.setText(database_email);
-
-                    choosenRegionsfromDB = userProfile.getChoosen_regions();
-                    if (choosenRegionsfromDB.contains(getString(R.string.lec))){settings_checkbox_lec.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.lcs))){settings_checkbox_lcs.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.lpl))){settings_checkbox_lpl.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.lck))){settings_checkbox_lck.setChecked(true);}
-
-                    if (choosenRegionsfromDB.contains(getString(R.string.tcl))){settings_checkbox_tcl.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.cblol))){settings_checkbox_cblol.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.opl))){settings_checkbox_opl.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.lla))){settings_checkbox_lla.setChecked(true);}
-
-                    if (choosenRegionsfromDB.contains(getString(R.string.pcs))){settings_checkbox_pcs.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.ljl))){settings_checkbox_ljl.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.lcs_academy))){settings_checkbox_lcsa.setChecked(true);}
-                    if (choosenRegionsfromDB.contains(getString(R.string.eu_masters))){settings_checkbox_eum.setChecked(true);}
-
-
+                    // tutti i team di quella regione, prendi solo il nome
+                    String regionName = snapshot.getKey().toString();
+                    Log.d(TAG, "onDataChange: regionName: "+regionName);
+                    all_databaseRegions.add(regionName );
                 }
+
+                reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+                reference.child(userID).child(getString(R.string.firebase_users_generealities)).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                        UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
+                        if (userProfile !=null){
+
+                            String database_email = userProfile.getEmail();
+
+                            edittext_emailaddress.setText(database_email);
+
+                            UserChoosenRegionsfromDB = userProfile.getChoosen_regions();
+                            //per ogni regione esistente
+                            for (int i=0; i<all_databaseRegions.size(); i++){
+                                //se tutte le regioni contiene la regione scelta dall'utente
+                                if (UserChoosenRegionsfromDB.contains(all_databaseRegions.get(i))){
+                                    full_list_withUserChoiche.add(new SimpleRegion(all_databaseRegions.get(i), true));
+                                }else {
+                                    full_list_withUserChoiche.add(new SimpleRegion(all_databaseRegions.get(i), false));
+                                }
+
+
+                            }
+                            loadListviewChooseRegions(full_list_withUserChoiche, UserChoosenRegionsfromDB );
+
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                settings_progressbar.setVisibility(View.INVISIBLE);
+
             }
 
             @Override
@@ -207,7 +326,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        settings_progressbar.setVisibility(View.INVISIBLE);
+
 
 
     }
@@ -220,54 +339,29 @@ public class SettingsActivity extends AppCompatActivity {
 
                 settings_progressbar.setVisibility(View.VISIBLE);
 
-               ArrayList <String> choosen_regions = new ArrayList<>();
+                choosen_regions = new ArrayList<>();
 
-/*                Integer int_checkbox_at_match_start = 0;
-                Integer int_notification_5_minutes=0;
-                Integer int_switch_allgames_firstgame=0;
-                Integer int_notification_morning_reminder=0;
-                Integer int_no_choice_made=0;*/
+                choosen_regions = finalRegions;
 
-                if(settings_checkbox_lec.isChecked())  {choosen_regions .add(getString(R.string.lec)) ;}
-                if(settings_checkbox_lcs.isChecked())  {choosen_regions .add(getString(R.string.lcs)) ;}
-                if(settings_checkbox_lck.isChecked())  {choosen_regions .add(getString(R.string.lck)) ;}
-                if(settings_checkbox_lpl.isChecked())  {choosen_regions .add(getString(R.string.lpl)) ;}
-                if(settings_checkbox_tcl.isChecked())  {choosen_regions .add(getString(R.string.tcl)) ;}
-                if(settings_checkbox_cblol.isChecked()){choosen_regions .add(getString(R.string.cblol) );}
-                if(settings_checkbox_opl.isChecked())  {choosen_regions .add(getString(R.string.opl)) ;}
-                if(settings_checkbox_ljl.isChecked())  {choosen_regions .add(getString(R.string.ljl)) ;}
-                if(settings_checkbox_pcs.isChecked())  {choosen_regions .add(getString(R.string.pcs)) ;}
-                if(settings_checkbox_eum.isChecked())  {choosen_regions .add(getString(R.string.eu_masters)) ;}
-                if(settings_checkbox_lcsa.isChecked()) {choosen_regions .add(getString(R.string.lcs_academy) );}
-                if(settings_checkbox_lla.isChecked())  {choosen_regions .add(getString(R.string.lla)); }
-
-/*                      if( checkbox_at_match_start.isChecked()){int_checkbox_at_match_start  =1;}else{int_checkbox_at_match_start  =0;}
-                        if( five_mins_before.isChecked()){int_notification_5_minutes  =1;}else{int_notification_5_minutes  =0;}
-                        if (switch_allgames_firstgame.isActivated()){int_switch_allgames_firstgame=1;}else {int_switch_allgames_firstgame=0;}
-                        if( checkbox_morning_reminder.isChecked()){int_notification_morning_reminder =1;}else{int_notification_morning_reminder =0;}
-                        if( not_picked.isChecked()){int_no_choice_made  =1;}else{int_no_choice_made  =0;}
-
-                        setnot_object= new Settings_notification_object(
-
-                                choosen_regions,
-                                int_checkbox_at_match_start,
-                                int_notification_5_minutes,
-                                int_switch_allgames_firstgame,
-                                int_notification_morning_reminder,
-                                int_no_choice_made
-                        );*/
-
-                Log.d(TAG, "onClick: passing this size: "+choosen_regions.size());
+                if (choosen_regions.isEmpty()) {
+                    Toast.makeText(SettingsActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
+                    settings_progressbar.setVisibility(View.INVISIBLE);
+                }else {
+                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", choosen_regions, "");
+                    //updateFirebaseRegionNotifications(userGeneralities);
+                    //updateFirebaseRegionNotifications(userGeneralities);
+                    updateUserGeneralities(userGeneralities);
+/*                    show_user_box.setVisibility(View.GONE);
+                    switch_user_settings.setChecked(false);*/
+                    Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                    settings_progressbar.setVisibility(View.INVISIBLE);
+                    Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
 
 
-                UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", choosen_regions, "");
-                //updateFirebaseRegionNotifications(userGeneralities);
-                //updateFirebaseRegionNotifications(userGeneralities);
-                updateUserGeneralities(userGeneralities);
-                show_user_box.setVisibility(View.GONE);
-                switch_user_settings.setChecked(false);
-                Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
-                settings_progressbar.setVisibility(View.INVISIBLE);
+
 
 
 
@@ -276,8 +370,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
     }
-
-
 
     public void updateUserGeneralities (UserGeneralities userGeneralities){
 
@@ -307,8 +399,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 }
-
-
 
     private void buttonActions() {
 
@@ -421,8 +511,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
     }
-
-
 
     public void changeNavBarColor() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

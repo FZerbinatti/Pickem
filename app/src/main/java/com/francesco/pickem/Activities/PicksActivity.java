@@ -11,13 +11,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +29,6 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.francesco.pickem.Adapters.Day_selection_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
@@ -41,7 +40,6 @@ import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -83,6 +81,7 @@ public class PicksActivity extends AppCompatActivity  {
     String logo_URL;
     ArrayList<MatchDetails> allMatchOfThisSplitForThisRegion;
     ArrayList<MatchDetails> filteredMatchDetails;
+    TextView no_match_found;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +91,8 @@ public class PicksActivity extends AppCompatActivity  {
         pick_backgroundimage = findViewById(R.id.pick_backgroundimage);
         pick_progressbar = findViewById(R.id.pick_progressbar);
         pick_progressbar_matches = findViewById(R.id.pick_progressbar_matches);
+        no_match_found= findViewById(R.id.no_match_found);
+        viewPager_match_day = findViewById(R.id.viewPager_match_day);
 
 
         selected_region_name ="";
@@ -99,6 +100,7 @@ public class PicksActivity extends AppCompatActivity  {
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
+
 
         split = "S1";
 
@@ -186,7 +188,7 @@ public class PicksActivity extends AppCompatActivity  {
 
                     }
                 }
-                loadViewPagerGiornate(allRegionsDetails);
+                loadViewPagerRegions(allRegionsDetails);
                 pick_progressbar.setVisibility(View.GONE);
 
             }
@@ -230,13 +232,13 @@ public class PicksActivity extends AppCompatActivity  {
 
         }
 
-        loadViewPagerGiornate(displayRegions);
+        loadViewPagerRegions(displayRegions);
         pick_progressbar.setVisibility(View.GONE);
 
 
     }
 
-    public void loadViewPagerGiornate(ArrayList<RegionDetails> userSelectedRegions){
+    public void loadViewPagerRegions(ArrayList<RegionDetails> userSelectedRegions){
         Log.d(TAG, "checkpoint2: "+userSelectedRegions.size());
 
         //Log.d(TAG, "loadViewPagerGiornate: userSelectedRegions.size():"+userSelectedRegions.size());
@@ -315,9 +317,20 @@ public class PicksActivity extends AppCompatActivity  {
 
                 }
                 Log.d(TAG, "onDataChange: $$$$$$$$$$$$$$$$$$$ allFullDates.size(1)"+allFullDates.size());
+                if (allFullDates.isEmpty()){
+                    no_match_found.setVisibility(View.VISIBLE);
+                    pick_progressbar_matches.setVisibility(View.GONE);
+                    pick_progressbar.setVisibility(View.GONE);
+                    viewPager_match_day.setVisibility(View.INVISIBLE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                }else {
+                    no_match_found.setVisibility(View.INVISIBLE);
+                    viewPager_match_day.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    //ora  setta le date in alto passando matchdays ma scopri quale di queste date è la attuale o prossima alla attuale
+                    loadViewPagerMatchDays( filterFullDates(allFullDates), allFullDates, selected_region);
+                }
 
-                //ora  setta le date in alto passando matchdays ma scopri quale di queste date è la attuale o prossima alla attuale
-                loadViewPagerMatchDays( filterFullDates(allFullDates), allFullDates, selected_region);
 
 
             }
