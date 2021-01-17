@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "411029265997",
+    "firebase_url": "https://pickemandroid.firebaseio.com",
+    "project_id": "pickemandroid",
+    "storage_bucket": "pickemandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411029265997:android:967f862562c645a12b0604",
+        "android_client_info": {
+          "package_name": "com.francesco.pickem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411029265997-i1focram6mff36b3001dg1abiccb9npn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOIn36ULlGgeURedU0skp8ABndcdGzW60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411029265997-i1focram6mff36b3001dg1abiccb9npn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411029265997:android:856b20a22b6512602b0604",
+        "android_client_info": {
+          "package_name": "com.francesco.pickemapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411029265997-i1focram6mff36b3001dg1abiccb9npn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOIn36ULlGgeURedU0skp8ABndcdGzW60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411029265997-i1focram6mff36b3001dg1abiccb9npn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
