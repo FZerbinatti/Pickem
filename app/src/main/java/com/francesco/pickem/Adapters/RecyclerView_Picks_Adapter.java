@@ -32,7 +32,10 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     RecyclerViewClickListener clickListener;
     DisplayMatch thisMatch;
 
+    public RecyclerView_Picks_Adapter() {
 
+
+    }
 
     public RecyclerView_Picks_Adapter(Context context, List<DisplayMatch> displayMatchDetailsList) {
         this.context = context;

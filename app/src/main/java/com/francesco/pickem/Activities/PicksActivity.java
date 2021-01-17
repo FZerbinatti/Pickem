@@ -56,15 +56,9 @@ public class PicksActivity extends AppCompatActivity  {
     ViewPager viewPager, viewPager_match_day;
     Region_selection_Adapter adapterRegions;
     Day_selection_Adapter adapterDays;
-
     RecyclerView_Picks_Adapter adapterRecycler;
-    ArrayList<String> selectedRegions;
-    ArrayList <RegionDetails> allRegionsDetails;
     ConstraintLayout pick_background;
     ImageButton notification, picks, calendar, stats;
-    RecyclerView recyclerView;
-    ArrayList<MatchDetails> matchListSplit;
-    ArrayList<DisplayMatch> displayMatchListSplit;
     private String TAG ="PicksActivity";
     Context context;
     ImageView pick_backgroundimage;
@@ -74,13 +68,16 @@ public class PicksActivity extends AppCompatActivity  {
     ArrayList<String> regionmatchDates;
     ArrayList <RegionDetails> displayRegions;
     ArrayList<FullDate> allFullDates;
+    ArrayList<MatchDetails> matchListSplit;
+    ArrayList<DisplayMatch> displayMatchListSplit;
+    ArrayList<String> selectedRegions;
+    ArrayList <RegionDetails> allRegionsDetails;
+    RecyclerView recyclerView;
     FullDate day_selected_fullDay;
     String split;
     Calendar myCalendar;
     String year;
     String logo_URL;
-    ArrayList<MatchDetails> allMatchOfThisSplitForThisRegion;
-    ArrayList<MatchDetails> filteredMatchDetails;
     TextView no_match_found;
 
     @Override
@@ -258,6 +255,16 @@ public class PicksActivity extends AppCompatActivity  {
 
                 Glide.with(context).load(userSelectedRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);
                 //selected_region_name="";
+                displayMatchListSplit = new ArrayList<>();
+                regionmatchDates = new ArrayList<>();
+                displayRegions = new ArrayList<>();
+                allFullDates = new ArrayList<>();
+                matchListSplit = new ArrayList<>();
+                displayMatchListSplit = new ArrayList<>();
+                selectedRegions = new ArrayList<>();
+                allRegionsDetails = new ArrayList<>();
+                //recyclerView.
+
 
 
             }
@@ -521,42 +528,6 @@ public class PicksActivity extends AppCompatActivity  {
 
 
 
-/*        // 1) prendi gli oggetti di tipo MatchDetails con gli id loadThisMatchesID
-        //ciclo for di un sigleEventListener che prende un oggetto da ficcare in matchListSplit
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.match))
-                .child(selected_region_name)
-                .child(selected_region_name + year)
-                .child(selected_region_name + year + split);
-
-
-        //ti fai questo con una interface porcodddio
-        for (int i =0; i < loadThisMatchesID.size(); i++){
-            Log.d(TAG, "loadRecyclerView: "+loadThisMatchesID.get(i));
-
-
-            reference.child(loadThisMatchesID.get(i)).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                    MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
-                    if (matchDetails!=null){
-
-                        Log.d(TAG, "onDataChange: £££££££££££££££££££££"+matchDetails.getId());
-                        matchListSplit.add(matchDetails);
-                        fromMatchDaysToDisplayMatch(matchListSplit);
-                    }
-
-                }
-
-
-                @Override
-                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-                }
-
-            });
-
-        }*/
-
 
     }
 
@@ -576,66 +547,6 @@ public class PicksActivity extends AppCompatActivity  {
             });
 
     }
-
-/*    private void loadAllMatchesForThisRegion(String regionSelected) {
-        allMatchOfThisSplitForThisRegion = new ArrayList<>();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.match))
-                .child(regionSelected)
-                .child(regionSelected + year)
-                .child(regionSelected + year + split);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    MatchDetails allMatches = snapshot.getValue(MatchDetails.class);
-                    if (allMatches!=null){
-
-                        allMatchOfThisSplitForThisRegion.add(allMatches);
-
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }*/
-
-/*    public void filterAllMatchestoTodays(ArrayList <String> todaysMatches){
-        filteredMatchDetails = new ArrayList<>();
-        Log.d(TAG, "filterAllMatchestoTodays: allMatchOfThisSplitForThisRegion.size():"+allMatchOfThisSplitForThisRegion.size());
-
-
-
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 10 seconds
-                    Log.d(TAG, "filterAllMatchestoTodays: allMatchOfThisSplitForThisRegion.size():"+allMatchOfThisSplitForThisRegion.size());
-
-
-                    for (int i =0; i < allMatchOfThisSplitForThisRegion.size(); i++){
-                       // Log.d(TAG, "run: "+allMatchOfThisSplitForThisRegion.get(i).getId());
-                        if (todaysMatches.contains(allMatchOfThisSplitForThisRegion.get(i).getDatetime())){
-                            filteredMatchDetails.add(allMatchOfThisSplitForThisRegion.get(i));
-                            Log.d(TAG, "run: allMatchOfThisSplitForThisRegion.get(i)"+allMatchOfThisSplitForThisRegion.get(i).getDatetime());
-                        }
-
-                    }
-
-                    fromMatchDaysToDisplayMatch(filteredMatchDetails);
-
-                }
-            }, 4000);
-
-
-    }*/
 
     private void fromMatchDaysToDisplayMatch(ArrayList<MatchDetails> matchListForThisDay){
         Log.d(TAG, "loadRecyclerView: %%%%%%%%%%%%%%%%%%%%%%"+matchListForThisDay.size());
@@ -657,57 +568,34 @@ public class PicksActivity extends AppCompatActivity  {
             displayMatch.setYear(year);
             displayMatch.setSplit(split);
 
-            displayMatchListSplit.add(displayMatch);
+            if (displayMatch.getTeam1()== null){}else {
+                displayMatchListSplit.add(displayMatch);
+            }
+
 
 
         }
 
         //load the views
+        for (int i=0; i<displayMatchListSplit.size(); i++){
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: team1: "+displayMatchListSplit.get(i).getTeam1());
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: team2: "+displayMatchListSplit.get(i).getTeam2());
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: winner:"+displayMatchListSplit.get(i).getWinner());
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: ID:: "+displayMatchListSplit.get(i).getId());
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: date: "+displayMatchListSplit.get(i).getDate());
+
+        }
 
         Log.d(TAG, "loadRecyclerView: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"+displayMatchListSplit.size());
         adapterRecycler = new RecyclerView_Picks_Adapter(this, displayMatchListSplit);
+        adapterRecycler.notifyDataSetChanged();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapterRecycler);
-        adapterRecycler.notifyDataSetChanged();
+
         pick_progressbar_matches.setVisibility(View.GONE);
 
     }
-
-/*    private String getImageForThisTeam(String teamName){
-
-        logo_URL="";
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_teams))
-                .child(selected_region_name)
-                .child(teamName)
-                .child(getString(R.string.team_image));
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                String teamImage = dataSnapshot.getValue(String.class);
-                if (teamImage!= null){
-                    logo_URL = teamImage;
-                }
-            }
-
-
-
-
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-            }
-
-
-        });
-
-        return logo_URL;
-
-    }*/
-
-
 
     public Integer selectMatchDay(ArrayList<FullDate> matchDays) {
         //in base agli ID dell'array list, trova la data sucessiva o coincidente a quella attuale
