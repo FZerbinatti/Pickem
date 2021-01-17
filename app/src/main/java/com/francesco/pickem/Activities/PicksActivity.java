@@ -581,6 +581,7 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "fromMatchDaysToDisplayMatch: team1: "+displayMatchListSplit.get(i).getTeam1());
             Log.d(TAG, "fromMatchDaysToDisplayMatch: team2: "+displayMatchListSplit.get(i).getTeam2());
             Log.d(TAG, "fromMatchDaysToDisplayMatch: winner:"+displayMatchListSplit.get(i).getWinner());
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: winner:"+displayMatchListSplit.get(i).getWinner());
             Log.d(TAG, "fromMatchDaysToDisplayMatch: ID:: "+displayMatchListSplit.get(i).getId());
             Log.d(TAG, "fromMatchDaysToDisplayMatch: date: "+displayMatchListSplit.get(i).getDate());
 
