@@ -1,6 +1,8 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,42 +93,61 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         Log.d(TAG, "onBindViewHolder: region:"+region);
 
+
+
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Teams")
                 .child(region);
 
-                reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                String teamImage = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
-                if (teamImage!= null){
-                    Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+        if (team1.equals(" ")){
+            viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+            viewHolder.image_team_1.setEnabled(false);
+            Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+
+        }else {
+            reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                    String teamImage = dataSnapshot.getValue(String.class);
+                    Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
+                    if (teamImage!= null){
+                        Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
 
-            }
-
-        });
-
-        reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                String teamImage = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
-                if (teamImage!= null){
-                    Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
                 }
-            }
 
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+            });
+        }
 
-            }
+        if (team2.equals(" ")){
+            viewHolder.image_team_2.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+            viewHolder.image_team_2.setEnabled(false);
+            Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
 
-        });
+        }else {
+
+            reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                    String teamImage = dataSnapshot.getValue(String.class);
+                    Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
+                    if (teamImage!= null){
+                        Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                }
+
+            });
+        }
+
+
 
 
         viewHolder.textview_match_timer.setText(match_time);
@@ -236,56 +257,70 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 String match_prediction = dataSnapshot.getValue(String.class);
-                if (match_prediction != null){
 
-                    if (match_prediction.equals("")||match_prediction.equals("null")){
-                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                    }else {
+                if (team1.equals(" ") || team2.equals(" ")) {
+                    viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                    viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
 
-                        if(match_winner.equals("null"))  {
-                            viewHolder.image_team_1.setEnabled(true);
-                            viewHolder.image_team_2.setEnabled(true);
-                            if (match_prediction.equals(team1)){
-                                viewHolder.opacity_team_1.setVisibility(View.GONE);
-                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                            }else {
-                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                viewHolder.opacity_team_2.setVisibility(View.GONE);
-                            }
-                        }else {
-                            viewHolder.image_team_1.setEnabled(false);
-                            viewHolder.image_team_2.setEnabled(false);
 
-                            if (match_winner.equals(team1) && match_prediction.equals(team1)){
-                                viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
-                                viewHolder.opacity_team_1.setVisibility(View.GONE);
-                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                            }else if (match_winner.equals(team1) &&  match_prediction.equals(team2)){
-                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                viewHolder.opacity_team_2.setVisibility(View.GONE);
-                                viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                            }else if (match_winner.equals(team2) && match_prediction.equals(team2)){
-                                viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
-                                viewHolder.opacity_team_2.setVisibility(View.GONE);
-                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                            }else if (match_winner.equals(team2) &&  match_prediction.equals(team1)){
-                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                                viewHolder.opacity_team_1.setVisibility(View.GONE);
-                                viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-                            }else if (match_prediction.equals("null")){
-                                viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                                viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                if (match_winner.equals(team1)){
-                                    viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                                }else if(match_winner.equals(team2)){
-                                    viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+                } else {
+
+                    if (match_prediction != null) {
+
+                        if (match_prediction.equals("") || match_prediction.equals("null")) {
+                            viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                            viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                        } else {
+                            if (match_winner == null) {
+                                Log.d(TAG, "onDataChange: null for: " + displayMatch.getId());
+                                Log.d(TAG, "onDataChange: region: " + displayMatch.getRegion());
+                                Log.d(TAG, "onDataChange: " + displayMatch.getTeam1() + " vs " + displayMatch.getTeam2());
+                            } else {
+                                if (match_winner.equals(" ")) {
+                                    viewHolder.image_team_1.setEnabled(true);
+                                    viewHolder.image_team_2.setEnabled(true);
+                                    if (match_prediction.equals(team1)) {
+                                        viewHolder.opacity_team_1.setVisibility(View.GONE);
+                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                                    } else {
+                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                        viewHolder.opacity_team_2.setVisibility(View.GONE);
+                                    }
+                                } else {
+                                    viewHolder.image_team_1.setEnabled(false);
+                                    viewHolder.image_team_2.setEnabled(false);
+
+                                    if (match_winner.equals(team1) && match_prediction.equals(team1)) {
+                                        viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
+                                        viewHolder.opacity_team_1.setVisibility(View.GONE);
+                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                                    } else if (match_winner.equals(team1) && match_prediction.equals(team2)) {
+                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                        viewHolder.opacity_team_2.setVisibility(View.GONE);
+                                        viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+                                    } else if (match_winner.equals(team2) && match_prediction.equals(team2)) {
+                                        viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
+                                        viewHolder.opacity_team_2.setVisibility(View.GONE);
+                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                    } else if (match_winner.equals(team2) && match_prediction.equals(team1)) {
+                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                                        viewHolder.opacity_team_1.setVisibility(View.GONE);
+                                        viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+                                    } else if (match_prediction.equals("null")) {
+                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+                                        if (match_winner.equals(team1)) {
+                                            viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+                                        } else if (match_winner.equals(team2)) {
+                                            viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+                                        }
+                                    }
                                 }
+
                             }
                         }
 
                     }
-
                 }
             }
 

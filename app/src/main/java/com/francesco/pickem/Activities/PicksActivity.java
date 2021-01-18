@@ -115,9 +115,9 @@ public class PicksActivity extends AppCompatActivity  {
         viewPager = findViewById(R.id.viewPager_picksActivity);
         pick_background = findViewById(R.id.pick_background);
 
-        Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
+        //Log.d(TAG, "initializeLeagueSelection: "+selectedRegions.size());
 
-        Log.d(TAG, "initializeLeagueSelection: UID: "+FirebaseAuth.getInstance().getCurrentUser().getUid());
+        //Log.d(TAG, "initializeLeagueSelection: UID: "+FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -128,12 +128,12 @@ public class PicksActivity extends AppCompatActivity  {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 int int_user_regions_selected = (int) dataSnapshot.getChildrenCount();
-                Log.d(TAG, "onDataChange: int_user_regions_selected: "+int_user_regions_selected);
+                //Log.d(TAG, "onDataChange: int_user_regions_selected: "+int_user_regions_selected);
                 //prendi tutte le regioni di interesse dello user
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String regionDetails = snapshot.getValue(String.class);
                     selectedRegions.add(regionDetails);
-                    Log.d(TAG, "onDataChange: adding region to arraylist:"+regionDetails);
+                    //Log.d(TAG, "onDataChange: adding region to arraylist:"+regionDetails);
 
                 }
                 //inizializza il top viewpager con le opzioni trovate
@@ -155,9 +155,9 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     public void getAllRegionDetails(ArrayList<String> userSelectedRegions){
-        for (int i=0; i<userSelectedRegions.size(); i++){
+/*        for (int i=0; i<userSelectedRegions.size(); i++){
             Log.d(TAG, "getAllRegionDetails: "+userSelectedRegions.get(i));
-        }
+        }*/
         allRegionsDetails = new ArrayList<>();
 
         // load da firebase i servers
@@ -168,7 +168,7 @@ public class PicksActivity extends AppCompatActivity  {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     RegionDetails regionDetails = snapshot.getValue(RegionDetails.class);
                     if (regionDetails!=null){
-                        Log.d(TAG, "onDataChange: regionDetails.getName()"+regionDetails.getName());
+                        //Log.d(TAG, "onDataChange: regionDetails.getName()"+regionDetails.getName());
                         if (userSelectedRegions.contains(regionDetails.getName())){
                             allRegionsDetails.add(regionDetails);
                         }
@@ -190,12 +190,12 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void getUserRegionsDetails(ArrayList<String> userSelectedRegions){
-        Log.d(TAG, "checkpoint1: "+userSelectedRegions.size());
+        //Log.d(TAG, "checkpoint1: "+userSelectedRegions.size());
         ArrayList<RegionDetails> displayRegions = new ArrayList<>();
 
         for (int i=0; i<userSelectedRegions.size(); i++){
             // per ogni nome nella lista, prendi l'oggetto corrispondente in /Regions
-            Log.d(TAG, "onDataChange: SEARCHING FOR THIS REGION IN REGIONS: "+ userSelectedRegions.get(i));
+            //Log.d(TAG, "onDataChange: SEARCHING FOR THIS REGION IN REGIONS: "+ userSelectedRegions.get(i));
             DatabaseReference referenceRegions = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions))
                     .child(userSelectedRegions.get(i));
 
@@ -226,7 +226,7 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     public void loadViewPagerRegions(ArrayList<RegionDetails> userSelectedRegions){
-        Log.d(TAG, "checkpoint2: "+userSelectedRegions.size());
+        //Log.d(TAG, "checkpoint2: "+userSelectedRegions.size());
 
         //Log.d(TAG, "loadViewPagerGiornate: userSelectedRegions.size():"+userSelectedRegions.size());
         //displayRegions = new ArrayList<>();
@@ -240,7 +240,7 @@ public class PicksActivity extends AppCompatActivity  {
         viewPager.setPadding(410, 0, 400, 0);
 
         viewPager.setCurrentItem(0);
-        loadSplitMatchesForThisRegion(userSelectedRegions.get(0).getName());
+        //loadSplitMatchesForThisRegion(userSelectedRegions.get(0).getName());
         selected_region_name=userSelectedRegions.get(0).getName();
 
 
@@ -282,6 +282,10 @@ public class PicksActivity extends AppCompatActivity  {
             @Override
             public void onPageScrollStateChanged(int state) {
 
+                if (state ==1 ){
+                    selected_region_name="";
+                }
+
             }
         });
 
@@ -289,13 +293,14 @@ public class PicksActivity extends AppCompatActivity  {
 
     public void loadSplitMatchesForThisRegion(String selected_region){
 
-        Log.d(TAG, "getAllMatchDays: selected_region: "+selected_region);
+
+        Log.d(TAG, "loadSplitMatchesForThisRegion: selected_region: "+selected_region);
         String firebase_section = getString(R.string.firebase_Matches);
 
         allFullDates = new ArrayList<>();
 
         // load da firebase le regioni
-        Log.d(TAG, "getAllMatchDays: path: "+ firebase_section +"/"+ selected_region +"/"+ selected_region + year +"/"+selected_region + year+split);
+        Log.d(TAG, "loadSplitMatchesForThisRegion: path: "+ firebase_section +"/"+ selected_region +"/"+ selected_region + year +"/"+selected_region + year+split);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(firebase_section)
                 .child(selected_region)
                 .child(selected_region + year)
@@ -314,7 +319,7 @@ public class PicksActivity extends AppCompatActivity  {
 
 
                 }
-                Log.d(TAG, "onDataChange: $$$$$$$$$$$$$$$$$$$ allFullDates.size(1)"+allFullDates.size());
+                //Log.d(TAG, "onDataChange: $$$$$$$$$$$$$$$$$$$ allFullDates.size(1)"+allFullDates.size());
                 if (allFullDates.isEmpty()){
                     no_match_found.setVisibility(View.VISIBLE);
                     pick_progressbar_matches.setVisibility(View.GONE);
@@ -343,7 +348,7 @@ public class PicksActivity extends AppCompatActivity  {
 
     private ArrayList<FullDate> filterFullDates(ArrayList<FullDate> fullMatchDaysList){
 
-        Log.d(TAG, "filterFullDates: fullMatchDaysList.size(y): "+fullMatchDaysList.size());
+        //Log.d(TAG, "filterFullDates: fullMatchDaysList.size(y): "+fullMatchDaysList.size());
 
         //qui di tutti gli id tiri fuori solo le giornate convertite in locale
         ArrayList <FullDate> uniqueFullMatchDays = new ArrayList<>();
@@ -358,7 +363,7 @@ public class PicksActivity extends AppCompatActivity  {
 
             uniqueDate = fullMatchDaysList.get(i).getDate();
         }
-        Log.d(TAG, "filterFullDates: +uniqueFullMatchDays.size(x) : "+uniqueFullMatchDays.size());
+        //Log.d(TAG, "filterFullDates: +uniqueFullMatchDays.size(x) : "+uniqueFullMatchDays.size());
         return uniqueFullMatchDays;
 
     }
@@ -407,7 +412,7 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void loadViewPagerMatchDays(ArrayList<FullDate> matchDays, ArrayList <FullDate> allFullDates, String selected_region_name) {
-        Log.d(TAG, "loadViewPagerMatchDays: $$$$$$$$"+matchDays.size());
+        //Log.d(TAG, "loadViewPagerMatchDays: $$$$$$$$"+matchDays.size());
 
             Integer selectedPage = selectMatchDay(matchDays);
 
@@ -424,7 +429,7 @@ public class PicksActivity extends AppCompatActivity  {
                 Log.d(TAG, "loadViewPagerMatchDays: "+day_selected_fullDay.getId());
                 //loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay));
                 //filterAllMatchestoTodays(allMatchesForThisDate(allFullDates, day_selected_fullDay ));
-                loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
+                //loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
 
                 viewPager_match_day.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
@@ -456,32 +461,37 @@ public class PicksActivity extends AppCompatActivity  {
 
         FullDate fullDate_campione = day_selected_fullDay;
 
-        Log.d(TAG, "1 allMatchesForThisDate: fullDates.size():"+fullDates.size());
-        Log.d(TAG, "2 allMatchesForThisDate: fullDate_campione:"+fullDate_campione.getId());
+/*        Log.d(TAG, "1 allMatchesForThisDate: fullDates.size():"+fullDates.size());
+        Log.d(TAG, "2 allMatchesForThisDate: fullDate_campione:"+fullDate_campione.getId());*/
 
         ArrayList <String> listOfIDs = new ArrayList<>();
 
         for (int i=0; i<fullDates.size(); i++){
-            Log.d(TAG, "3 allMatchesForThisDate: fullDates.get(i).getDate(): "+fullDates.get(i).getId());
-            Log.d(TAG, "4 allMatchesForThisDate: fullDate_campione.getDate(): "+fullDate_campione.getId());
+/*            Log.d(TAG, "3 allMatchesForThisDate: fullDates.get(i).getDate(): "+fullDates.get(i).getId());
+            Log.d(TAG, "4 allMatchesForThisDate: fullDate_campione.getDate(): "+fullDate_campione.getId());*/
             if (fullDates.get(i).getDate().equals(fullDate_campione.getDate())){
                 listOfIDs.add(fullDates.get(i).getId());
+
+                Log.d(TAG, "allMatchesForThisDate: ID: "+ fullDates.get(i).getId() +" - date: "+ fullDates.get(i).getDate() +" time: "+ fullDates.get(i).getTime());
+
             }
 
         }
-        Log.d(TAG, "allMatchesForThisDate: listOfIDs.size():"+listOfIDs.size());
+        //Log.d(TAG, "allMatchesForThisDate: listOfIDs.size():"+listOfIDs.size());
         return listOfIDs;
 
 
     }
 
     private void loadRecyclerView(ArrayList <String> loadThisMatchesID, String selected_region_name){
-        Log.d(TAG, "initRecyclerView: loadThisMatchesID.size(): "+loadThisMatchesID.size());
+        //Log.d(TAG, "initRecyclerView: loadThisMatchesID.size(): "+loadThisMatchesID.size());
 
         //matchDetails
         matchListSplit = new ArrayList<>();
         //DisplayMatch
         displayMatchListSplit = new ArrayList<>();
+
+
 
         for (int i =0; i < loadThisMatchesID.size(); i++){
 
@@ -496,16 +506,16 @@ public class PicksActivity extends AppCompatActivity  {
             readData(reference, new OnGetDataListener() {
                 @Override
                 public void onSuccess(DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onSuccess: ");
+                    //Log.d(TAG, "onSuccess: ");
                     MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
                     //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
                     if (matchDetails!=null){
 
-                        Log.d(TAG, "onDataChange: £££££££££££££££££££££"+matchDetails.getId());
+                        //Log.d(TAG, "onDataChange: £££££££££££££££££££££"+matchDetails.getId());
                         matchListSplit.add(matchDetails);
-                        Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
+                        //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
                         if (matchListSplit.size()==loadThisMatchesID.size()){
-                            Log.d(TAG, "loadRecyclerView: "+matchListSplit.size());
+                            //Log.d(TAG, "loadRecyclerView: "+matchListSplit.size());
                             fromMatchDaysToDisplayMatch(matchListSplit);
                         }
 
@@ -514,7 +524,7 @@ public class PicksActivity extends AppCompatActivity  {
 
                 @Override
                 public void onStart() {
-                    Log.d(TAG, "onStart: ");
+                    //Log.d(TAG, "onStart: ");
                 }
 
                 @Override
@@ -549,11 +559,13 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void fromMatchDaysToDisplayMatch(ArrayList<MatchDetails> matchListForThisDay){
-        Log.d(TAG, "loadRecyclerView: %%%%%%%%%%%%%%%%%%%%%%"+matchListForThisDay.size());
+        //Log.d(TAG, "loadRecyclerView: %%%%%%%%%%%%%%%%%%%%%%"+matchListForThisDay.size());
 
         displayMatchListSplit= new ArrayList<>();
 
         for (int i =0; i < matchListForThisDay.size(); i++){
+
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2());
 
             DisplayMatch displayMatch = new DisplayMatch();
             FullDate fullDate = getFullDateFromUnivDate(matchListForThisDay.get(i).getDatetime());
@@ -576,18 +588,9 @@ public class PicksActivity extends AppCompatActivity  {
 
         }
 
-        //load the views
-        for (int i=0; i<displayMatchListSplit.size(); i++){
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: team1: "+displayMatchListSplit.get(i).getTeam1());
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: team2: "+displayMatchListSplit.get(i).getTeam2());
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: winner:"+displayMatchListSplit.get(i).getWinner());
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: winner:"+displayMatchListSplit.get(i).getWinner());
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: ID:: "+displayMatchListSplit.get(i).getId());
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: date: "+displayMatchListSplit.get(i).getDate());
 
-        }
 
-        Log.d(TAG, "loadRecyclerView: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"+displayMatchListSplit.size());
+        //Log.d(TAG, "loadRecyclerView: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"+displayMatchListSplit.size());
         adapterRecycler = new RecyclerView_Picks_Adapter(this, displayMatchListSplit);
         adapterRecycler.notifyDataSetChanged();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -678,3 +681,5 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
 }
+
+// dove cerchi i match per quel giorno?
