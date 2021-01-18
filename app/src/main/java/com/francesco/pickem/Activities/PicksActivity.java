@@ -1,5 +1,6 @@
 package com.francesco.pickem.Activities;
 
+import androidx.annotation.LongDef;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -226,24 +227,17 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     public void loadViewPagerRegions(ArrayList<RegionDetails> userSelectedRegions){
-        //Log.d(TAG, "checkpoint2: "+userSelectedRegions.size());
-
-        //Log.d(TAG, "loadViewPagerGiornate: userSelectedRegions.size():"+userSelectedRegions.size());
-        //displayRegions = new ArrayList<>();
 
         adapterRegions = new Region_selection_Adapter(userSelectedRegions, PicksActivity.this);
-
-        //Log.d(TAG, "displayRegions: "+displayRegions.size());
 
         viewPager = findViewById(R.id.viewPager_picksActivity);
         viewPager.setAdapter(adapterRegions);
         viewPager.setPadding(410, 0, 400, 0);
 
         viewPager.setCurrentItem(0);
-        //loadSplitMatchesForThisRegion(userSelectedRegions.get(0).getName());
+
         selected_region_name=userSelectedRegions.get(0).getName();
-
-
+        loadSplitMatchesForThisRegion(selected_region_name);
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -254,18 +248,6 @@ public class PicksActivity extends AppCompatActivity  {
                         .error(R.drawable.ic_load);
 
                 Glide.with(context).load(userSelectedRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);
-                //selected_region_name="";
-                displayMatchListSplit = new ArrayList<>();
-                regionmatchDates = new ArrayList<>();
-                displayRegions = new ArrayList<>();
-                allFullDates = new ArrayList<>();
-                matchListSplit = new ArrayList<>();
-                displayMatchListSplit = new ArrayList<>();
-                selectedRegions = new ArrayList<>();
-                allRegionsDetails = new ArrayList<>();
-                //recyclerView.
-
-
 
             }
 
@@ -273,9 +255,9 @@ public class PicksActivity extends AppCompatActivity  {
             public void onPageSelected(int position) {
                 selected_region_name = userSelectedRegions.get(position).getName();
                 Log.d(TAG, "onPageSelected:selected_region_name: "+selected_region_name);
-
-
                 loadSplitMatchesForThisRegion(selected_region_name);
+
+
 
             }
 
@@ -284,6 +266,9 @@ public class PicksActivity extends AppCompatActivity  {
 
                 if (state ==1 ){
                     selected_region_name="";
+                }else {
+
+
                 }
 
             }
@@ -293,8 +278,7 @@ public class PicksActivity extends AppCompatActivity  {
 
     public void loadSplitMatchesForThisRegion(String selected_region){
 
-
-        Log.d(TAG, "loadSplitMatchesForThisRegion: selected_region: "+selected_region);
+        Log.d(TAG, "ADESSO STO CERCANDO DELLE GIORNATE PER LA REGIONE SELEZIONATA: "+selected_region);
         String firebase_section = getString(R.string.firebase_Matches);
 
         allFullDates = new ArrayList<>();
@@ -331,6 +315,10 @@ public class PicksActivity extends AppCompatActivity  {
                     viewPager_match_day.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.VISIBLE);
                     //ora  setta le date in alto passando matchdays ma scopri quale di queste date è la attuale o prossima alla attuale
+/*                    Log.d(TAG, "onDataChange: ECCO LE DATE CHE HO TROVATO PER QUESTA REGION: "+selected_region);
+                    for (int i=0; i<allFullDates.size();i++){
+                        Log.d(TAG, "onDataChange: ID: "+allFullDates.get(i).getId()+" date: "+ allFullDates.get(i).getLocalDateTime());
+                    }*/
                     loadViewPagerMatchDays( filterFullDates(allFullDates), allFullDates, selected_region);
                 }
 
@@ -427,26 +415,21 @@ public class PicksActivity extends AppCompatActivity  {
                 viewPager_match_day.setCurrentItem(selectedPage);
                 day_selected_fullDay = matchDays.get(selectedPage);
                 Log.d(TAG, "loadViewPagerMatchDays: "+day_selected_fullDay.getId());
-                //loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay));
-                //filterAllMatchestoTodays(allMatchesForThisDate(allFullDates, day_selected_fullDay ));
-                //loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
+                loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
 
                 viewPager_match_day.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                        //day_selected_fullDay = matchDays.get(position);
-                        //Log.d(TAG, "onPageScrolled: id day selected: "+ day_selected_fullDay.getId());
-                        // 1 ) errore in all matches for this Date
-                        // 2 ) all full dates not resetted correctly
+                        day_selected_fullDay = matchDays.get(position);
+                        loadRecyclerView(allMatchesForThisDate(allFullDates,day_selected_fullDay),selected_region_name);
 
                     }
 
                     @Override
                     public void onPageSelected(int position) {
-                        //filterAllMatchestoTodays(allMatchesForThisDate(allFullDates,day_selected_fullDay));
-                        day_selected_fullDay = matchDays.get(position);
-                        loadRecyclerView(allMatchesForThisDate(allFullDates,day_selected_fullDay),selected_region_name);
+
+
                     }
 
                     @Override
@@ -459,6 +442,10 @@ public class PicksActivity extends AppCompatActivity  {
 
     private ArrayList<String> allMatchesForThisDate (ArrayList<FullDate> fullDates, FullDate day_selected_fullDay ){
 
+/*        Log.d(TAG, "allMatchesForThisDate: ADESSO TI BECCO ");
+        for (int i=0; i<fullDates.size(); i++){
+            Log.d(TAG, "allMatchesForThisDate: ID: "+ fullDates.get(i).getId() + " date: "+ fullDates.get(i).getLocalDateTime());
+        }*/
         FullDate fullDate_campione = day_selected_fullDay;
 
 /*        Log.d(TAG, "1 allMatchesForThisDate: fullDates.size():"+fullDates.size());
