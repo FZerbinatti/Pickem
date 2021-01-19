@@ -67,7 +67,7 @@
     <string name="firebase_user_notification_teams">Teams</string>
     <string name="firebase_user_choosen_regions">choosen_regions</string>
 
-    //TestMatch è  di prova, Matches di deploy
+    //TestMatch è di prova, Matches di deploy
     <string name="firebase_Matches">Matches</string>
     <!--<string name="firebase_testMatch">TestMatch</string>-->
 

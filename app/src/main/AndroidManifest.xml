@@ -15,10 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.EloActivity"></activity>
+        <activity android:name=".Activities.InfoActivity"></activity>
+        <activity android:name=".Activities.EloActivity" />
         <activity android:name=".Activities.NewTrackEloDay" />
         <activity android:name=".Activities.EloTrackerActivity" />
-        <activity android:name=".Activities.MainActivity" />
+        <activity android:name=".Activities.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Activities.NotificationTeamActivity" />
         <activity android:name=".Activities.NotificationRegionActivity" />
         <activity android:name=".Activities.ResetPasswordActivity" />
@@ -26,11 +33,7 @@
         <activity android:name=".Activities.SettingsActivity" />
         <activity android:name=".Activities.RegisterActivity" />
         <activity android:name=".Activities.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".Activities.CalendarActivity" />
         <activity android:name=".Activities.PicksActivity" />

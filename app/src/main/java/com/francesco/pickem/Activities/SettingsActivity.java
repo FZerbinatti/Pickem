@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -65,24 +66,18 @@ public class SettingsActivity extends AppCompatActivity {
     RecyclerView settings_recycler_regioni;
     ListView settings_regions_listview;
     ScrollView parentScrollListener;
-
     EditText edittext_summoner_name;
     Spinner spinner_choose_server;
     Button button_save_elotracker_info;
     SwitchCompat switch_elotracker;
     ConstraintLayout show_elotracker_box;
     ArrayList <String> finalRegionChoosen;
-
-
     public static String REGION_SELECTED = "REGION_SELECTED";
-
     private String userID;
     Button button_save_settings_account;
     RegionNotifications setnot_object;
     ProgressBar settings_progressbar;
-
     EditText edittext_emailaddress;
-
     ArrayList <String> UserChoosenRegionsfromDB;
     ArrayList<String> servers ;
     ArrayList<SimpleRegion> user_choosen_regions;
@@ -90,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
     ArrayList<String> finalRegions;
     SimpleRegionRecyclerViewAdapter adapter;
     ArrayList<String> choosen_regions;
+    ImageView info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
         settings_regions_listview = findViewById(R.id.settings_regions_listview);
         settings_recycler_regioni = findViewById(R.id.settings_recyclerview_regioni);
         parentScrollListener = findViewById(R.id.parentScrollListener);
+        info = findViewById(R.id.info_button);
 
         UserChoosenRegionsfromDB = new ArrayList<>();
 
@@ -154,7 +151,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         context = this;
-
+        infoButton();
         setupBottomNavView();
         buttonActions();
         changeNavBarColor();
@@ -166,6 +163,19 @@ public class SettingsActivity extends AppCompatActivity {
         reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
         userID = user.getUid();
         Log.d(TAG, "onCreate: userID: "+userID);
+
+
+    }
+
+    private void infoButton() {
+
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SettingsActivity.this, InfoActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
     }
@@ -501,9 +511,9 @@ public class SettingsActivity extends AppCompatActivity {
                         break;
 
                     case R.id.button_settings:
-                        Intent intentNotif= new Intent(context, SettingsActivity.class);
+                        /*Intent intentNotif= new Intent(context, SettingsActivity.class);
                         startActivity(intentNotif);
-                        Animatoo.animateFade(context);
+                        Animatoo.animateFade(context);*/
                         break;
                 }
                 return true;

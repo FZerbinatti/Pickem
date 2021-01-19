@@ -109,7 +109,7 @@ public class PicksActivity extends AppCompatActivity  {
 
     private void downloadSelectedRegions() {
 
-        Log.d(TAG, "initializeLeagueSelection: ");
+        //Log.d(TAG, "initializeLeagueSelection: ");
 
         selectedRegions = new ArrayList<String>();
 
@@ -156,9 +156,7 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     public void getAllRegionDetails(ArrayList<String> userSelectedRegions){
-/*        for (int i=0; i<userSelectedRegions.size(); i++){
-            Log.d(TAG, "getAllRegionDetails: "+userSelectedRegions.get(i));
-        }*/
+
         allRegionsDetails = new ArrayList<>();
 
         // load da firebase i servers
@@ -254,7 +252,7 @@ public class PicksActivity extends AppCompatActivity  {
             @Override
             public void onPageSelected(int position) {
                 selected_region_name = userSelectedRegions.get(position).getName();
-                Log.d(TAG, "onPageSelected:selected_region_name: "+selected_region_name);
+                //Log.d(TAG, "onPageSelected:selected_region_name: "+selected_region_name);
                 loadSplitMatchesForThisRegion(selected_region_name);
 
 
@@ -278,13 +276,13 @@ public class PicksActivity extends AppCompatActivity  {
 
     public void loadSplitMatchesForThisRegion(String selected_region){
 
-        Log.d(TAG, "ADESSO STO CERCANDO DELLE GIORNATE PER LA REGIONE SELEZIONATA: "+selected_region);
+        //Log.d(TAG, "ADESSO STO CERCANDO DELLE GIORNATE PER LA REGIONE SELEZIONATA: "+selected_region);
         String firebase_section = getString(R.string.firebase_Matches);
 
         allFullDates = new ArrayList<>();
 
         // load da firebase le regioni
-        Log.d(TAG, "loadSplitMatchesForThisRegion: path: "+ firebase_section +"/"+ selected_region +"/"+ selected_region + year +"/"+selected_region + year+split);
+        //Log.d(TAG, "loadSplitMatchesForThisRegion: path: "+ firebase_section +"/"+ selected_region +"/"+ selected_region + year +"/"+selected_region + year+split);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(firebase_section)
                 .child(selected_region)
                 .child(selected_region + year)
@@ -414,7 +412,7 @@ public class PicksActivity extends AppCompatActivity  {
 
                 viewPager_match_day.setCurrentItem(selectedPage);
                 day_selected_fullDay = matchDays.get(selectedPage);
-                Log.d(TAG, "loadViewPagerMatchDays: "+day_selected_fullDay.getId());
+                //Log.d(TAG, "loadViewPagerMatchDays: "+day_selected_fullDay.getId());
                 loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
 
                 viewPager_match_day.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -459,7 +457,7 @@ public class PicksActivity extends AppCompatActivity  {
             if (fullDates.get(i).getDate().equals(fullDate_campione.getDate())){
                 listOfIDs.add(fullDates.get(i).getId());
 
-                Log.d(TAG, "allMatchesForThisDate: ID: "+ fullDates.get(i).getId() +" - date: "+ fullDates.get(i).getDate() +" time: "+ fullDates.get(i).getTime());
+                //Log.d(TAG, "allMatchesForThisDate: ID: "+ fullDates.get(i).getId() +" - date: "+ fullDates.get(i).getDate() +" time: "+ fullDates.get(i).getTime());
 
             }
 
@@ -488,7 +486,7 @@ public class PicksActivity extends AppCompatActivity  {
                     .child(selected_region_name + year + split)
                     .child(loadThisMatchesID.get(i));
 
-            Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year + split+"/"+loadThisMatchesID.get(i));
+            //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year + split+"/"+loadThisMatchesID.get(i));
 
             readData(reference, new OnGetDataListener() {
                 @Override
@@ -516,7 +514,7 @@ public class PicksActivity extends AppCompatActivity  {
 
                 @Override
                 public void onFailure() {
-                    Log.d(TAG, "onFailure: ");
+                    //Log.d(TAG, "onFailure: ");
                 }
             });
 
@@ -552,7 +550,7 @@ public class PicksActivity extends AppCompatActivity  {
 
         for (int i =0; i < matchListForThisDay.size(); i++){
 
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2() );
+            //Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2() );
 
             DisplayMatch displayMatch = new DisplayMatch();
             FullDate fullDate = getFullDateFromUnivDate(matchListForThisDay.get(i).getDatetime());
@@ -567,7 +565,7 @@ public class PicksActivity extends AppCompatActivity  {
             displayMatch.setRegion(selected_region_name);
             displayMatch.setYear(year);
             displayMatch.setSplit(split);
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
+            //Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
 
             if (displayMatch.getTeam1()== null){}else {
                 displayMatchListSplit.add(displayMatch);
@@ -612,7 +610,7 @@ public class PicksActivity extends AppCompatActivity  {
 
            // Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
             if (System.currentTimeMillis() <= matchTimeMillis) {
-                itemPosition = i-1;
+                itemPosition = i;
                 //Log.d(TAG, "selectMatchDay: itemPosition"+itemPosition);
                 if (itemPosition <0){return 0;}else{return itemPosition;}
 
@@ -639,7 +637,7 @@ public class PicksActivity extends AppCompatActivity  {
                         Animatoo.animateFade(context);
                         break;
                     case R.id.button_calendar:
-                        Intent intentCalendar= new Intent(context, Calendar.class);
+                        Intent intentCalendar= new Intent(context, CalendarActivity.class);
                         startActivity(intentCalendar);
                         Animatoo.animateFade(context);
                         break;

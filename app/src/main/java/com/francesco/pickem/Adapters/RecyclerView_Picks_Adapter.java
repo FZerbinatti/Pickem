@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.FullDate;
@@ -41,8 +42,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     String match_prediction;
 
     public RecyclerView_Picks_Adapter() {
-
-
     }
 
     public RecyclerView_Picks_Adapter(Context context, List<DisplayMatch> displayMatchDetailsList) {
@@ -66,8 +65,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-
-
 
         String team1 = displayMatchDetailsList.get(i).getTeam1();
         String team2 = displayMatchDetailsList.get(i).getTeam2();
@@ -110,7 +107,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             if (team1.equals(" ")){
                 viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
                 viewHolder.image_team_1.setEnabled(false);
-                Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                Glide.with(context)
+                        .load(R.mipmap.ic_tbd).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
 
             }else {
                 reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -119,7 +118,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                         String teamImage = dataSnapshot.getValue(String.class);
                         Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
                         if (teamImage!= null){
-                            Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                            Glide.with(context)
+                                    .load(teamImage).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                    .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
                         }
                     }
 
@@ -134,7 +135,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             if (team2.equals(" ")){
                 viewHolder.image_team_2.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
                 viewHolder.image_team_2.setEnabled(false);
-                Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+                Glide.with(context).load(R.mipmap.ic_tbd).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
 
             }else {
 
@@ -144,7 +146,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                         String teamImage = dataSnapshot.getValue(String.class);
                         Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
                         if (teamImage!= null){
-                            Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+                            Glide.with(context).load(teamImage).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                    .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
                         }
                     }
 

@@ -8,6 +8,16 @@
     android:background="@color/background"
     tools:context=".Activities.SettingsActivity">
 
+    <ImageView
+        android:id="@+id/info_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_info"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
+
     <ProgressBar
         android:id="@+id/settings_progressbar"
         android:indeterminateDrawable="@drawable/custom_progressbar"
@@ -34,10 +44,9 @@
 
 
     <ScrollView
+        android:id="@+id/parentScrollListener"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/parentScrollListener"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,9 +61,9 @@
                 android:id="@+id/expandable_view2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/square_blue_box"
                 android:paddingStart="10dp"
-                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -149,9 +158,9 @@
                             android:id="@+id/edittext_emailaddress"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:hint="email address"
-                            android:gravity="center"
                             android:layout_marginHorizontal="20dp"
+                            android:gravity="center"
+                            android:hint="email address"
                             android:textSize="18sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -160,7 +169,7 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <!--                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cc3x"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
@@ -205,11 +214,11 @@
                             android:id="@+id/interest_regions"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:fontFamily="@font/simplex"
                             android:text="Pickem for these regions: "
                             android:textColor="@color/blue_light"
                             android:textSize="20sp"
-                            android:layout_marginBottom="5dp"
-                            android:fontFamily="@font/simplex"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -228,24 +237,21 @@
                             app:layout_constraintVertical_bias="0.0">
 
 
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/settings_recyclerview_regioni"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"/>
-
-
-
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/settings_recyclerview_regioni"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--
+                    <!--
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cc5x"
                         android:layout_width="match_parent"
@@ -291,11 +297,11 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/simplex"
                             android:gravity="center_horizontal"
                             android:text="Account"
                             android:textColor="@color/blue_light"
                             android:textSize="20sp"
-                            android:fontFamily="@font/simplex"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -328,10 +334,10 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_marginEnd="10dp"
-                            android:src="@drawable/ic_delete"
-                            android:scaleType="centerCrop"
-                            android:padding="5dp"
                             android:background="@drawable/buttons_logout_background"
+                            android:padding="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_delete"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -378,6 +384,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/square_blue_box"
                 android:paddingStart="10dp"
+                android:layout_marginTop="10dp"
+
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/expandable_view2">
@@ -452,13 +460,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
                         android:layout_marginEnd="10dp"
-                        android:background="@drawable/square_round_corners"
                         android:layout_marginBottom="5dp"
+                        android:background="@drawable/square_round_corners"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cc0">
-
 
 
                         <ListView
@@ -710,7 +717,6 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -719,9 +725,9 @@
                 android:id="@+id/expandable_view4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/square_blue_box"
                 android:paddingStart="10dp"
-                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/expandable_view1">
@@ -815,9 +821,9 @@
                             android:id="@+id/edittext_summoner_name"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:hint="Summoner Name"
-                            android:gravity="center"
                             android:layout_marginHorizontal="20dp"
+                            android:gravity="center"
+                            android:hint="Summoner Name"
                             android:textSize="18sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -876,8 +882,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cc10xx">
-
-
 
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -950,10 +954,10 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_marginEnd="10dp"
-                        android:src="@drawable/ic_logout"
-                        android:scaleType="centerCrop"
-                        android:padding="15dp"
                         android:background="@drawable/buttons_logout_background"
+                        android:padding="15dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_logout"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -962,15 +966,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-
-
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
     </ScrollView>

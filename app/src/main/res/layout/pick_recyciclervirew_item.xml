@@ -11,8 +11,9 @@
         android:id="@+id/logo_team_1"
         android:layout_width="@dimen/teams_icons_dimens"
         android:layout_height="@dimen/teams_icons_dimens"
+        android:padding="3dp"
         android:background="@drawable/background_round_corners"
-        android:src="@drawable/ic_no_cloud"
+        android:src="@color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/icon_vs1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
@@ -77,8 +78,9 @@
         android:id="@+id/logo_team_2"
         android:layout_width="@dimen/teams_icons_dimens"
         android:layout_height="@dimen/teams_icons_dimens"
+        android:padding="3dp"
         android:background="@drawable/background_round_corners"
-        android:src="@drawable/ic_no_cloud"
+        android:src="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/icon_vs1"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />

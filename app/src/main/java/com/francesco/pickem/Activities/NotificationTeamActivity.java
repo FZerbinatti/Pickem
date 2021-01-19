@@ -220,6 +220,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
 
                 Toast.makeText(NotificationTeamActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(NotificationTeamActivity.this, NotificationRegionActivity.class);
+                intent.putExtra(REGION_SELECTED, regionSelectedExtra);
                 startActivity( intent);
 
 

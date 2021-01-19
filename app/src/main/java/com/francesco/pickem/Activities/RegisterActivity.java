@@ -84,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         register_progressbar = findViewById(R.id.register_progressbar);
         button_register = findViewById(R.id.button_register);
+
         mAuth = FirebaseAuth.getInstance();
         dropdown_status=0;
         allRegionsFromBD= new ArrayList<>();

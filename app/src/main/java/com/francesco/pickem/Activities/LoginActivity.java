@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 
 public class LoginActivity extends AppCompatActivity {
@@ -43,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         login_button = findViewById(R.id.button_login);
         go_to_registration = findViewById(R.id.go_to_registration);
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         login_email = findViewById(R.id.login_email);
         login_password = findViewById(R.id.login_password);
         login_progressbar = findViewById(R.id.login_progressbar);
@@ -58,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = login_email.getText().toString();
                 String password = login_password.getText().toString();
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
                 if (email.isEmpty()){
                     login_email.setError("email address required to login");
