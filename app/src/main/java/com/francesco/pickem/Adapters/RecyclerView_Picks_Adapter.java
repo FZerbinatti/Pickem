@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.DisplayMatch;
+import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,6 +25,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerView_Picks_Adapter.ViewHolder> {
@@ -33,6 +38,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     private String TAG ="Adapter RecyclerVIew";
     RecyclerViewClickListener clickListener;
     DisplayMatch thisMatch;
+    String match_prediction;
 
     public RecyclerView_Picks_Adapter() {
 
@@ -73,6 +79,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String region = displayMatchDetailsList.get(i).getRegion();
         String split = displayMatchDetailsList.get(i).getSplit();
         String year = displayMatchDetailsList.get(i).getYear();
+        String dateTime = displayMatchDetailsList.get(i).getDatetime();
 
         Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
 
@@ -85,6 +92,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         thisMatch.setTeam2(team2);
         thisMatch.setDate(match_date);
         thisMatch.setTime(match_time);
+        thisMatch.setDatetime(dateTime);
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -93,59 +101,66 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         Log.d(TAG, "onBindViewHolder: region:"+region);
 
+        Log.d(TAG, "onBindViewHolder: match gia passato? " + matchAlreadyElapsedQuestionMark(thisMatch));
 
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Teams")
-                .child(region);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Teams")
+                    .child(region);
 
-        if (team1.equals(" ")){
-            viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
-            viewHolder.image_team_1.setEnabled(false);
-            Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+            if (team1.equals(" ")){
+                viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+                viewHolder.image_team_1.setEnabled(false);
+                Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
 
-        }else {
-            reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                    String teamImage = dataSnapshot.getValue(String.class);
-                    Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
-                    if (teamImage!= null){
-                        Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+            }else {
+                reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                        String teamImage = dataSnapshot.getValue(String.class);
+                        Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
+                        if (teamImage!= null){
+                            Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
 
-                }
-
-            });
-        }
-
-        if (team2.equals(" ")){
-            viewHolder.image_team_2.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
-            viewHolder.image_team_2.setEnabled(false);
-            Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
-
-        }else {
-
-            reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                    String teamImage = dataSnapshot.getValue(String.class);
-                    Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
-                    if (teamImage!= null){
-                        Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
                     }
-                }
 
-                @Override
-                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+                });
+            }
 
-                }
+            if (team2.equals(" ")){
+                viewHolder.image_team_2.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
+                viewHolder.image_team_2.setEnabled(false);
+                Glide.with(context).load(R.mipmap.ic_tbd).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
 
-            });
-        }
+            }else {
+
+                reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                        String teamImage = dataSnapshot.getValue(String.class);
+                        Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
+                        if (teamImage!= null){
+                            Glide.with(context).load(teamImage).placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                    }
+
+                });
+            }
+
+
+
+
+
+
 
 
 
@@ -239,7 +254,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     }
 
-    public String getUserPick (DisplayMatch displayMatch, ViewHolder viewHolder){
+    public void getUserPick (DisplayMatch displayMatch, ViewHolder viewHolder){
 
         String match_winner = displayMatch.getWinner();
         String team1 = displayMatch.getTeam1();
@@ -256,73 +271,14 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                String match_prediction = dataSnapshot.getValue(String.class);
+                match_prediction = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "onDataChange: match_prediction: "+match_prediction);
+                displayMatch.setPrediction(match_prediction);
+                loadDataWithPrediction(displayMatch, viewHolder);
 
-                if (team1.equals(" ") || team2.equals(" ")) {
-                    viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                    viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-
-
-                } else {
-
-                    if (match_prediction != null) {
-
-                        if (match_prediction.equals("") || match_prediction.equals("null")) {
-                            viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                            viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                        } else {
-                            if (match_winner == null) {
-                                Log.d(TAG, "onDataChange: null for: " + displayMatch.getId());
-                                Log.d(TAG, "onDataChange: region: " + displayMatch.getRegion());
-                                Log.d(TAG, "onDataChange: " + displayMatch.getTeam1() + " vs " + displayMatch.getTeam2());
-                            } else {
-                                if (match_winner.equals(" ")) {
-                                    viewHolder.image_team_1.setEnabled(true);
-                                    viewHolder.image_team_2.setEnabled(true);
-                                    if (match_prediction.equals(team1)) {
-                                        viewHolder.opacity_team_1.setVisibility(View.GONE);
-                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                                    } else {
-                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                        viewHolder.opacity_team_2.setVisibility(View.GONE);
-                                    }
-                                } else {
-                                    viewHolder.image_team_1.setEnabled(false);
-                                    viewHolder.image_team_2.setEnabled(false);
-
-                                    if (match_winner.equals(team1) && match_prediction.equals(team1)) {
-                                        viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
-                                        viewHolder.opacity_team_1.setVisibility(View.GONE);
-                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                                    } else if (match_winner.equals(team1) && match_prediction.equals(team2)) {
-                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                        viewHolder.opacity_team_2.setVisibility(View.GONE);
-                                        viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                                    } else if (match_winner.equals(team2) && match_prediction.equals(team2)) {
-                                        viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
-                                        viewHolder.opacity_team_2.setVisibility(View.GONE);
-                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                    } else if (match_winner.equals(team2) && match_prediction.equals(team1)) {
-                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                                        viewHolder.opacity_team_1.setVisibility(View.GONE);
-                                        viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-                                    } else if (match_prediction.equals("null")) {
-                                        viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
-                                        viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
-                                        if (match_winner.equals(team1)) {
-                                            viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-                                        } else if (match_winner.equals(team2)) {
-                                            viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-
-                    }
-                }
             }
+
+
 
 
             @Override
@@ -331,7 +287,77 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             }
         });
 
-        return "";
+
+
+    }
+
+    public void loadDataWithPrediction (DisplayMatch displayMatch, ViewHolder viewHolder){
+
+        String prediction= displayMatch.getPrediction();
+        String team1 = displayMatch.getTeam1();
+        String team2 = displayMatch.getTeam2();
+        String winner = displayMatch.getWinner();
+
+        Log.d(TAG, "loadDataWithPrediction: ID: "+ displayMatch.getId() +" - region: "+ displayMatch.getRegion() +" teams: "+ displayMatch.getTeam1()  +" vs "+ displayMatch.getTeam2()+" prediction: "+ displayMatch.getPrediction()+" winner: "+ displayMatch.getWinner() );
+
+        Boolean elapsed = matchAlreadyElapsedQuestionMark(displayMatch);
+
+        if (elapsed){
+            //se il match è passato, disabilita la possibilità di selezione
+            viewHolder.image_team_1.setEnabled(false);
+            viewHolder.image_team_2.setEnabled(false);
+
+            //se il match è già passato, allora setta il match winner
+            if (winner.equals(team1)) {
+                viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
+                viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+
+            } else if (winner.equals(team2) ) {
+                viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
+                viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+            }
+        }else {
+            // altrimenti i match si possono ancora scegliere/cambiare
+            viewHolder.image_team_1.setEnabled(true);
+            viewHolder.image_team_2.setEnabled(true);
+        }
+        //setta le prediction dell'utente, dove possibile
+        if (prediction != null) {
+            //se le prediction non sono null, vuol dire che lo user ha fatto la prediction
+            if(prediction.equals(team1)){
+                viewHolder.opacity_team_1.setVisibility(View.INVISIBLE);
+            }else if (prediction.equals(team2)){
+                viewHolder.opacity_team_2.setVisibility(View.INVISIBLE);
+            }
+        }else {
+            //se le prediction, sono null, vuol dire che lo user non ha votato nulla, quindi both dark
+            viewHolder.opacity_team_1.setVisibility(View.VISIBLE);
+            viewHolder.opacity_team_2.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public boolean matchAlreadyElapsedQuestionMark(DisplayMatch matchDays) {
+
+        //Log.d(TAG, "matchAlreadyElapsedQuestionMark: (matchDays.getDatetime(): "+(matchDays.getDatetime()));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date strDate = null;
+            try {
+                strDate = sdf.parse(matchDays.getDatetime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+            // Log.d(TAG, "selectMatchDay: System.currentTimeMillis(): "+System.currentTimeMillis());;
+
+            long matchTimeMillis = strDate.getTime();
+
+            // Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
+            if (System.currentTimeMillis() < matchTimeMillis) {
+                return false;
+            }else {
+                return true;}
+
 
     }
 

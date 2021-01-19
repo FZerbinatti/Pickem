@@ -552,10 +552,11 @@ public class PicksActivity extends AppCompatActivity  {
 
         for (int i =0; i < matchListForThisDay.size(); i++){
 
-            Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2());
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2() );
 
             DisplayMatch displayMatch = new DisplayMatch();
             FullDate fullDate = getFullDateFromUnivDate(matchListForThisDay.get(i).getDatetime());
+            displayMatch.setDatetime(matchListForThisDay.get(i).getDatetime());
             displayMatch.setDate(fullDate.getDate());
             displayMatch.setTime(fullDate.getTime());
             displayMatch.setTeam1(matchListForThisDay.get(i).getTeam1());
@@ -566,6 +567,7 @@ public class PicksActivity extends AppCompatActivity  {
             displayMatch.setRegion(selected_region_name);
             displayMatch.setYear(year);
             displayMatch.setSplit(split);
+            Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
 
             if (displayMatch.getTeam1()== null){}else {
                 displayMatchListSplit.add(displayMatch);

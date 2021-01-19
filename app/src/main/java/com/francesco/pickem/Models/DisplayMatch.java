@@ -2,6 +2,7 @@ package com.francesco.pickem.Models;
 
 public class DisplayMatch {
 
+    private String datetime;
     private String year;
     private String region;
     private String split;
@@ -18,7 +19,9 @@ public class DisplayMatch {
     public DisplayMatch() {
     }
 
-    public DisplayMatch(String year, String region, String split, String id, String date, String time, String team1, String team2, String urlLogoteam1, String urlLogoteam2, String prediction, String winner) {
+
+    public DisplayMatch(String datetime, String year, String region, String split, String id, String date, String time, String team1, String team2, String urlLogoteam1, String urlLogoteam2, String prediction, String winner) {
+        this.datetime = datetime;
         this.year = year;
         this.region = region;
         this.split = split;
@@ -31,6 +34,14 @@ public class DisplayMatch {
         this.urlLogoteam2 = urlLogoteam2;
         this.prediction = prediction;
         this.winner = winner;
+    }
+
+    public String getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(String datetime) {
+        this.datetime = datetime;
     }
 
     public String getYear() {
