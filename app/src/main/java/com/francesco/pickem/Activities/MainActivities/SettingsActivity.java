@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.MainActivities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +14,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +31,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.francesco.pickem.Activities.InfoActivity;
+import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
+import com.francesco.pickem.Activities.Notifications.NotificationRegionActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.Models.SimpleRegion;
@@ -468,6 +470,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 FirebaseAuth.getInstance().signOut();
                                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                                 PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
+                                firebaseAuth.signOut();
                                 startActivity(intent);
                             }
                         });

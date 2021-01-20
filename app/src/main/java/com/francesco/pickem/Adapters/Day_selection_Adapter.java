@@ -1,30 +1,19 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.francesco.pickem.Activities.PicksActivity;
+import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Models.FullDate;
-import com.francesco.pickem.Models.MatchDayDetails;
-import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.R;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class Day_selection_Adapter extends PagerAdapter {
 

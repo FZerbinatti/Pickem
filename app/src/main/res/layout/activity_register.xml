@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.RegisterActivity">
+    tools:context=".Activities.AccountActivities.RegisterActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -204,7 +204,7 @@
                     android:fontFamily="@font/simplex"
                     android:paddingHorizontal="10dp"
 
-                    android:text="Register"
+                    android:text="Sign Up"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="20sp"
@@ -234,7 +234,7 @@
                     android:layout_gravity="center"
                     android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
-
+                    android:indeterminateDrawable="@drawable/custom_progressbar"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

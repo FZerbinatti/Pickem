@@ -15,28 +15,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.InfoActivity"></activity>
-        <activity android:name=".Activities.EloActivity" />
-        <activity android:name=".Activities.NewTrackEloDay" />
-        <activity android:name=".Activities.EloTrackerActivity" />
-        <activity android:name=".Activities.MainActivity" >
+        <activity android:name=".Activities.InfoActivity"/>
+        <activity android:name=".Activities.EloTracker.EloActivity" />
+        <activity android:name=".Activities.EloTracker.NewTrackEloDay" />
+        <activity android:name=".Activities.EloTracker.EloTrackerActivity" />
+        <activity android:name=".Activities.Notifications.NotificationTeamActivity" />
+        <activity android:name=".Activities.Notifications.NotificationRegionActivity" />
+        <activity android:name=".Activities.AccountActivities.ResetPasswordActivity" />
+        <activity android:name=".Activities.MainActivities.StatsActivity" />
+        <activity android:name=".Activities.MainActivities.SettingsActivity" />
+        <activity android:name=".Activities.AccountActivities.RegisterActivity" />
+        <activity android:name=".Activities.AccountActivities.LoginActivity"/>
+        <activity android:name=".Activities.MainActivities.CalendarActivity" />
+        <activity android:name=".Activities.MainActivities.PicksActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.NotificationTeamActivity" />
-        <activity android:name=".Activities.NotificationRegionActivity" />
-        <activity android:name=".Activities.ResetPasswordActivity" />
-        <activity android:name=".Activities.StatsActivity" />
-        <activity android:name=".Activities.SettingsActivity" />
-        <activity android:name=".Activities.RegisterActivity" />
-        <activity android:name=".Activities.LoginActivity">
-
-        </activity>
-        <activity android:name=".Activities.CalendarActivity" />
-        <activity android:name=".Activities.PicksActivity" />
     </application>
 
 </manifest>

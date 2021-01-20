@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.Notifications;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,8 +21,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
 import com.francesco.pickem.Models.RegionNotifications;
-import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

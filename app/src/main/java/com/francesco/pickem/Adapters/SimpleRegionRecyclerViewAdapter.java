@@ -1,11 +1,8 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -14,8 +11,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.francesco.pickem.Activities.NewTrackEloDay;
-import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.Models.SimpleRegion;
 import com.francesco.pickem.R;
 

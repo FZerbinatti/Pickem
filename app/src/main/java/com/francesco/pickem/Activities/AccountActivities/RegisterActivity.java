@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.AccountActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
         collapsable_box_registration = findViewById(R.id.collapsable_box_registration);
         textView_selectRegion = findViewById(R.id.textView_selectRegion);
         context = this;
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         register_scrollview = findViewById(R.id.register_scrollview);
         register_recyclerview_regioni = findViewById(R.id.register_recyclerview_regioni);
 
@@ -125,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 if (dropdown_status == 0){
                     register_progressbar.setVisibility(View.VISIBLE);
-                    textView_selectRegion.setText("Long Clickto select");
+                    textView_selectRegion.setText("Long Click to select");
                     collapsable_box_registration.setVisibility(View.VISIBLE);
                     registration_show_regions.setImageResource(R.drawable.ic_dropup);
                     dropdown_status =1;

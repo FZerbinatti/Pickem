@@ -2,7 +2,9 @@ package com.francesco.pickem.Adapters;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.R;
@@ -93,7 +97,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .placeholder(R.drawable.ic_loading)
                 .error(R.drawable.ic_loading_error);
 
         Log.d(TAG, "onBindViewHolder: region:"+region);
@@ -107,9 +110,13 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             if (team1.equals(" ")){
                 viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
                 viewHolder.image_team_1.setEnabled(false);
-                Glide.with(context)
-                        .load(R.mipmap.ic_tbd).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                Glide
+                        .with(context)
+                        .load(R.mipmap.ic_tbd)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .placeholder(R.drawable.ic_load)
+                        .apply(options)
+                        .into(viewHolder.image_team_1);
 
             }else {
                 reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -118,9 +125,17 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                         String teamImage = dataSnapshot.getValue(String.class);
                         Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
                         if (teamImage!= null){
-                            Glide.with(context)
-                                    .load(teamImage).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                                    .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_1);
+                            Glide
+                                    .with(context)
+                                    .load(teamImage)
+                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                    .transition(DrawableTransitionOptions.withCrossFade(500))
+                                    .apply(options)
+                                    .into(viewHolder.image_team_1);
+
+
+
+
                         }
                     }
 
@@ -135,8 +150,12 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             if (team2.equals(" ")){
                 viewHolder.image_team_2.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
                 viewHolder.image_team_2.setEnabled(false);
-                Glide.with(context).load(R.mipmap.ic_tbd).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                        .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+                Glide
+                        .with(context)
+                        .load(R.mipmap.ic_tbd)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .apply(options)
+                        .into(viewHolder.image_team_2);
 
             }else {
 
@@ -146,8 +165,17 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                         String teamImage = dataSnapshot.getValue(String.class);
                         Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
                         if (teamImage!= null){
-                            Glide.with(context).load(teamImage).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                                    .placeholder(R.drawable.ic_load).apply(options).into(viewHolder.image_team_2);
+
+                                    Glide
+                                            .with(context)
+                                            .load(teamImage)
+                                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                            .apply(options)
+                                            .transition(DrawableTransitionOptions.withCrossFade(500))
+                                            .dontAnimate()
+                                            .into(viewHolder.image_team_2);
+
+
                         }
                     }
 

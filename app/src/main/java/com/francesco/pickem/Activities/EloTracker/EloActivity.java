@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.EloTracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 

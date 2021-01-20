@@ -1,9 +1,7 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.MainActivities;
 
-import androidx.annotation.LongDef;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
@@ -12,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -30,6 +27,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
 import com.francesco.pickem.Adapters.Day_selection_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
@@ -40,6 +38,7 @@ import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -92,6 +91,7 @@ public class PicksActivity extends AppCompatActivity  {
         no_match_found= findViewById(R.id.no_match_found);
         viewPager_match_day = findViewById(R.id.viewPager_match_day);
 
+        isUserAlreadyLogged();
         selected_region_name ="";
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
@@ -105,6 +105,14 @@ public class PicksActivity extends AppCompatActivity  {
         downloadSelectedRegions();
 
 
+    }
+
+    private void isUserAlreadyLogged() {
+        if ( !PreferencesData.getUserLoggedInStatus(this) ){
+            Intent intent = new Intent(PicksActivity.this, LoginActivity.class);
+            pick_progressbar.setVisibility(View.GONE);
+            startActivity(intent);
+        }
     }
 
     private void downloadSelectedRegions() {
@@ -188,41 +196,7 @@ public class PicksActivity extends AppCompatActivity  {
 
     }
 
-    private void getUserRegionsDetails(ArrayList<String> userSelectedRegions){
-        //Log.d(TAG, "checkpoint1: "+userSelectedRegions.size());
-        ArrayList<RegionDetails> displayRegions = new ArrayList<>();
 
-        for (int i=0; i<userSelectedRegions.size(); i++){
-            // per ogni nome nella lista, prendi l'oggetto corrispondente in /Regions
-            //Log.d(TAG, "onDataChange: SEARCHING FOR THIS REGION IN REGIONS: "+ userSelectedRegions.get(i));
-            DatabaseReference referenceRegions = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions))
-                    .child(userSelectedRegions.get(i));
-
-            referenceRegions.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                    RegionDetails regionDetails = dataSnapshot.getValue(RegionDetails.class);
-                    if (regionDetails!=null){
-                        displayRegions.add(regionDetails);
-                    }
-
-
-
-                }
-                @Override
-                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-                }
-
-            });
-
-        }
-
-        loadViewPagerRegions(displayRegions);
-        pick_progressbar.setVisibility(View.GONE);
-
-
-    }
 
     public void loadViewPagerRegions(ArrayList<RegionDetails> userSelectedRegions){
 
@@ -581,7 +555,11 @@ public class PicksActivity extends AppCompatActivity  {
         adapterRecycler = new RecyclerView_Picks_Adapter(this, displayMatchListSplit);
         adapterRecycler.notifyDataSetChanged();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
+/*        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }*/
         recyclerView.setAdapter(adapterRecycler);
 
         pick_progressbar_matches.setVisibility(View.GONE);

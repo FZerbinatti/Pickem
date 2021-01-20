@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.AccountActivities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,12 +21,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 
 public class LoginActivity extends AppCompatActivity {
     Button login_button;
-    TextView go_to_registration;
+    TextView go_to_registration, forgot_password;
     EditText login_email, login_password;
     ProgressBar login_progressbar;
     private StorageReference storageReference;
@@ -44,11 +43,20 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         login_button = findViewById(R.id.button_login);
         go_to_registration = findViewById(R.id.go_to_registration);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        forgot_password = findViewById(R.id.forgot_password);
+
         login_email = findViewById(R.id.login_email);
         login_password = findViewById(R.id.login_password);
         login_progressbar = findViewById(R.id.login_progressbar);
         mAuth = FirebaseAuth.getInstance();
+
+        forgot_password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -72,17 +80,18 @@ public class LoginActivity extends AppCompatActivity {
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful() && firebaseUser.isEmailVerified()){
+                            if (task.isSuccessful() && (firebaseUser != null && (firebaseUser).isEmailVerified())){
 
                                    login_progressbar.setVisibility(View.GONE);
                                    PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
                                    Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
+                                   PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
                                    startActivity(intent);
 
 
                                 
                             }else {
-                                Toast.makeText(LoginActivity.this, "Login Error, Have you verified your email?", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Login Error, Have you verified your email? If so, Try again", Toast.LENGTH_SHORT).show();
                                 login_progressbar.setVisibility(View.GONE);
                             }
                         }

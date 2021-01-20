@@ -1,11 +1,12 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.EloTracker;
 
-import androidx.annotation.ColorInt;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,24 +19,22 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.francesco.pickem.Activities.MainActivities.CalendarActivity;
+import com.francesco.pickem.Activities.MainActivities.PicksActivity;
+import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
+import com.francesco.pickem.Activities.MainActivities.StatsActivity;
 import com.francesco.pickem.Adapters.EloTrackerRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
-import com.francesco.pickem.Models.Elo;
 import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
@@ -52,8 +51,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
 public class EloTrackerActivity extends AppCompatActivity  implements OnChartGestureListener, OnChartValueSelectedListener {
 
@@ -72,6 +69,8 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
     LineChart mChart;
     ArrayList<EloTracker> elotracker_list;
     EloActivity eloActivity;
+    String year;
+    Calendar calendar;
 
 
     @Override
@@ -86,6 +85,8 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
         elotrack_progressbar.setVisibility(View.VISIBLE);
         mChart = findViewById(R.id.chart1);
         eloActivity = new EloActivity();
+        calendar = Calendar.getInstance();
+        year = String.valueOf(calendar.get(Calendar.YEAR));
 
         setupBottomNavView();
         loadFirebaseDataEloTracker();
@@ -169,15 +170,59 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
         recycler_eloTracker.addOnItemTouchListener(
                 new RecyclerItemClickListener(context, recycler_eloTracker , new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        // do whatever
+                        Intent intent= new Intent(EloTrackerActivity.this, NewTrackEloDay.class);
+
+                        intent.putExtra((getResources().getString(R.string.elotracker_id)), eloTrackerArrayList.get(position).getID());
+                        intent.putExtra((getResources().getString(R.string.elotracker_date)),eloTrackerArrayList.get(position).getDate() );
+                        intent.putExtra((getResources().getString(R.string.elotracker_wins)),eloTrackerArrayList.get(position).getWins().toString() );
+                        intent.putExtra((getResources().getString(R.string.elotracker_losses)),eloTrackerArrayList.get(position).getLosses().toString() );
+                        intent.putExtra((getResources().getString(R.string.elotracker_elo)),eloTrackerArrayList.get(position).getElo() );
+                        intent.putExtra((getResources().getString(R.string.elotracker_lps)),eloTrackerArrayList.get(position).getLps().toString() );
+
+
+
+
+
+                        startActivity(intent);
 
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
-                        // do whatever
+
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setMessage("Are you sure to delete this record?");
+                        builder.setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which)
+                                    {
+                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(getString(R.string.firebase_users_elotracker))
+                                                .child(year)
+                                                .child(elotracker_list.get(position).getDate());
+
+
+                                        Log.d(TAG, "onClick: ID:"+elotracker_list.get(position).getDate());
+                                        reference.removeValue();
+                                        //loadFirebaseDataEloTracker();
+                                        Intent intent= new Intent(EloTrackerActivity.this, EloTrackerActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                        final AlertDialog dialog = builder.create();
+                        dialog.show();
+
+
+
+
                     }
                 })
         );
+
+
 
        // loadGraph(eloTrackerArrayList);
 
@@ -192,6 +237,8 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(EloTrackerActivity.this, NewTrackEloDay.class);
+                Log.d(TAG, "onClick: elotracker_list.get(elotracker_list.size()-1).getElo(): "+elotracker_list.get(elotracker_list.size()-1).getElo());
+                intent.putExtra("EX_ELO", elotracker_list.get(elotracker_list.size()-1).getElo());
                 startActivity(intent);
             }
         });

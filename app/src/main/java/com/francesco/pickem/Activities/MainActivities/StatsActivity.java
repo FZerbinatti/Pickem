@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.MainActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.francesco.pickem.Activities.EloTracker.EloTrackerActivity;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

@@ -5,28 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_darker"
-    tools:context=".Activities.StatsActivity">
+    tools:context=".Activities.MainActivities.StatsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginBottom="20sp"
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
+            android:id="@+id/button_manual_elo_tracking"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button_manual_elo_tracking"
             android:background="@drawable/buttons_background_blue_stroke"
             android:backgroundTint="@color/blue_light_opaque"
             android:backgroundTintMode="add"
+            android:fontFamily="@font/classicroman"
             android:paddingHorizontal="25dp"
             android:paddingVertical="20dp"
-            android:fontFamily="@font/classicroman"
+            android:text="LoL Elo tracking"
             android:textSize="16sp"
-            android:text="LoL Manual Elo tracking"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
