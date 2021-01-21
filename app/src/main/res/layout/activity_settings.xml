@@ -444,7 +444,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/simplex"
                             android:gravity="center_horizontal"
-                            android:text="Show Notification for:"
+                            android:text="Select a Region:"
                             android:textColor="@color/blue_light"
                             android:textSize="20sp"
                             app:layout_constraintBottom_toBottomOf="parent"

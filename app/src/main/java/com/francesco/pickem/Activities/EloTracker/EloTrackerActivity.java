@@ -179,10 +179,6 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
                         intent.putExtra((getResources().getString(R.string.elotracker_elo)),eloTrackerArrayList.get(position).getElo() );
                         intent.putExtra((getResources().getString(R.string.elotracker_lps)),eloTrackerArrayList.get(position).getLps().toString() );
 
-
-
-
-
                         startActivity(intent);
 
                     }

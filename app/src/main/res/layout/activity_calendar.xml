@@ -14,7 +14,7 @@
         android:layout_marginHorizontal="40dp"
         android:background="@drawable/square_round_corners"
         android:fontFamily="@font/classicroman"
-        android:text="Current under construction"
+        android:text="Coming Soon"
         android:paddingVertical="10dp"
         android:selectAllOnFocus="true"
         android:textAlignment="center"

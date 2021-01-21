@@ -2,9 +2,7 @@ package com.francesco.pickem.Adapters;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +17,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.francesco.pickem.Interfaces.RecyclerViewClickListener;
 import com.francesco.pickem.Models.DisplayMatch;
-import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -78,13 +74,11 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String match_prediction = displayMatchDetailsList.get(i).getPrediction();
         String match_winner = displayMatchDetailsList.get(i).getWinner();
         String region = displayMatchDetailsList.get(i).getRegion();
-        String split = displayMatchDetailsList.get(i).getSplit();
         String year = displayMatchDetailsList.get(i).getYear();
         String dateTime = displayMatchDetailsList.get(i).getDatetime();
 
         Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
 
-        thisMatch.setSplit(split);
         thisMatch.setYear(year);
         thisMatch.setRegion(region);
         thisMatch.setId(match_ID);
@@ -279,7 +273,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child("UserPicks")
                 .child(displayMatch.getRegion())
                 .child(displayMatch.getYear())
-                .child(displayMatch.getSplit())
                 .child(displayMatch.getId())
                 .setValue(displayMatch.getPrediction());
 
@@ -296,7 +289,6 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child("UserPicks")
                 .child(displayMatch.getRegion())
                 .child(displayMatch.getYear())
-                .child(displayMatch.getSplit())
                 .child(displayMatch.getId());
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -49,6 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class PicksActivity extends AppCompatActivity  {
@@ -74,11 +77,12 @@ public class PicksActivity extends AppCompatActivity  {
     ArrayList <RegionDetails> allRegionsDetails;
     RecyclerView recyclerView;
     FullDate day_selected_fullDay;
-    String split;
     Calendar myCalendar;
     String year;
     String logo_URL;
     TextView no_match_found;
+    ArrayList <String> list_of_splits;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,12 +95,13 @@ public class PicksActivity extends AppCompatActivity  {
         no_match_found= findViewById(R.id.no_match_found);
         viewPager_match_day = findViewById(R.id.viewPager_match_day);
 
+
         isUserAlreadyLogged();
         selected_region_name ="";
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
-        split = "S1";
+
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         changeNavBarColor();
@@ -106,6 +111,7 @@ public class PicksActivity extends AppCompatActivity  {
 
 
     }
+
 
     private void isUserAlreadyLogged() {
         if ( !PreferencesData.getUserLoggedInStatus(this) ){
@@ -196,8 +202,6 @@ public class PicksActivity extends AppCompatActivity  {
 
     }
 
-
-
     public void loadViewPagerRegions(ArrayList<RegionDetails> userSelectedRegions){
 
         adapterRegions = new Region_selection_Adapter(userSelectedRegions, PicksActivity.this);
@@ -225,9 +229,11 @@ public class PicksActivity extends AppCompatActivity  {
 
             @Override
             public void onPageSelected(int position) {
+
                 selected_region_name = userSelectedRegions.get(position).getName();
-                //Log.d(TAG, "onPageSelected:selected_region_name: "+selected_region_name);
+
                 loadSplitMatchesForThisRegion(selected_region_name);
+
 
 
 
@@ -249,6 +255,7 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     public void loadSplitMatchesForThisRegion(String selected_region){
+        Log.d(TAG, "loadSplitMatchesForThisRegion: ");
 
         //Log.d(TAG, "ADESSO STO CERCANDO DELLE GIORNATE PER LA REGIONE SELEZIONATA: "+selected_region);
         String firebase_section = getString(R.string.firebase_Matches);
@@ -259,8 +266,7 @@ public class PicksActivity extends AppCompatActivity  {
         //Log.d(TAG, "loadSplitMatchesForThisRegion: path: "+ firebase_section +"/"+ selected_region +"/"+ selected_region + year +"/"+selected_region + year+split);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(firebase_section)
                 .child(selected_region)
-                .child(selected_region + year)
-                .child(selected_region + year+split);
+                .child(selected_region + year);
 
 
 
@@ -453,11 +459,9 @@ public class PicksActivity extends AppCompatActivity  {
 
 
         for (int i =0; i < loadThisMatchesID.size(); i++){
-
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
                     .child(selected_region_name)
                     .child(selected_region_name + year)
-                    .child(selected_region_name + year + split)
                     .child(loadThisMatchesID.get(i));
 
             //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year + split+"/"+loadThisMatchesID.get(i));
@@ -479,6 +483,7 @@ public class PicksActivity extends AppCompatActivity  {
                         }
 
                     }
+
                 }
 
                 @Override
@@ -525,7 +530,6 @@ public class PicksActivity extends AppCompatActivity  {
         for (int i =0; i < matchListForThisDay.size(); i++){
 
             //Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2() );
-
             DisplayMatch displayMatch = new DisplayMatch();
             FullDate fullDate = getFullDateFromUnivDate(matchListForThisDay.get(i).getDatetime());
             displayMatch.setDatetime(matchListForThisDay.get(i).getDatetime());
@@ -537,8 +541,7 @@ public class PicksActivity extends AppCompatActivity  {
             displayMatch.setWinner(matchListForThisDay.get(i).getWinner());
             displayMatch.setPrediction("null");
             displayMatch.setRegion(selected_region_name);
-            displayMatch.setYear(year);
-            displayMatch.setSplit(split);
+            displayMatch.setYear(selected_region_name+year);
             //Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
 
             if (displayMatch.getTeam1()== null){}else {
@@ -575,8 +578,12 @@ public class PicksActivity extends AppCompatActivity  {
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
             Date strDate = null;
+            String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            Date todays_date= null;
+
             try {
                 strDate = sdf.parse(matchDays.get(i).getDate());
+                todays_date = sdf.parse(date);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -585,9 +592,12 @@ public class PicksActivity extends AppCompatActivity  {
             // Log.d(TAG, "selectMatchDay: System.currentTimeMillis(): "+System.currentTimeMillis());;
 
             long matchTimeMillis = strDate.getTime();
+            long todays_date_millis = todays_date.getTime();
 
-           // Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
-            if (System.currentTimeMillis() <= matchTimeMillis) {
+            Log.d(TAG, "selectMatchDay: todays_date_millis:"+todays_date_millis);
+            Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
+
+            if (todays_date_millis <= matchTimeMillis) {
                 itemPosition = i;
                 //Log.d(TAG, "selectMatchDay: itemPosition"+itemPosition);
                 if (itemPosition <0){return 0;}else{return itemPosition;}

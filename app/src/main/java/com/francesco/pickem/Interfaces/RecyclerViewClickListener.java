@@ -1,4 +1,4 @@
-package com.francesco.pickem.Adapters;
+package com.francesco.pickem.Interfaces;
 
 import android.view.View;
 

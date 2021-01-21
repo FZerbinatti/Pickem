@@ -5,7 +5,7 @@ public class DisplayMatch {
     private String datetime;
     private String year;
     private String region;
-    private String split;
+
     private String id;
     private String date;
     private String time;
@@ -20,11 +20,10 @@ public class DisplayMatch {
     }
 
 
-    public DisplayMatch(String datetime, String year, String region, String split, String id, String date, String time, String team1, String team2, String urlLogoteam1, String urlLogoteam2, String prediction, String winner) {
+    public DisplayMatch(String datetime, String year, String region, String id, String date, String time, String team1, String team2, String urlLogoteam1, String urlLogoteam2, String prediction, String winner) {
         this.datetime = datetime;
         this.year = year;
         this.region = region;
-        this.split = split;
         this.id = id;
         this.date = date;
         this.time = time;
@@ -50,14 +49,6 @@ public class DisplayMatch {
 
     public void setYear(String year) {
         this.year = year;
-    }
-
-    public String getSplit() {
-        return split;
-    }
-
-    public void setSplit(String split) {
-        this.split = split;
     }
 
     public String getRegion() {
