@@ -80,13 +80,16 @@ public class SettingsActivity extends AppCompatActivity {
     RegionNotifications setnot_object;
     ProgressBar settings_progressbar;
     EditText edittext_emailaddress;
-    ArrayList <String> UserChoosenRegionsfromDB;
+    ArrayList <String> userChoosenRegionsfromDB;
     ArrayList<String> servers ;
     ArrayList<SimpleRegion> user_choosen_regions;
     ArrayList<SimpleRegion> full_list_withUserChoiche;
     ArrayList<String> finalRegions;
     SimpleRegionRecyclerViewAdapter adapter;
     ArrayList<String> choosen_regions;
+    ArrayList<String> old_choosen_regions;
+    ArrayList<String> new_choosen_regions;
+
     ImageView info;
 
     @Override
@@ -107,7 +110,7 @@ public class SettingsActivity extends AppCompatActivity {
         parentScrollListener = findViewById(R.id.parentScrollListener);
         info = findViewById(R.id.info_button);
 
-        UserChoosenRegionsfromDB = new ArrayList<>();
+        userChoosenRegionsfromDB = new ArrayList<>();
 
         edittext_emailaddress.setFocusable(false);
         edittext_emailaddress.setTextColor(Color.GRAY);
@@ -271,6 +274,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void loadFirebaseData() {
+        old_choosen_regions = new ArrayList<>();
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -303,11 +307,12 @@ public class SettingsActivity extends AppCompatActivity {
 
                             edittext_emailaddress.setText(database_email);
 
-                            UserChoosenRegionsfromDB = userProfile.getChoosen_regions();
+                            userChoosenRegionsfromDB = userProfile.getChoosen_regions();
+                            old_choosen_regions = userChoosenRegionsfromDB;
                             //per ogni regione esistente
                             for (int i=0; i<all_databaseRegions.size(); i++){
                                 //se tutte le regioni contiene la regione scelta dall'utente
-                                if (UserChoosenRegionsfromDB.contains(all_databaseRegions.get(i))){
+                                if (userChoosenRegionsfromDB.contains(all_databaseRegions.get(i))){
                                     full_list_withUserChoiche.add(new SimpleRegion(all_databaseRegions.get(i), true));
                                 }else {
                                     full_list_withUserChoiche.add(new SimpleRegion(all_databaseRegions.get(i), false));
@@ -315,7 +320,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
                             }
-                            loadListviewChooseRegions(full_list_withUserChoiche, UserChoosenRegionsfromDB );
+                            loadListviewChooseRegions(full_list_withUserChoiche, userChoosenRegionsfromDB);
 
                         }
 
@@ -350,15 +355,37 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 settings_progressbar.setVisibility(View.VISIBLE);
-
+                new_choosen_regions = new ArrayList<>();
                 choosen_regions = new ArrayList<>();
 
                 choosen_regions = finalRegions;
+                new_choosen_regions = choosen_regions;
+
+
+
 
                 if (choosen_regions.isEmpty()) {
                     Toast.makeText(SettingsActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                     settings_progressbar.setVisibility(View.INVISIBLE);
                 }else {
+                    
+                    for (int i=0; i< old_choosen_regions.size(); i++){
+                        if (choosen_regions.contains(old_choosen_regions.get(i))){
+                            old_choosen_regions.remove(old_choosen_regions.get(i));
+                        }
+                    }removeNotificationNoChoosenMatchForThisRegion(old_choosen_regions);
+
+                    //LEC LCK LCS
+                    //LEC LPL
+
+                    for (int i=0; i< new_choosen_regions.size(); i++){
+                        if (old_choosen_regions.contains(new_choosen_regions.get(i))){
+                            new_choosen_regions.remove(new_choosen_regions.get(i));
+                        }
+                    }addNotificationNoChoosenMatchForThisRegion(new_choosen_regions);
+
+
+                    
                     UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", choosen_regions, "");
                     //updateFirebaseRegionNotifications(userGeneralities);
                     //updateFirebaseRegionNotifications(userGeneralities);
@@ -380,6 +407,45 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void removeNotificationNoChoosenMatchForThisRegion(ArrayList<String> old_choosen_regions) {
+
+        for (int i=0; i<old_choosen_regions.size();i++){
+
+            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(getString(R.string.firebase_user_notification))
+                    .child(getString(R.string.firebase_user_notification_region))
+                    .child(old_choosen_regions.get(i))
+                    .child(getString(R.string.notification_no_choice_made))
+                    .setValue(0);
+        }
+
+
+
+    }
+
+    private void addNotificationNoChoosenMatchForThisRegion(ArrayList<String> new_choosen_regions) {
+
+        for (int i=0; i<new_choosen_regions.size();i++){
+
+            RegionNotifications regionNotifications = new RegionNotifications();
+            regionNotifications.setNo_choice_made(1);
+            regionNotifications.setNotification_first_match_otd(0);
+            regionNotifications.setNotification_morning_reminder(0);
+            regionNotifications.setRegion_name(new_choosen_regions.get(i));
+
+            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(getString(R.string.firebase_user_notification))
+                    .child(getString(R.string.firebase_user_notification_region))
+                    .child(new_choosen_regions.get(i))
+                    .setValue(regionNotifications);
+        }
+
+
 
     }
 
@@ -449,6 +515,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if (switch_user_settings.isChecked()){
                     Log.d(TAG, "onCreate: ON");
                     show_user_box.setVisibility(View.VISIBLE);
+                    Toast.makeText(context, "Long Press to select / deselect ", Toast.LENGTH_SHORT).show();
                     loadFirebaseData();
                 }else {
                     Log.d(TAG, "onCreate: OFF");
@@ -463,7 +530,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 AlertDialog alertDialog = new AlertDialog.Builder(SettingsActivity.this).create();
                 alertDialog.setTitle("Logout");
-                alertDialog.setMessage("Do you want to perform the Logout");
+                alertDialog.setMessage("Do you want to Logout?");
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {

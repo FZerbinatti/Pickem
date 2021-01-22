@@ -186,12 +186,6 @@ public class NotificationTeamActivity extends AppCompatActivity {
 
     }
 
-
-
-
-
-
-
     private void saveButton() {
 
         save_button.setOnClickListener(new View.OnClickListener() {
@@ -201,7 +195,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
                 DatabaseReference notificationTeamReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(getString(R.string.firebase_user_notification))
-                        .child(getString(R.string.firebase_user_notification_region))
+                        .child(getString(R.string.firebase_teams))
                         .child(regionSelectedExtra)
                         .child(teamSelectedExtra);
 
@@ -221,6 +215,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
                 Intent intent = new Intent(NotificationTeamActivity.this, NotificationRegionActivity.class);
                 intent.putExtra(REGION_SELECTED, regionSelectedExtra);
                 startActivity( intent);
+                finish();
 
 
             }
@@ -233,7 +228,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
         DatabaseReference notificationTeamReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(getString(R.string.firebase_user_notification))
-                .child(getString(R.string.firebase_user_notification_region))
+                .child(getString(R.string.firebase_teams))
                 .child(regionSelected)
                 .child(teamSelected);
 

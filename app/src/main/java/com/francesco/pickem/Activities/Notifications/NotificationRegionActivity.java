@@ -268,6 +268,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
                 intent.putExtra(TEAM_SELECTED, stringTeamSelected);
                 intent.putExtra(REGION_SELECTED, regionSelectedExtra);
                 startActivity(intent);
+                finish();
 
             }
         });

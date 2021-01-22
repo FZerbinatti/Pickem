@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class RegionNotifications {
 
+
     Integer no_choice_made;
     Integer notification_first_match_otd;
     Integer notification_morning_reminder;

@@ -141,5 +141,11 @@
     <string name="elotracker_elo">elotracker_elo</string>
     <string name="elotracker_lps">elotracker_lps</string>
 
+    //Notification Stuff
+    <string name="channel_pickem">Chennel Pickem</string>
+    <string name="channel_description">Pickem Notification Channel</string>
+    <string name="channel_name">pickem_channel</string>
+
+
 
 </resources>

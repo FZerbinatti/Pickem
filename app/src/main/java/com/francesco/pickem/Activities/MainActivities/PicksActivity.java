@@ -6,6 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -39,6 +42,7 @@ import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
+import com.francesco.pickem.NotificationsService.SetNotificationFor24Hours;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -82,6 +86,7 @@ public class PicksActivity extends AppCompatActivity  {
     String logo_URL;
     TextView no_match_found;
     ArrayList <String> list_of_splits;
+    SetNotificationFor24Hours setNotificationFor24Hours;
 
 
     @Override
@@ -108,6 +113,22 @@ public class PicksActivity extends AppCompatActivity  {
         setupBottomNavView();
 
         downloadSelectedRegions();
+        ComponentName componentName = new ComponentName(this, SetNotificationFor24Hours.class);
+        JobInfo info = new JobInfo.Builder(001, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic( 24* 60 * 60 * 1000)
+                .build();
+        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode =  scheduler.schedule(info);
+        if (resultCode == JobScheduler.RESULT_SUCCESS){
+            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
+        }else {
+            Log.d(TAG, "onCreate: DIO PORCO");
+        }
+
+
+
 
 
     }
@@ -273,6 +294,7 @@ public class PicksActivity extends AppCompatActivity  {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
                     // prendi tutti i giorni disponibili per quell'anno per quella regione per quello split
