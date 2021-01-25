@@ -31,9 +31,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
-import com.francesco.pickem.Activities.InfoActivity;
+import com.francesco.pickem.Activities.SettingsActivities.InfoActivity;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
-import com.francesco.pickem.Activities.Notifications.NotificationRegionActivity;
+import com.francesco.pickem.Activities.SettingsActivities.NotificationRegionActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.Models.SimpleRegion;
@@ -235,22 +235,36 @@ public class SettingsActivity extends AppCompatActivity {
 
                     @Override public void onLongItemClick(View view, int position) {
                         Log.d(TAG, "onLongItemClick: ");
-                        // do whatever
+                        finalRegions= new ArrayList<>();
+
                         if (all_regions.get(position).getChecked()){
                             all_regions.get(position).setChecked(false);
                             adapter.notifyDataSetChanged();
                             //Log.d(TAG, "onLongItemClick: false");
-                            if (finalRegions.contains(all_regions.get(position).getName())){
+/*                            if (finalRegions.contains(all_regions.get(position).getName())){
                                 finalRegions.remove(all_regions.get(position).getName());
-                            }
-                        }else {
+                                Log.d(TAG, "onLongItemClick: rimuovo: "+all_regions.get(position).getName());
+                            }*/
+                        } else {
                             all_regions.get(position).setChecked(true);
                             //Log.d(TAG, "onLongItemClick: true");
                             adapter.notifyDataSetChanged();
-                            finalRegions.add(all_regions.get(position).getName());
+/*
+                            if (!finalRegions.contains(all_regions.get(position).getName())){
+                                finalRegions.add(all_regions.get(position).getName());
+                                Log.d(TAG, "onLongItemClick: aggiungo: "+all_regions.get(position).getName());
+                            }
+*/
+
                         }
 
-                        Log.d(TAG, "onLongItemClick: "+all_regions.get(position).getName()+":"+all_regions.get(position).getChecked());
+                        //Log.d(TAG, "onLongItemClick: "+all_regions.get(position).getName()+":"+all_regions.get(position).getChecked());
+                        for(int i=0;i<all_regions.size();i++){
+                            if(all_regions.get(i).getChecked()){
+                                finalRegions.add(all_regions.get(i).getName());
+                                Log.d(TAG, "onLongItemClick: final regions: "+all_regions.get(i).getName());
+                            }
+                        }
 
 
                     }
@@ -357,9 +371,16 @@ public class SettingsActivity extends AppCompatActivity {
                 settings_progressbar.setVisibility(View.VISIBLE);
                 new_choosen_regions = new ArrayList<>();
                 choosen_regions = new ArrayList<>();
+                Log.d(TAG, "onClick: 1+++++++++++++++++++++++++++++++"+finalRegions.size());
+                for (int i=0; i< finalRegions.size(); i++){
+                    Log.d(TAG, "/////////////////////////////////////////////////////////////: "+finalRegions.get(i));
+                }
+
 
                 choosen_regions = finalRegions;
                 new_choosen_regions = choosen_regions;
+
+
 
 
 
@@ -368,7 +389,10 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(SettingsActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                     settings_progressbar.setVisibility(View.INVISIBLE);
                 }else {
-                    
+                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", finalRegions, "");
+                    updateUserGeneralities(userGeneralities);
+
+
                     for (int i=0; i< old_choosen_regions.size(); i++){
                         if (choosen_regions.contains(old_choosen_regions.get(i))){
                             old_choosen_regions.remove(old_choosen_regions.get(i));
@@ -377,21 +401,14 @@ public class SettingsActivity extends AppCompatActivity {
 
                     //LEC LCK LCS
                     //LEC LPL
-
                     for (int i=0; i< new_choosen_regions.size(); i++){
                         if (old_choosen_regions.contains(new_choosen_regions.get(i))){
                             new_choosen_regions.remove(new_choosen_regions.get(i));
                         }
-                    }addNotificationNoChoosenMatchForThisRegion(new_choosen_regions);
+                    }
+                    addNotificationNoChoosenMatchForThisRegion(new_choosen_regions);
 
 
-                    
-                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", choosen_regions, "");
-                    //updateFirebaseRegionNotifications(userGeneralities);
-                    //updateFirebaseRegionNotifications(userGeneralities);
-                    updateUserGeneralities(userGeneralities);
-/*                    show_user_box.setVisibility(View.GONE);
-                    switch_user_settings.setChecked(false);*/
                     Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
                     settings_progressbar.setVisibility(View.INVISIBLE);
                     Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);

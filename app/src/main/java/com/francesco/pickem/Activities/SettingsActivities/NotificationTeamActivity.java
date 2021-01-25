@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities.Notifications;
+package com.francesco.pickem.Activities.SettingsActivities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

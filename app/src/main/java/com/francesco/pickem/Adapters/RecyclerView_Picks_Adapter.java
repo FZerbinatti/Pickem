@@ -273,7 +273,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child("UserPicks")
                 .child(displayMatch.getRegion())
                 .child(displayMatch.getYear())
-                .child(displayMatch.getId())
+                .child(displayMatch.getDatetime())
                 .setValue(displayMatch.getPrediction());
 
     }
@@ -289,7 +289,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child("UserPicks")
                 .child(displayMatch.getRegion())
                 .child(displayMatch.getYear())
-                .child(displayMatch.getId());
+                .child(displayMatch.getDatetime());
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

@@ -42,6 +42,7 @@ import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
+import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.NotificationsService.SetNotificationFor24Hours;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
@@ -135,10 +136,16 @@ public class PicksActivity extends AppCompatActivity  {
 
 
     private void isUserAlreadyLogged() {
-        if ( !PreferencesData.getUserLoggedInStatus(this) ){
+        Log.d(TAG, "isUserAlreadyLogged: ");
+
+        
+        //PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
+        Log.d(TAG, "isUserAlreadyLogged: "+PreferencesData.getUserLoggedInStatus(this));
+        if ( !PreferencesData.getUserLoggedInStatus(this)    ){
             Intent intent = new Intent(PicksActivity.this, LoginActivity.class);
             pick_progressbar.setVisibility(View.GONE);
             startActivity(intent);
+
         }
     }
 
@@ -319,6 +326,7 @@ public class PicksActivity extends AppCompatActivity  {
                     for (int i=0; i<allFullDates.size();i++){
                         Log.d(TAG, "onDataChange: ID: "+allFullDates.get(i).getId()+" date: "+ allFullDates.get(i).getLocalDateTime());
                     }*/
+                    createUserPicksForThisRegionIfNotExist(allFullDates, selected_region);
                     loadViewPagerMatchDays( filterFullDates(allFullDates), allFullDates, selected_region);
                 }
 
@@ -331,6 +339,42 @@ public class PicksActivity extends AppCompatActivity  {
 
             }
         });
+
+    }
+
+    private void createUserPicksForThisRegionIfNotExist(ArrayList<FullDate> allFullDates, String selected_region) {
+
+        for (int i=0; i<allFullDates.size();i++){
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getResources().getString(R.string.firebase_users_picks))
+                .child(selected_region)
+                .child(selected_region+year)
+                .child(allFullDates.get(i).getId());
+
+
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                    String user_pick = snapshot.getValue(String.class);
+                    if (user_pick == null){
+                        reference.setValue("unpicked");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+                }
+            });
+
+
+
+        }
+
+
 
     }
 

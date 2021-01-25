@@ -35,6 +35,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 
+import com.francesco.pickem.Activities.MainActivities.PicksActivity;
+import com.francesco.pickem.R;
+
 import java.util.Random;
 
 public class AlarmReceiver extends BroadcastReceiver{
@@ -51,87 +54,25 @@ public class AlarmReceiver extends BroadcastReceiver{
 
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
-            String nome_medicina = intent.getStringExtra("nome");
-            String dose_medicina = intent.getStringExtra("dose");
-            String descrizione_medicina =  intent.getStringExtra("descr");
-            String ora_medicina = intent.getStringExtra("ora");
-            String giorno_medicina = intent.getStringExtra("giorno");
-            Integer med_presa = intent.getIntExtra("presa",-1);
-            Integer alarmSet = intent.getIntExtra("alarmSet",-1);
-
-/*            String id = intent.getStringExtra("id");
-            Log.d(TAG, "onReceive: 000000000000000000000000000000000000000000000000000000000000000000000000000000000");
-            Log.d(TAG, "onReceive: id: "+id);
-            Log.d(TAG, "onReceive: alarmSet: "+alarmSet);
-            Log.d(TAG, "onReceive: presa: "+med_presa);
-            Log.d(TAG, "onReceive: ora: "+ora_medicina);
-            DrugMed sampleDrug = new DrugMed();
-            sampleDrug.setgDiPartenza(giorno_medicina);
-            sampleDrug.setOra(ora_medicina);
-
-
-
-            if (med_presa ==-1 && ss.isThisDrugAmmissible(sampleDrug)){
-                Log.d(TAG, "onReceive: YES ");
-                Log.d(TAG, "onReceive: "+sampleDrug.getgDiPartenza());
-                Log.d(TAG, "onReceive: "+sampleDrug.getOra());
-
-
-
-        *//*            Intent i = new Intent(context, ModalDrugDialog.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    i.putExtra("id", id );
-                    i.putExtra("ora", intent.getStringExtra("ora"));
-                    i.putExtra("nome", nome_medicina);
-                    i.putExtra("dose", dose_medicina);
-                    i.putExtra("descr",descrizione_medicina);*//*
-
-                //intent per andare a TabletMod quando si fa tap sulla notifica
-                Intent resultIntent = new Intent(context, TabletMod.class);
-                PendingIntent goToTabletModClassIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                // intent per mandare al server la notifica che la medicina è stata presa e contrassegnata come tale presa==1
-                Intent broadcastMedTakenIntent = new Intent(context, Broadcastreceiver_FromNotification.class);
-                broadcastMedTakenIntent.setAction("DRUG_TAKEN");
-                broadcastMedTakenIntent.putExtra("ID",id);
-                broadcastMedTakenIntent.putExtra("NOTIFICATION_ID",notificationID);
-                PendingIntent medTakenPendingIntent = PendingIntent.getBroadcast(context, 0, broadcastMedTakenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                // intent per rimandare la notifica di 10m
-                *//*Intent broadcastPosticipateMed = new Intent(context, Broadcastreceiver_FromNotification.class);
-                broadcastPosticipateMed.setAction("REMIND_LATER");
-                PendingIntent posticipateMedPendingIntent = PendingIntent.getBroadcast(context, 0, broadcastPosticipateMed, PendingIntent.FLAG_UPDATE_CURRENT);*//*
-
+                //intent per andare a PicksActivity quando si fa tap sulla notifica
+                Intent resultIntent = new Intent(context, PicksActivity.class);
+                PendingIntent goToPickem = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
-                        .setSmallIcon(R.drawable.logo_rhs)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
 
-                        .setContentTitle("Reminder Medicina")
-                        .setStyle(new NotificationCompat.InboxStyle()
-                                .addLine(context.getString(R.string.notif_nome) + nome_medicina)
-                                .addLine(context.getString(R.string.notif_descrizione)  + descrizione_medicina)
-                                .addLine(context.getString(R.string.notif_dose) + dose_medicina)
-                                .addLine(context.getString(R.string.notif_ora)  +ora_medicina))
+                        .setContentTitle("Pick EM!")
+                        .setContentText("Dont forget to do your picks for today's matches!")
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(goToTabletModClassIntent)
-                        .addAction(R.drawable.take, context.getString(R.string.Mep),
-                                medTakenPendingIntent)
-                        // aggiunge un pulsante alla notifica
-                        *//*.addAction(R.drawable.delete, context.getString(R.string.Post),
-                                posticipateMedPendingIntent)*//*
+                        .setContentIntent(goToPickem)
                         .setAutoCancel(true);
-
-
 
                 notificationManagerCompat.notify(notificationID, notificationBuilder.build());
                 //notificationManagerCompat.cancel(200);
 
-
-                    //context.startActivity(i);
             }
-*/
 
-    }
+
 
 
 

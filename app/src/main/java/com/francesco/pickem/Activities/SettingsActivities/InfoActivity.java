@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities;
+package com.francesco.pickem.Activities.SettingsActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

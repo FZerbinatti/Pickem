@@ -16,19 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.InfoActivity"/>
+        <activity android:name=".Activities.MainActivities.MatchView"></activity>
+        <activity android:name=".Activities.SettingsActivities.InfoActivity" />
         <activity android:name=".Activities.EloTracker.EloActivity" />
         <activity android:name=".Activities.EloTracker.NewTrackEloDay" />
         <activity android:name=".Activities.EloTracker.EloTrackerActivity" />
-        <activity android:name=".Activities.Notifications.NotificationTeamActivity" />
-        <activity android:name=".Activities.Notifications.NotificationRegionActivity" />
+        <activity android:name=".Activities.SettingsActivities.NotificationTeamActivity" />
+        <activity android:name=".Activities.SettingsActivities.NotificationRegionActivity" />
         <activity android:name=".Activities.AccountActivities.ResetPasswordActivity" />
         <activity android:name=".Activities.MainActivities.StatsActivity" />
         <activity android:name=".Activities.MainActivities.SettingsActivity" />
         <activity android:name=".Activities.AccountActivities.RegisterActivity" />
-        <activity android:name=".Activities.AccountActivities.LoginActivity"/>
+        <activity android:name=".Activities.AccountActivities.LoginActivity" />
         <activity android:name=".Activities.MainActivities.CalendarActivity" />
-        <activity android:name=".Activities.MainActivities.PicksActivity" >
+        <activity android:name=".Activities.MainActivities.PicksActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,9 +39,8 @@
 
         <service
             android:name=".NotificationsService.SetNotificationFor24Hours"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <receiver android:name=".NotificationsService.AlarmReceiver" />
     </application>
-
 
 </manifest>

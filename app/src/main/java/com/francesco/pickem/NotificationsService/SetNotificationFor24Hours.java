@@ -1,53 +1,79 @@
 package com.francesco.pickem.NotificationsService;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
 import com.francesco.pickem.Interfaces.OnGetDataListener;
-import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.MatchNotification;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.R;
+import com.google.android.gms.common.api.internal.TaskUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import static com.google.android.gms.tasks.Tasks.await;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class SetNotificationFor24Hours extends JobService {
     private static final String CHANNEL_ID = "1";
     String TAG = "SetNotificationFor24Hours";
     ArrayList<RegionNotifications> userRegionsNotifications;
     ArrayList<TeamNotification> userTeamsNotifications;
-    ArrayList <MatchNotification> matchDetailsList;
+    ArrayList <MatchNotification> tomorrowsMatches;
+    ArrayList <String> tomorrowUserunpickedMatches;
+    ArrayList <MatchNotification> notPickedMatchIDs;
     Calendar myCalendar;
-    String year;
+    String year , today, tomorrow;
     private DatabaseReference reference;
     Integer positionJ;
     Integer positionI;
     private boolean jobCancelled = false;
+    TaskUtil taskUtil;
+    String region_test;
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
+    private Context context;
 
     //il servizio viene chiamato ogni volta che si apre l'app, ogni volta che si riprende la rete, reboot e ogni 24 ore
     //il servizio setta alarmManager in base ai NotificationSettings scelti che rientrano nelle prossime 24 ore
+
+    public SetNotificationFor24Hours(Context context){
+        this.context=context;
+    }
+
+    public SetNotificationFor24Hours(){
+
+    }
 
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
+        today = getTodayDate();
+        tomorrow = getTomorrowsDate();
+
+
 
         // per gli 1 fai una query delle partite di quella regione con data attuale o sucessiva
         //setta gli alarm
@@ -104,7 +130,7 @@ public class SetNotificationFor24Hours extends JobService {
                     }
 
                 }
-                setAlarmRegion(userRegionsNotifications);
+                getUserUnpickedMatches(userRegionsNotifications);
 
             }
             @Override
@@ -115,65 +141,188 @@ public class SetNotificationFor24Hours extends JobService {
         jobFinished(parameters, false);
     }
 
-    private void setAlarmRegion(ArrayList <RegionNotifications> userRegionsNotifications){
-        Log.d(TAG, "setAlarmRegion: ");
-        matchDetailsList= new ArrayList<>();
+
+/*    private void setUserRegionNotifications(ArrayList <RegionNotifications> userRegionsNotifications){
+
         String today_date = getTodayDate();
 
         // prendi tutti gli id delle partite, splitta T e mantieni solo quelli della giornata giusta
         //setta gli alarmManager per quelli
-        for (Integer i=0; i<userRegionsNotifications.size(); i++){
-
+        for (int i=0; i<userRegionsNotifications.size(); i++){
+            region_test = userRegionsNotifications.get(i).getRegion_name();
+            Log.d(TAG, "setAlarmRegion: region_test: "+region_test);
+            MatchNotification mdwr = new MatchNotification();
+            mdwr.setRegion(region_test);
+            // se l'utente vuol che per questa regione gli sia mandata la notifica se si è dimenticato di fare picks
+            // (fai il controllo per la data di domani e imposta la notifica per domani mattina)
             if (userRegionsNotifications.get(i).getNo_choice_made()>0){
-                positionI = i;
+                Log.d(TAG, "setUserRegionNotifications: "+userRegionsNotifications.get(i).getNo_choice_made() +" region : "+ userRegionsNotifications.get(i).getRegion_name());
+
 
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
                         .child(userRegionsNotifications.get(i).getRegion_name())
                         .child(userRegionsNotifications.get(i).getRegion_name() + year);
 
-                //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year + split+"/"+loadThisMatchesID.get(i));
+
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int count = (int) dataSnapshot.getChildrenCount();
+                        tomorrowsMatches= new ArrayList<>();
+                        int current_cycle_number = 0;
+
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            MatchNotification mdwr2 = new MatchNotification();
+                            current_cycle_number++;
+                            MatchDetails matchDetails = snapshot.getValue(MatchDetails.class);
+
+                            if (matchDetails!=null){
+                                String[] datetime = matchDetails.getDatetime().split("T");
+                                String data =datetime[0];
+                            // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
+                                if (data.equals(today)){
+                                    mdwr2.setRegion(mdwr.getRegion());
+                                    mdwr2.setId(matchDetails.getId());
+                                    mdwr2.setDatetime(matchDetails.getDatetime());
+                                    mdwr2.setTeam1(matchDetails.getTeam1());
+                                    mdwr2.setTeam2(matchDetails.getTeam2());
+
+                                    tomorrowsMatches.add(mdwr2);
+                                }
+                            }
+
+                            if (current_cycle_number == count){
+                                    compareToUserPickedMatchesTomorrow(tomorrowsMatches, userRegionsNotifications);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+            }
+        }
+    }
+
+    private void compareToUserPickedMatchesTomorrow(ArrayList<MatchNotification> tomorrowsMatches, ArrayList <RegionNotifications> userRegionsNotifications) {
+
+        for (int i=0; i<userRegionsNotifications.size(); i++){
+
+            // prendi tutti i pick dell'utente di domani
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userRegionsNotifications.get(i).getRegion_name())
+                    .child(userRegionsNotifications.get(i).getRegion_name() + year);
+
+            Log.d(TAG, "compareToUserPickedMatchesTomorrow: querying in: "+userRegionsNotifications.get(i).getRegion_name());
+
+
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int count = (int) dataSnapshot.getChildrenCount();
+                    tomorrowUserPickedMatches= new ArrayList<>();
+                    int current_cycle_number = 0;
+
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        current_cycle_number++;
+
+                        String match_ID = snapshot.getKey().toString();
+                        Log.d(TAG, "onDataChange: "+match_ID);
+
+                        String[] datetime = match_ID.split("T");
+                        String data =datetime[0];
+                        // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
+                        if (data.equals(today)){
+                            tomorrowUserPickedMatches.add(match_ID);
+                        }
+
+                        Log.d(TAG, "onDataChange: "+current_cycle_number);
+                        Log.d(TAG, "onDataChange: "+count);
+                        if (current_cycle_number == count){
+                            getJustUnpickedMatchesForTomorrow(tomorrowsMatches, tomorrowUserPickedMatches);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
+        }
+
+
+
+
+
+    }*/
+
+    private void setAlarmsBecauseThisMatchesHasNotBeenPicked(ArrayList<String> tomorrowUserUnpickedMatches) {
+        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: ");
+        /*for (int i=0; i<tomorrowUserUnpickedMatches.size(); i++){
+            Log.d(TAG, "compareToUserPickedMatchesTomorrow: region: "+tomorrowUserUnpickedMatches.get(i) +" datetime: "+tomorrowUserUnpickedMatches.get(i));
+        }*/
+
+        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        intent.putExtra("TYPE", "NOT_PICKED");
+        intent.putExtra("MATCHES", tomorrowUserUnpickedMatches);
+        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
+        try {
+            calendar.setTime(formatter.parse(tomorrow+"T07:00:00"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: millis:"+calendar.getTimeInMillis());
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+
+    }
+
+    private void getUserUnpickedMatches( ArrayList<RegionNotifications> regionNotifications)  {
+        tomorrowUserunpickedMatches = new ArrayList<>();
+
+
+            for (int i=0; i< regionNotifications.size(); i++){
+
+                if (regionNotifications.get(i).getNo_choice_made()>0){
+
+                reference = FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(getResources().getString(R.string.firebase_users_picks))
+                        .child(regionNotifications.get(i).getRegion_name())
+                        .child(regionNotifications.get(i).getRegion_name()+year);
 
                 readData(reference, new OnGetDataListener() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
-                        //Log.d(TAG, "onSuccess: ");
-                        int int_user_regions_selected = (int) dataSnapshot.getChildrenCount();
+
                         for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                            MatchDetails matchDetails = snapshot.getValue(MatchDetails.class);
+                            String match_ID = snapshot.getKey().toString();
+                            String matchUserResult = snapshot.getValue(String.class);
 
-                            //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
-                            if (matchDetails!=null){
-
-                                String[] datetime = matchDetails.getDatetime().split("T");
-
-                                String data =datetime[0];
-
-
-                                Log.d(TAG, "onSuccess: today_date:"+today_date);
-                                Log.d(TAG, "onSuccess: data:"+data);
-                                if (data.equals(today_date)){
-                                    MatchNotification mdwr = new MatchNotification();
-                                    Log.d(TAG, "onSuccess: true");
-
-                                    mdwr.setRegion(userRegionsNotifications.get(positionI).getRegion_name());
-                                    mdwr.setId(matchDetails.getId());
-                                    mdwr.setDatetime(matchDetails.getDatetime());
-                                    mdwr.setTeam1(matchDetails.getTeam1());
-                                    mdwr.setTeam2(matchDetails.getTeam2());
-
-                                    matchDetailsList.add(mdwr);
-                                }
-
-
-
+                            String[] datetime = match_ID.split("T");
+                            String data =datetime[0];
+                            // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
+                            if (data.equals(tomorrow)&&matchUserResult.equals("unpicked")){
+                                tomorrowUserunpickedMatches.add(match_ID);
                             }
+
                         }
 
-
-
                     }
-
-
 
                     @Override
                     public void onStart() {
@@ -191,98 +340,59 @@ public class SetNotificationFor24Hours extends JobService {
 
         }
 
+        //getTheEarliestNotPickedMatchDate(notPickedMatchIDs);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 // Actions to do after 10 seconds
-                Log.d(TAG, "setAlarmRegion: matchDetailsList: "+matchDetailsList.size());
-                areThisMatchesBeenPicked(matchDetailsList, userRegionsNotifications);
+                if(tomorrowUserunpickedMatches.size()>0){
+                    setAlarmsBecauseThisMatchesHasNotBeenPicked(tomorrowUserunpickedMatches);
+                }
+
             }
         }, 3000);
 
 
 
-
     }
 
-    private void areThisMatchesBeenPicked(ArrayList<MatchNotification> matchDetailsList, ArrayList<RegionNotifications> regionNotifications) {
-
-        // sono arrivate le partite della data odierna, se rientrano nei picks apposto
-        Log.d(TAG, "setAlarmsForThisMatches: "+matchDetailsList.size());
-
-        for (int i=0; i< regionNotifications.size(); i++){
-            Log.d(TAG, "loadRecyclerView: "+getResources().getString(R.string.firebase_users_picks)+"/"+regionNotifications.get(i).getRegion_name() +"/"+ regionNotifications.get(i).getRegion_name() + year);
-
-            reference = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(getResources().getString(R.string.firebase_users_picks))
-                    .child(regionNotifications.get(i).getRegion_name())
-                    .child(regionNotifications.get(i).getRegion_name()+year);
-
-            if (regionNotifications.get(i).getNo_choice_made()>0){
-                // prendi il valore della partita nei pick dell'utente, se non c'è, setta l'alarm manager
-
-                for (int j=0; j< matchDetailsList.size(); j++){
-
-                    positionJ = j;
-
-                    if (matchDetailsList.get(j).getRegion().equals(regionNotifications.get(i).getRegion_name())){
-
-                        readData(reference.child(matchDetailsList.get(j).getId()), new OnGetDataListener() {
-                            @Override
-                            public void onSuccess(DataSnapshot dataSnapshot) {
-                                String match_ID = dataSnapshot.getKey().toString();
-                                String user_pick = dataSnapshot.getValue(String.class);
-                                    //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
-                                    if (user_pick ==null){
-                                        // (prendi l'ora della prima partita del giorno, togli 1)
-                                        Log.d(TAG, "onSuccess: il pick non esiste per questo ID: "+match_ID);
-
-                                    }else {
-                                        //String datetime_not_picked_match = matchDetailsList.get(positionJ).getDatetime();
-                                        Log.d(TAG, "onSuccess: il pick esiste per questo id: "+match_ID +" e lo user ha pickkato: "+user_pick);
-
-                                    }
-
-                            }
-
-                            @Override
-                            public void onStart() {
-                                //Log.d(TAG, "onStart: ");
-                            }
-
-                            @Override
-                            public void onFailure() {
-                                //Log.d(TAG, "onFailure: ");
-                            }
-                        });
-
-
-                    }
-
-                }
+    /*private void getTheEarliestNotPickedMatchDate(ArrayList<String> match_IDs) throws ParseException {
+        Log.d(TAG, "setAlarmForTheRecentestMatchOfThose: size: "+match_IDs.size());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String earliest_not_picked_match = year +"-12-30T23:59:59";
 
 
 
-
-
-
-
-
+        for(int i = 0; i < match_IDs.size(); i++){
+            Date earliest_date = sdf.parse(earliest_not_picked_match);
+            Date strDate = sdf.parse(match_IDs.get(i));
+            if (strDate.before(earliest_date)) {
+                earliest_not_picked_match = match_IDs.get(i).toString();
             }
 
         }
 
+        setAlarm1hBeforeThisDateTime(earliest_not_picked_match);
 
-    }
+    }*/
+
 
     private String getTodayDate(){
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        Log.d(TAG, "getTodayMatchID: ID begins with: :"+date);
 
         return date;
+    }
+
+    private String getTomorrowsDate(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date tomorrow = calendar.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        String tomorrowAsString = sdf.format(tomorrow);
+        return tomorrowAsString;
     }
 
     public void readData(DatabaseReference ref, final OnGetDataListener listener) {
@@ -301,6 +411,8 @@ public class SetNotificationFor24Hours extends JobService {
         });
 
     }
+
+
 
 
 
