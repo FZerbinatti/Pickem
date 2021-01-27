@@ -134,7 +134,6 @@ public class PicksActivity extends AppCompatActivity  {
 
     }
 
-
     private void isUserAlreadyLogged() {
         Log.d(TAG, "isUserAlreadyLogged: ");
 

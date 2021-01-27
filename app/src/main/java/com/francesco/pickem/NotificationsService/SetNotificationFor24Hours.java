@@ -8,13 +8,25 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Interfaces.OnGetDataListener;
+import com.francesco.pickem.Models.CurrentRegion;
+import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.MatchNotification;
+import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.Models.RegionNotifications;
+import com.francesco.pickem.Models.SimpleRegion;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.R;
 import com.google.android.gms.common.api.internal.TaskUtil;
@@ -26,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import static com.google.android.gms.tasks.Tasks.await;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 public class SetNotificationFor24Hours extends JobService {
     private static final String CHANNEL_ID = "1";
@@ -41,6 +55,8 @@ public class SetNotificationFor24Hours extends JobService {
     ArrayList<TeamNotification> userTeamsNotifications;
     ArrayList <MatchNotification> tomorrowsMatches;
     ArrayList <String> tomorrowUserunpickedMatches;
+    ArrayList <MatchDetails> tomorrowMatches;
+    ArrayList <MatchDetails> firstsMatchOfTheDay;
     ArrayList <MatchNotification> notPickedMatchIDs;
     Calendar myCalendar;
     String year , today, tomorrow;
@@ -53,6 +69,9 @@ public class SetNotificationFor24Hours extends JobService {
     private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
     private Context context;
+    CurrentRegion currentRegion;
+    String primo_match_otd;
+    Bitmap bitmap;
 
     //il servizio viene chiamato ogni volta che si apre l'app, ogni volta che si riprende la rete, reboot e ogni 24 ore
     //il servizio setta alarmManager in base ai NotificationSettings scelti che rientrano nelle prossime 24 ore
@@ -127,10 +146,11 @@ public class SetNotificationFor24Hours extends JobService {
                     RegionNotifications regionNotifications = snapshot.getValue(RegionNotifications.class);
                     if (regionNotifications !=null){
                         userRegionsNotifications.add(regionNotifications);
+                        Log.d(TAG, "onDataChange: "+regionNotifications.getRegion_name());
                     }
 
                 }
-                getUserUnpickedMatches(userRegionsNotifications);
+                thisUserNotificationPreference(userRegionsNotifications);
 
             }
             @Override
@@ -264,40 +284,21 @@ public class SetNotificationFor24Hours extends JobService {
 
     }*/
 
-    private void setAlarmsBecauseThisMatchesHasNotBeenPicked(ArrayList<String> tomorrowUserUnpickedMatches) {
-        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: ");
-        /*for (int i=0; i<tomorrowUserUnpickedMatches.size(); i++){
-            Log.d(TAG, "compareToUserPickedMatchesTomorrow: region: "+tomorrowUserUnpickedMatches.get(i) +" datetime: "+tomorrowUserUnpickedMatches.get(i));
-        }*/
 
-        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-        intent.putExtra("TYPE", "NOT_PICKED");
-        intent.putExtra("MATCHES", tomorrowUserUnpickedMatches);
-        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
-        try {
-            calendar.setTime(formatter.parse(tomorrow+"T07:00:00"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: millis:"+calendar.getTimeInMillis());
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-
-
-    }
-
-    private void getUserUnpickedMatches( ArrayList<RegionNotifications> regionNotifications)  {
+    private void thisUserNotificationPreference(ArrayList<RegionNotifications> regionNotifications)  {
+        Log.d(TAG, "thisUserNotificationPreference: ?????????????????????????????"+regionNotifications.size());
         tomorrowUserunpickedMatches = new ArrayList<>();
+        tomorrowMatches = new ArrayList<>();
 
 
-            for (int i=0; i< regionNotifications.size(); i++){
 
-                if (regionNotifications.get(i).getNo_choice_made()>0){
+
+        for (int i=0; i< regionNotifications.size(); i++){
+            CurrentRegion currentRegion = new CurrentRegion();
+            currentRegion.setRegion(regionNotifications.get(i).getRegion_name());
+
+                if (regionNotifications.get(i).getNo_choice_made()>0) {
+
 
                 reference = FirebaseDatabase.getInstance().getReference("Users")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -337,6 +338,45 @@ public class SetNotificationFor24Hours extends JobService {
 
             }
 
+                if (regionNotifications.get(i).getNotification_first_match_otd()>0){
+                    //prendi il primo match di domani e piazza un alarm manager all'ora di inizio
+                    reference = FirebaseDatabase.getInstance().getReference
+                            (getResources().getString(R.string.firebase_Matches))
+                            .child(regionNotifications.get(i).getRegion_name())
+                            .child(regionNotifications.get(i).getRegion_name()+year);
+
+                    readData(reference, new OnGetDataListener() {
+                        @Override
+                        public void onSuccess(DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                String match_ID = snapshot.getKey().toString();
+                                MatchDetails match = snapshot.getValue(MatchDetails.class);
+
+                                String[] datetime = match_ID.split("T");
+                                String data =datetime[0];
+                                // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
+                                if (data.equals(tomorrow)){
+                                    match.setWinner(currentRegion.getRegion());
+                                    tomorrowMatches.add(match);
+                                }
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onStart() {
+                            //Log.d(TAG, "onStart: ");
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            //Log.d(TAG, "onFailure: ");
+                        }
+                    });
+                }
+
 
         }
 
@@ -348,6 +388,9 @@ public class SetNotificationFor24Hours extends JobService {
                 if(tomorrowUserunpickedMatches.size()>0){
                     setAlarmsBecauseThisMatchesHasNotBeenPicked(tomorrowUserunpickedMatches);
                 }
+                if(tomorrowMatches.size()>0){
+                    setToTheFirstOfThisMatches(tomorrowMatches);
+                }
 
             }
         }, 3000);
@@ -355,6 +398,138 @@ public class SetNotificationFor24Hours extends JobService {
 
 
     }
+
+    private void setToTheFirstOfThisMatches(ArrayList<MatchDetails> tomorrowMatches) {
+        Integer ora_minima =24;
+        primo_match_otd = "";
+        CurrentRegion currentRegion =new CurrentRegion();
+
+        firstsMatchOfTheDay= new ArrayList<>();
+        // dell'AL arrivato, dividi nelle regioni diverse e per ognuna trova la data piu recente
+        for (int i=0; i<userRegionsNotifications.size();i++){
+            currentRegion.setRegion(userRegionsNotifications.get(i).getRegion_name());
+            for (int j=0; j<tomorrowMatches.size();j++){
+                if(tomorrowMatches.get(j).getWinner().equals(userRegionsNotifications.get(j).getRegion_name())){
+
+                    String[] datetime = tomorrowMatches.get(j).getDatetime().split("T");
+                    String data =datetime[0];
+                    if (data.length()==2){
+                        String[] datetime2 = data.split(":");
+
+                        String ora ="";
+                        String minuto = "";
+                        String secondo = "";
+
+
+                        if (datetime.length ==3){
+                            ora = datetime[0];
+                            Integer int_ora =Integer.parseInt(ora);
+                            if (int_ora < ora_minima){
+                                ora_minima = int_ora;
+                                primo_match_otd = tomorrowMatches.get(j).getDatetime();
+                            }
+
+                        }
+                    }
+
+
+
+
+                }
+            }
+
+            DatabaseReference regionImageReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions))
+                    .child(userRegionsNotifications.get(i).getRegion_name())
+                    .child(getString(R.string.regions_image));
+
+            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+            regionImageReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String url_image = dataSnapshot.getValue(String.class);
+                    Log.d(TAG, "onDataChange: url_image:"+url_image);
+                     bitmap = null;
+                    RequestOptions options = new RequestOptions()
+                            .fitCenter()
+                            .error(R.drawable.ic_load);
+
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            FutureTarget futureTarget = Glide.with(getApplicationContext()).asBitmap().load(url_image).apply(options).submit();
+                            try {
+                                bitmap = (Bitmap) futureTarget.get();
+                                Log.d(TAG, "run: bitmap:"+bitmap);
+                                ByteArrayOutputStream bs = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 50, bs);
+                                intent.putExtra("BITMAP", bs.toByteArray());
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+
+                    intent.putExtra(getResources().getString(R.string.TYPE) ,getResources().getString(R.string.FIRST_MATCH));
+                    intent.putExtra("REGION", currentRegion.getRegion() );
+
+                    alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    try {
+                        calendar.setTime(formatter.parse(primo_match_otd));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d(TAG, "*******************************questo è il primo match di domani: millis:"+calendar.getTimeInMillis() +" region: "+currentRegion.getRegion() +" time: ");
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+
+
+
+
+    }
+
+    private void setAlarmsBecauseThisMatchesHasNotBeenPicked(ArrayList<String> tomorrowUserUnpickedMatches) {
+        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: ");
+        /*for (int i=0; i<tomorrowUserUnpickedMatches.size(); i++){
+            Log.d(TAG, "compareToUserPickedMatchesTomorrow: region: "+tomorrowUserUnpickedMatches.get(i) +" datetime: "+tomorrowUserUnpickedMatches.get(i));
+        }*/
+
+        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        intent.putExtra("TYPE", "NOT_PICKED");
+        intent.putExtra("MATCHES", tomorrowUserUnpickedMatches);
+        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
+        try {
+            calendar.setTime(formatter.parse(tomorrow+"T07:00:00"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: millis:"+calendar.getTimeInMillis());
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+
+
+    }
+
 
     /*private void getTheEarliestNotPickedMatchDate(ArrayList<String> match_IDs) throws ParseException {
         Log.d(TAG, "setAlarmForTheRecentestMatchOfThose: size: "+match_IDs.size());

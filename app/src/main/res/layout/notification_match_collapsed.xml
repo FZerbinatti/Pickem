@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:gravity="start"
+    android:weightSum="10"
+    android:background="@color/background"
+
+    android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/custom_imageview_notification_collapsed_team1"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="match_parent"
+        android:src="@drawable/logo_lec"
+        android:layout_alignParentStart="true"/>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="6"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <TextView
+            android:id="@+id/default_text1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:fontFamily="@font/classicroman"
+            android:gravity="center"
+            android:text="Currently starting:"
+            android:textColor="@color/blue_light"
+            android:textSize="20sp" />
+
+
+        <TextView
+            android:id="@+id/custom_textview_collapsed_notification_time"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:fontFamily="@font/classicroman"
+            android:gravity="center"
+            android:text="19:50"
+
+            android:textColor="@color/blue_light_opaque"
+            android:textSize="18sp" />
+
+
+
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/custom_imageview_collapsed_notification_team2"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="match_parent"
+        android:src="@drawable/logo_lec"
+        android:layout_alignParentEnd="true"/>
+</LinearLayout>

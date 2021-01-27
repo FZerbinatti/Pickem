@@ -277,7 +277,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void updateChoosenRegion(String stringRegionSelected, Boolean booleanRegionSelected){
+/*    private void updateChoosenRegion(String stringRegionSelected, Boolean booleanRegionSelected){
 
 
         FirebaseDatabase.getInstance().getReference("Users")
@@ -285,7 +285,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .child(getResources().getString(R.string.firebase_users_generealities))
                 .child(getResources().getString(R.string.firebase_user_choosen_regions))
                 .setValue(stringRegionSelected);
-    }
+    }*/
 
     private void loadFirebaseData() {
         old_choosen_regions = new ArrayList<>();
@@ -376,9 +376,9 @@ public class SettingsActivity extends AppCompatActivity {
                     Log.d(TAG, "/////////////////////////////////////////////////////////////: "+finalRegions.get(i));
                 }
 
+                choosen_regions.addAll(finalRegions);
 
-                choosen_regions = finalRegions;
-                new_choosen_regions = choosen_regions;
+                new_choosen_regions.addAll(finalRegions);
 
 
 

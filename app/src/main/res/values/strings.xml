@@ -132,7 +132,6 @@
     <string name="Iron_3">Iron 3</string>
     <string name="Iron_4">Iron 4</string>
 
-
     //Elotracker stuff
     <string name="elotracker_id">elotracker_id</string>
     <string name="elotracker_date">elotracker_date</string>
@@ -145,6 +144,13 @@
     <string name="channel_pickem">Chennel Pickem</string>
     <string name="channel_description">Pickem Notification Channel</string>
     <string name="channel_name">pickem_channel</string>
+
+    <string name="TYPE">TYPE</string>
+    <string name="FIRST_MATCH">FIRST_MATCH</string>
+    <string name="NOT_PICKED">NOT_PICKED</string>
+    <string name="MATCHES">MATCHES</string>
+    <string name="MATCH">MATCH</string>
+
 
 
 </resources>

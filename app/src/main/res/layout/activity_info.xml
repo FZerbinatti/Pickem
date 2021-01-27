@@ -8,7 +8,7 @@
     tools:context=".Activities.SettingsActivities.InfoActivity">
 
     <TextView
-        android:id="@+id/add_eloday_date"
+        android:id="@+id/display_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
