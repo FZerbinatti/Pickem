@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
@@ -60,8 +61,8 @@ public class AlarmReceiver extends BroadcastReceiver{
     private String TAG = "Drugs Alarm";
     private static String NOTIFICATION_ID = "1";
     public static String PACKAGE_NAME;
-    Bitmap bitmap;
-    Bitmap bitmap_region;
+    //Bitmap bitmap;
+    //Bitmap bitmap_region;
 
 
 
@@ -117,22 +118,11 @@ public class AlarmReceiver extends BroadcastReceiver{
                             .build();
                     notificationManagerCompat.notify(1, notification);
                 }
-                else if (notification_type.equals("FIRST_MATCH")){/*
+                else if (notification_type.equals("FIRST_MATCH")){
 
                     String region = intent.getStringExtra("REGION");
 
-                     if(intent.hasExtra("BITMAP")) {
-                         Log.d(TAG, "onReceive: has");
-
-                         bitmap_region = BitmapFactory.decodeByteArray(
-                                 intent.getByteArrayExtra("BITMAP"),0,intent
-                                         .getByteArrayExtra("BITMAP").length);
-                         Log.d(TAG, "onReceive: bitmap_region: "+bitmap_region);
-
-                     }
-
-
-
+                    String imagepath = context.getFilesDir().getAbsolutePath() + "/images/regions/" +region +".png";
 
                     RemoteViews collapsedView = new RemoteViews(PACKAGE_NAME,
                             R.layout.custom_notif_region_collapsed);
@@ -141,12 +131,9 @@ public class AlarmReceiver extends BroadcastReceiver{
 
 
                             expandedView.setTextViewText(R.id.custom_notif_region_regionname, region);
-                            //expandedView.setImageViewResource(R.id.custom_notif_region_regionlogo, R.drawable.logo_lpl);
                             collapsedView.setTextViewText(R.id.custom_notif_region_regionname_collapsed, region);
-                            //collapsedView.setImageViewResource(R.id.custom_notif_region_regionlogo_collapsed, R.drawable.logo_lpl);
-                            collapsedView.setImageViewBitmap(R.id.custom_notif_region_regionlogo_collapsed, bitmap_region);
-                            expandedView.setImageViewBitmap(R.id.custom_notif_region_regionlogo, bitmap_region);
-
+                            collapsedView.setImageViewBitmap(R.id.custom_notif_region_regionlogo_collapsed, BitmapFactory.decodeFile(imagepath));
+                            expandedView.setImageViewBitmap(R.id.custom_notif_region_regionlogo, BitmapFactory.decodeFile(imagepath));
 
                             Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                                     .setSmallIcon(R.drawable.ic_p)
@@ -158,7 +145,6 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                             notificationManagerCompat.notify(1, notification);
 
-*/
 
                 }
 

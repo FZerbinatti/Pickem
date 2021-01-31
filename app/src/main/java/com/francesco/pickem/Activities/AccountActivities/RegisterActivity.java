@@ -88,6 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         dropdown_status=0;
         allRegionsFromBD= new ArrayList<>();
+        finalRegions = new ArrayList<>();
 
         register_scrollview.setOnTouchListener(new View.OnTouchListener() {
 
@@ -127,6 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                     register_progressbar.setVisibility(View.VISIBLE);
                     textView_selectRegion.setText("Long Click to select");
                     collapsable_box_registration.setVisibility(View.VISIBLE);
+                    Toast.makeText(context, "Long Click to Select a Region", Toast.LENGTH_SHORT).show();
                     registration_show_regions.setImageResource(R.drawable.ic_dropup);
                     dropdown_status =1;
                     hideKeyboard(RegisterActivity.this);
@@ -255,7 +257,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-                if (choosen_regions.isEmpty()) {
+                if (choosen_regions.size()==0) {
                     Toast.makeText(RegisterActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                 }else {
 

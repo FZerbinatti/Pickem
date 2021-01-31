@@ -63,7 +63,7 @@ public class Region_selection_Adapter extends PagerAdapter {
                 .placeholder(R.drawable.logo_lec)
                 .error(R.drawable.logo_lck);
 
-        Log.d(TAG, "/////////////////////////////////////////instantiateItem: "+leaguesSelectedList.get(position).getImage());
+        //Log.d(TAG, "/////////////////////////////////////////instantiateItem: "+leaguesSelectedList.get(position).getImage());
 
         Glide.with(context).load(leaguesSelectedList.get(position).getImage()).placeholder(R.drawable.ic_load).apply(options).into(imageView);
 

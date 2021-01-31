@@ -93,9 +93,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .centerCrop()
                 .error(R.drawable.ic_loading_error);
 
-        Log.d(TAG, "onBindViewHolder: region:"+region);
+        //Log.d(TAG, "onBindViewHolder: region:"+region);
 
-        Log.d(TAG, "onBindViewHolder: match gia passato? " + matchAlreadyElapsedQuestionMark(thisMatch));
+        //Log.d(TAG, "onBindViewHolder: match gia passato? " + matchAlreadyElapsedQuestionMark(thisMatch));
 
 
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Teams")
@@ -157,7 +157,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                     @Override
                     public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                         String teamImage = dataSnapshot.getValue(String.class);
-                        Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
+                       // Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
                         if (teamImage!= null){
 
                                     Glide
@@ -321,7 +321,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String team2 = displayMatch.getTeam2();
         String winner = displayMatch.getWinner();
 
-        Log.d(TAG, "loadDataWithPrediction: ID: "+ displayMatch.getId() +" - region: "+ displayMatch.getRegion() +" teams: "+ displayMatch.getTeam1()  +" vs "+ displayMatch.getTeam2()+" prediction: "+ displayMatch.getPrediction()+" winner: "+ displayMatch.getWinner() );
+        //Log.d(TAG, "loadDataWithPrediction: ID: "+ displayMatch.getId() +" - region: "+ displayMatch.getRegion() +" teams: "+ displayMatch.getTeam1()  +" vs "+ displayMatch.getTeam2()+" prediction: "+ displayMatch.getPrediction()+" winner: "+ displayMatch.getWinner() );
 
         Boolean elapsed = matchAlreadyElapsedQuestionMark(displayMatch);
 

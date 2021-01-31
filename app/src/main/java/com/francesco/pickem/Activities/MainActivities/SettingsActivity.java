@@ -556,6 +556,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
                                 firebaseAuth.signOut();
                                 startActivity(intent);
+                                finish();
                             }
                         });
                 alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",

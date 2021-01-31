@@ -11,6 +11,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -42,10 +44,10 @@ import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
-import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.NotificationsService.SetNotificationFor24Hours;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -53,10 +55,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class PicksActivity extends AppCompatActivity  {
@@ -90,6 +96,7 @@ public class PicksActivity extends AppCompatActivity  {
     SetNotificationFor24Hours setNotificationFor24Hours;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +109,11 @@ public class PicksActivity extends AppCompatActivity  {
         viewPager_match_day = findViewById(R.id.viewPager_match_day);
 
 
-        isUserAlreadyLogged();
+        if(isUserAlreadyLogged()){
+            Log.d(TAG, "onCreate: ");
+            downloadSelectedRegions();
+            startBackgorundTasks();
+        }
         selected_region_name ="";
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
@@ -113,16 +124,33 @@ public class PicksActivity extends AppCompatActivity  {
         changeNavBarColor();
         setupBottomNavView();
 
-        downloadSelectedRegions();
+    }
+
+    private void startBackgorundTasks() {
+
         ComponentName componentName = new ComponentName(this, SetNotificationFor24Hours.class);
-        JobInfo info = new JobInfo.Builder(001, componentName)
+        JobInfo info1 = new JobInfo.Builder(1, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
                 .setPeriodic( 24* 60 * 60 * 1000)
                 .build();
-        JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        int resultCode =  scheduler.schedule(info);
-        if (resultCode == JobScheduler.RESULT_SUCCESS){
+        JobScheduler scheduler1 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode1 =  scheduler1.schedule(info1);
+        if (resultCode1 == JobScheduler.RESULT_SUCCESS){
+            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
+        }else {
+            Log.d(TAG, "onCreate: DIO PORCO");
+        }
+
+        Log.d(TAG, "startBackgorundTasks: ");
+        JobInfo info2 = new JobInfo.Builder(2, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic( 24* 60 * 60 * 1000)
+                .build();
+        JobScheduler scheduler2 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode2 = scheduler2.schedule(info2);
+        if (resultCode2 == JobScheduler.RESULT_SUCCESS){
             Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
         }else {
             Log.d(TAG, "onCreate: DIO PORCO");
@@ -130,22 +158,19 @@ public class PicksActivity extends AppCompatActivity  {
 
 
 
-
-
     }
+    
+    private boolean isUserAlreadyLogged() {
 
-    private void isUserAlreadyLogged() {
-        Log.d(TAG, "isUserAlreadyLogged: ");
-
-        
-        //PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
+         //PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
         Log.d(TAG, "isUserAlreadyLogged: "+PreferencesData.getUserLoggedInStatus(this));
-        if ( !PreferencesData.getUserLoggedInStatus(this)    ){
+        if ( !PreferencesData.getUserLoggedInStatus(this) ||   FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())  ==null ){
             Intent intent = new Intent(PicksActivity.this, LoginActivity.class);
             pick_progressbar.setVisibility(View.GONE);
             startActivity(intent);
-
-        }
+            return false;
+        }else {return true;}
     }
 
     private void downloadSelectedRegions() {
@@ -659,8 +684,8 @@ public class PicksActivity extends AppCompatActivity  {
             long matchTimeMillis = strDate.getTime();
             long todays_date_millis = todays_date.getTime();
 
-            Log.d(TAG, "selectMatchDay: todays_date_millis:"+todays_date_millis);
-            Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
+            //Log.d(TAG, "selectMatchDay: todays_date_millis:"+todays_date_millis);
+            //Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
 
             if (todays_date_millis <= matchTimeMillis) {
                 itemPosition = i;
@@ -721,5 +746,3 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
 }
-
-// dove cerchi i match per quel giorno?
