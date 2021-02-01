@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +41,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     RecyclerViewClickListener clickListener;
     DisplayMatch thisMatch;
     String match_prediction;
+    String imageTeamPath;
 
     public RecyclerView_Picks_Adapter() {
     }
@@ -59,6 +61,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         view = layoutInflater.inflate(R.layout.pick_recyciclervirew_item, viewGroup,false);
         thisMatch = new DisplayMatch();
 
+        imageTeamPath = context.getFilesDir().getAbsolutePath() + "/images/teams/";
 
         return new ViewHolder(view);
     }
@@ -91,15 +94,11 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .error(R.drawable.ic_loading_error);
 
-        //Log.d(TAG, "onBindViewHolder: region:"+region);
 
-        //Log.d(TAG, "onBindViewHolder: match gia passato? " + matchAlreadyElapsedQuestionMark(thisMatch));
-
-
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Teams")
-                    .child(region);
 
             if (team1.equals(" ")){
                 viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
@@ -113,32 +112,15 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                         .into(viewHolder.image_team_1);
 
             }else {
-                reference.child(team1).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                        String teamImage = dataSnapshot.getValue(String.class);
-                        Log.d(TAG, "onDataChange: teamImage1:"+teamImage);
-                        if (teamImage!= null){
-                            Glide
-                                    .with(context)
-                                    .load(teamImage)
-                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .apply(options)
-                                    .into(viewHolder.image_team_1);
 
+                String local_image =imageTeamPath +team1+".png";
 
+                Glide.with(context)
+                        .load(new File(local_image)) // Uri of the picture
+                        .apply(options)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(viewHolder.image_team_1);
 
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-                    }
-
-                });
             }
 
             if (team2.equals(" ")){
@@ -153,32 +135,15 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }else {
 
-                reference.child(team2).child("image").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                        String teamImage = dataSnapshot.getValue(String.class);
-                       // Log.d(TAG, "onDataChange: teamImage2:"+teamImage);
-                        if (teamImage!= null){
+                String local_image =imageTeamPath +team2+".png";
 
-                                    Glide
-                                            .with(context)
-                                            .load(teamImage)
-                                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                                            .apply(options)
-                                            .transition(DrawableTransitionOptions.withCrossFade(500))
-                                            .dontAnimate()
-                                            .into(viewHolder.image_team_2);
+                Glide.with(context)
+                        .load(new File(local_image)) // Uri of the picture
+                        .apply(options)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(viewHolder.image_team_2);
 
 
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-                    }
-
-                });
             }
 
 

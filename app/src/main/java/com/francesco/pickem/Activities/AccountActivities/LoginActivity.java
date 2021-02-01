@@ -153,7 +153,6 @@ public class LoginActivity extends AppCompatActivity {
                                             Integer region_image_size = regions_images.getResult().getItems().size();
                                             float costante = 100f/region_image_size;
 
-
                                             CurrentNumber currentNumber =new CurrentNumber();
                                             currentNumber.setNumber(1);
                                             personalized_dialog_progressbar1.setMax(region_image_size);
@@ -163,11 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                                                 String file_cloud_path = regions_images.getResult().getItems().get(i).toString();
                                                 String[] datetime =file_cloud_path.split("region_img/");
                                                 String file_name =datetime[1];
-                                                Log.d(TAG, "run: file_name:"+file_name);
                                                 File file = new File(folderRegions+"/"+file_name);
-                                                Log.d(TAG, "localImageDirectoryUpdated: cloud:"+ file_cloud_path);
                                                 StorageReference gsReference = storage.getReferenceFromUrl(regions_images.getResult().getItems().get(i).toString());
-                                                //StorageReference gsReference = storage.getReferenceFromUrl(regions_images.getResult().getItems().get(i).toString().replace("S%20", " "));
                                                  gsReference.getFile(file).addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {

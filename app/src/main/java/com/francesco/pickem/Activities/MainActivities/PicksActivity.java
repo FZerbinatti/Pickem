@@ -32,6 +32,7 @@ import java.util.Calendar;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
@@ -94,8 +95,8 @@ public class PicksActivity extends AppCompatActivity  {
     TextView no_match_found;
     ArrayList <String> list_of_splits;
     SetNotificationFor24Hours setNotificationFor24Hours;
-
-
+    ImageView test;
+    String imageRegionPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +108,7 @@ public class PicksActivity extends AppCompatActivity  {
         pick_progressbar_matches = findViewById(R.id.pick_progressbar_matches);
         no_match_found= findViewById(R.id.no_match_found);
         viewPager_match_day = findViewById(R.id.viewPager_match_day);
+        test = findViewById(R.id.topper_pick_backgroundimage);
 
 
         if(isUserAlreadyLogged()){
@@ -118,11 +120,23 @@ public class PicksActivity extends AppCompatActivity  {
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
+        imageRegionPath = context.getFilesDir().getAbsolutePath() + "/images/regions/";
 
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         changeNavBarColor();
         setupBottomNavView();
+
+/*
+        String imagepath = context.getFilesDir().getAbsolutePath() + "/images/regions/" +"BelgianLeague" +".png";
+        //test.setImageBitmap(BitmapFactory.decodeFile(imagepath));
+        Glide.with(context)
+                .load(new File(imagepath)) // Uri of the picture
+                .into(test);
+
+*/
+
+
 
     }
 
@@ -271,11 +285,19 @@ public class PicksActivity extends AppCompatActivity  {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+
+                String local_image =userSelectedRegions.get(position).getName().replace(" ", "")+".png";
                 RequestOptions options = new RequestOptions()
                         .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
                         .error(R.drawable.ic_load);
 
-                Glide.with(context).load(userSelectedRegions.get(position).getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(pick_backgroundimage);
+                Glide.with(context)
+                        .load(new File(imageRegionPath+local_image)) // Uri of the picture
+                        .apply(options)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(pick_backgroundimage);
 
             }
 

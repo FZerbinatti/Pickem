@@ -11,11 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.Models.TeamDetails;
 import com.francesco.pickem.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class Region_selection_Adapter extends PagerAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
     private String TAG ="Adapter ";
+    String imageRegionPath;
 
 
     public Region_selection_Adapter(ArrayList<RegionDetails> leaguesSelectedList, Context context) {
@@ -58,25 +62,37 @@ public class Region_selection_Adapter extends PagerAdapter {
         //imageView.setImageResource(leaguesSelectedList.get(position).getImage());
         //title.setText(leaguesSelectedList.get(position).getLeague_name());
 
+/*
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.logo_lec)
                 .error(R.drawable.logo_lck);
 
-        //Log.d(TAG, "/////////////////////////////////////////instantiateItem: "+leaguesSelectedList.get(position).getImage());
 
         Glide.with(context).load(leaguesSelectedList.get(position).getImage()).placeholder(R.drawable.ic_load).apply(options).into(imageView);
 
+*/
 
-/*        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("param", models.get(position).getTitle());
-                context.startActivity(intent);
-                // finish();
-            }
-        });*/
+
+        imageRegionPath = context.getFilesDir().getAbsolutePath() + "/images/regions/";
+
+        RequestOptions options2 = new RequestOptions()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.logo_lck);
+
+
+        String local_image =imageRegionPath+leaguesSelectedList.get(position).getName().replace(" ", "")+".png";
+        Log.d(TAG, "instantiateItem: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ "+imageRegionPath);
+
+        Glide.with(context)
+                .load(new File(local_image)) // Uri of the picture
+                .apply(options2)
+                .transition(DrawableTransitionOptions.withCrossFade(500))
+                .into(imageView);
+
+
 
         container.addView(view, 0);
         return view;

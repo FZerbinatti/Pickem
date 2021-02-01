@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.TeamDetails;
@@ -27,6 +30,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.File;
 
 public class NotificationTeamActivity extends AppCompatActivity {
 
@@ -42,6 +47,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
     String teamSelectedExtra ;
     String regionSelectedExtra;
     CheckBox checkbox_as_team_plays, checkbox_team_morning_reminder;
+    String imageTeamPath;
 
 
     @Override
@@ -62,6 +68,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
         checkbox_as_team_plays = findViewById(R.id.checkbox_as_team_plays);
         checkbox_team_morning_reminder = findViewById(R.id.checkbox_team_morning_reminder);
         context = this;
+        imageTeamPath = context.getFilesDir().getAbsolutePath() + "/images/teams/";
 
         notifications_teams_progressbar.setVisibility(View.VISIBLE);
 
@@ -129,7 +136,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
 
     public void setInfoTeamDetailsForRegionForTeam (String region , String team){
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_teams))
+/*        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_teams))
                 .child(region)
                 .child(team);
 
@@ -153,7 +160,25 @@ public class NotificationTeamActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
+
+
+
+        String local_image =imageTeamPath +team+".png";
+
+
+        RequestOptions options = new RequestOptions()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.ic_load);
+
+        Glide.with(context)
+                .load(new File(local_image)) // Uri of the picture
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade(500))
+                .into(background_team);
+
 
 /*        reference.addValueEventListener(new ValueEventListener() {
             @Override

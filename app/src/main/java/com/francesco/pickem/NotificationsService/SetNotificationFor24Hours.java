@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference;
 import static com.google.android.gms.tasks.Tasks.await;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -128,6 +129,7 @@ public class SetNotificationFor24Hours extends JobService {
         StorageReference regionReference = storage.getReference("region_img");
         ArrayList<ImageValidator> cloud_regions_images = new ArrayList<>();
         Task<ListResult> regions_images = regionReference.listAll();
+        //IMMAGINI TEAMS SUL CLOUD
         StorageReference teamsReference = storage.getReference("team_img");
         ArrayList<ImageValidator> cloud_teams_images = new ArrayList<>();
         Task<ListResult> teams_images = teamsReference.listAll();
@@ -136,39 +138,32 @@ public class SetNotificationFor24Hours extends JobService {
         handler.postDelayed(new Runnable() {
             public void run() {
 
+                // immagini regions in cloud
                 Integer region_image_size = regions_images.getResult().getItems().size();
                 for (int i = 0; i < region_image_size; i++) {
-
                     String file_cloud_path = regions_images.getResult().getItems().get(i).toString();
                     String[] datetime =file_cloud_path.split("region_img/");
                     String file_name =datetime[1];
                     StorageReference regionImageReference = regionReference.child(file_name);
-                    //Log.d(TAG, "run: regionImageReference:"+regionImageReference);
                     regionImageReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                         @Override
                         public void onSuccess(StorageMetadata storageMetadata) {
                             cloud_regions_images.add(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
-                            //Log.d(TAG, "onSuccess: file_name:"+file_name);
-                            //Log.d(TAG, "onSuccess: storageMetadata.getCreationTimeMillis():"+storageMetadata.getCreationTimeMillis());
                         }
                     });
-
                 }
-                Log.d(TAG, "run: 002");
                 // immagini region in locale
                 ArrayList<String> local_regions_images = new ArrayList<>();
                 File folderRegions = new File(getFilesDir().getAbsolutePath()
                         + "/images/regions");
                 File[] files_regions = folderRegions.listFiles();
-                Log.d(TAG, "run: "+files_regions.length);
                 if(files_regions != null){
-                    for(File f : files_regions){ // loop and print all file
-                        String fileName = f.getName(); // this is file name
-                        Log.d(TAG, "run: presente in locale:"+fileName + "dove? :" +folderRegions);
+                    for(File f : files_regions){
+                        String fileName = f.getName();
+                        //Log.d(TAG, "immagini region locale: "+fileName);
                         local_regions_images.add(fileName);
                     }
                 }
-
 
                 //immagini teams sul cloud
                 Integer teams_image_size = teams_images.getResult().getItems().size();
@@ -177,20 +172,16 @@ public class SetNotificationFor24Hours extends JobService {
                     String[] datetime =file_cloud_path.split("team_img/");
                     String file_name =datetime[1];
                     StorageReference teamsImageReference = teamsReference.child(file_name);
-                    //Log.d(TAG, "run: regionImageReference:"+teamsImageReference);
                     teamsImageReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                         @Override
                         public void onSuccess(StorageMetadata storageMetadata) {
                             cloud_teams_images.add(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
-                            //Log.d(TAG, "onSuccess: file_name:"+file_name);
-                            //Log.d(TAG, "onSuccess: storageMetadata.getCreationTimeMillis():"+storageMetadata.getCreationTimeMillis());
                         }
                     });
                 }
-
                 // immagini teams in locale
                 ArrayList<String> local_teams_images = new ArrayList<>();
-                File folderTeams = new File(getFilesDir()
+                File folderTeams = new File(getFilesDir().getAbsolutePath()
                         + "/images/teams");
                 File[] files_teams = folderTeams.listFiles();
                 if(files_teams != null){
@@ -200,93 +191,122 @@ public class SetNotificationFor24Hours extends JobService {
                     }
                 }
 
-
+                // se ci sono piu immagini regions sul cloud di quelle locali
                 ArrayList<String> moreRegions = new ArrayList<>();
-                //Log.d(TAG, "run: cloud_regions_images:"+cloud_regions_images.size());
                 Integer cloud_regions_images_size =cloud_regions_images.size();
                 if (cloud_regions_images_size>local_regions_images.size()){
                     for (int i=0; i<cloud_regions_images_size; i++){
-                        //Log.d(TAG, "run: cloud_regions_images.get(i): "+i+"-"+cloud_regions_images.get(i));
-                        if (!local_regions_images.contains(cloud_regions_images.get(i)) ){
-                            //Log.d(TAG, "run: adding: "+cloud_regions_images.get(i));
+                        if (!local_regions_images.contains(cloud_regions_images.get(i).getName()) ){
                             moreRegions.add(cloud_regions_images.get(i).getName());
-
                         }
                     }
-                   // Log.d(TAG, "run: cloud_regions_images.size():"+cloud_regions_images.size());
                     for (int i=0; i<moreRegions.size(); i++){
-                       // Log.d(TAG, "immagine in piu del cloud rispetto locale: "+moreRegions.get(i).toString());
                         // devo creare un file e scaricarci dentro l'immagine
                         StorageReference regionReference = storage.getReference("region_img");
                         File file = new File(folderRegions+"/"+moreRegions.get(i));
-                       // Log.d(TAG, "run: URL? = "+regionReference+"/"+moreRegions.get(i));
                         StorageReference gsReference = storage.getReferenceFromUrl(regionReference+"/"+cloud_regions_images.get(i));
                         gsReference.getFile(file);
                     }
-
                 }
-                Log.d(TAG, "run: 001");
+
+                // se ci sono piu immagini regions sul cloud di quelle locali
+                ArrayList<String> moreTeams = new ArrayList<>();
+                Integer cloud_teams_images_size =cloud_teams_images.size();
+                if (cloud_teams_images_size>local_teams_images.size()){
+                    for (int i=0; i<cloud_teams_images_size; i++){
+                        if (!local_teams_images.contains(cloud_teams_images.get(i).getName()) ){
+                            moreTeams.add(cloud_teams_images.get(i).getName());
+                        }
+                    }
+                    for (int i=0; i<moreTeams.size(); i++){
+                        // devo creare un file e scaricarci dentro l'immagine
+                        StorageReference teamsReference = storage.getReference("team_img");
+                        File file = new File(folderTeams+"/"+moreTeams.get(i));
+                        StorageReference gsReference = storage.getReferenceFromUrl(teamsReference+"/"+cloud_teams_images.get(i));
+                        gsReference.getFile(file);
+                    }
+                }
+
+
+
+
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        // Actions to do after 10 seconds
                         //controlla che le immagini presenti siano le stesse delle immagini sul cloud
                         for (int i=0; i<cloud_regions_images.size(); i++){
                             String region_name = cloud_regions_images.get(i).getName();
-                            Log.d(TAG, "run: region_name:"+region_name);
                             Long local_region_image = sqLite.getMillisCreationRegionImage(region_name);
+                            if (local_region_image >0){
+                                if (!cloud_regions_images.get(i).getDate().toString().equals(local_region_image.toString())){
+                                    Log.d(TAG, "run: NOT EQUALS: "+cloud_regions_images.get(i).getDate() +" == "+ local_region_image +" for: "+cloud_regions_images.get(i).getName());
+                                    //elimina l'immagine presente in locale
+                                    File folderRegionsImage = new File(getFilesDir() + "/images/regions/"+ cloud_regions_images.get(i).getName() );
+                                    if (folderRegionsImage.exists()) {
+                                        if (folderRegionsImage.delete()) {
+                                            Log.d(TAG, "run: deleted: "+folderRegionsImage);
+                                        } else {
+                                            Log.d(TAG, "run: error, not found: "+folderRegionsImage);
+                                        }
 
-
-                            if (!cloud_regions_images.get(i).getDate().toString().equals(local_region_image.toString())){
-                                Log.d(TAG, "run: NOT EQUALS: "+cloud_regions_images.get(i).getDate() +" == "+ local_region_image);
-                                //elimina l'immagine presente in locale
-
-                                File folderRegionsImage = new File(getFilesDir() + "/images/regions/"+ cloud_regions_images.get(i).getName() );
-
-
-                                if (folderRegionsImage.exists()) {
-                                    if (folderRegionsImage.delete()) {
-                                        Log.d(TAG, "run: deleted: "+folderRegionsImage);
-                                    } else {
-
-                                        Log.d(TAG, "run: error, not found: "+folderRegionsImage);
+                                    }else {
+                                        Log.d(TAG, "NOT EXIST: path:"+folderRegionsImage.getAbsolutePath());
                                     }
-                                }else {
-                                    Log.d(TAG, "NOT EXIST: path:"+folderRegionsImage.getAbsolutePath());
+                                    //scarica l'immagine nello stesso path
+                                    StorageReference gsReference = storage.getReferenceFromUrl(regionReference+"/"+cloud_regions_images.get(i).getName());
+                                    gsReference.getFile(folderRegionsImage);
+                                    gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                                        @Override
+                                        public void onSuccess(StorageMetadata storageMetadata) {
+                                            //Log.d(TAG, "onSuccess: modifico nel db questi dati: "+ region_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
+                                            sqLite.updateImageRegion(new ImageValidator(region_name,storageMetadata.getCreationTimeMillis()));
+                                        }
+                                    });
+
+
                                 }
-                                //scarica l'immagine nello stesso path
-                                StorageReference gsReference = storage.getReferenceFromUrl(regionReference+"/"+cloud_regions_images.get(i).getName());
-                                gsReference.getFile(folderRegionsImage);
+                            }
 
 
-                                gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-                                    @Override
-                                    public void onSuccess(StorageMetadata storageMetadata) {
-                                        Log.d(TAG, "onSuccess: modifico nel db questi dati: "+ region_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
-
-                                        sqLite.updateImageRegion(new ImageValidator(region_name,storageMetadata.getCreationTimeMillis()));
-                                    }
-                                });
-
-
-                                //dopo che l'ha cancellata fai un for e verifica le immagini presenti in loclae per assicurarti che non abbia fatto il cazzone
-/*                                File folderRegions = new File(getFilesDir().getAbsolutePath()
-                                        + "/images/regions");
-                                File[] files_regions = folderRegions.listFiles();
-                                Log.d(TAG, "run: "+files_regions.length);
-                                if(files_regions != null){
-                                    for(File f : files_regions){ // loop and print all file
-                                        String fileName = f.getName(); // this is file name
-                                        Log.d(TAG, "run: presente in locale:"+fileName + "dove? :" +folderRegions);
-
-                                    }
-                                }*/
-                                
-
-                            }/*else {
-                                Log.d(TAG, "run: EQUALS: "+cloud_regions_images.get(i).getDate() +" == "+ local_region_image);
-                            }*/
                         }
+                        // controllo sincronizzazione immagini localie  cloud per Teams
+                        for (int i=0; i<cloud_teams_images.size(); i++){
+                            String team_name = cloud_teams_images.get(i).getName();
+                            Long local_teams_image = sqLite.getMillisCreationTeamImage(team_name);
+                            if (local_teams_image>0){
+
+                                if (!cloud_teams_images.get(i).getDate().toString().equals(local_teams_image.toString())){
+                                    Log.d(TAG, "run: NOT EQUALS: "+cloud_teams_images.get(i).getDate() +" == "+ local_teams_image);
+                                    //elimina l'immagine presente in locale
+                                    File folderTeamsImage = new File(getFilesDir() + "/images/teams/"+ cloud_teams_images.get(i).getName() );
+                                    if (folderTeamsImage.exists()) {
+                                        folderTeamsImage.deleteOnExit();
+                                        if (folderTeamsImage.delete()) {
+                                            Log.d(TAG, "run: deleted: "+folderTeamsImage);
+                                        } else {
+                                            Log.d(TAG, "run: error, not found: "+folderTeamsImage);
+                                        }
+                                    }else {
+                                        Log.d(TAG, "NOT EXIST: path:"+folderTeamsImage.getAbsolutePath());
+                                    }
+                                    //scarica l'immagine nello stesso path
+
+                                    StorageReference gsReference = storage.getReferenceFromUrl(teamsReference+"/"+cloud_teams_images.get(i).getName());
+                                    //Log.d(TAG, "run: cerco di scaricare l'immagine da: "+gsReference + " ||||| "+teamsReference+"/"+cloud_teams_images.get(i).getName());
+                                    gsReference.getFile(folderTeamsImage);
+                                    gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+                                        @Override
+                                        public void onSuccess(StorageMetadata storageMetadata) {
+                                            Log.d(TAG, "onSuccess: scaricato,  modifico nel db questi dati: "+ team_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
+                                            sqLite.updateImageTeams(new ImageValidator(team_name,storageMetadata.getCreationTimeMillis()));
+                                        }
+                                    });
+                                }
+                            }
+
+                        }
+
+
                     }
                 }, 3000);
 

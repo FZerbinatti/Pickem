@@ -111,6 +111,7 @@ public class SQLite extends SQLiteOpenHelper {
         cv.put(DATE, imageValidator.getDate()  );
 
         db.update(TABLE_IMAGE_TEAMS, cv, null, null);
+        Log.d(TAG, "updateImageTeams: done.");
         db.close();
     }
 

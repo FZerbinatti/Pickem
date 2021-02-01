@@ -84,8 +84,8 @@ public class AlarmReceiver extends BroadcastReceiver{
                     PendingIntent goToPickem = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
-                            .setSmallIcon(R.mipmap.ic_launcher_round)
-
+                            .setSmallIcon(R.drawable.ic_p)
+                            .setColor(context.getResources().getColor(R.color.blue_light))
                             .setContentTitle("Pick EM!")
                             .setContentText("Dont forget to do your picks for today's matches!")
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

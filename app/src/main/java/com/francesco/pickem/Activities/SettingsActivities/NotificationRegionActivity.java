@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
@@ -31,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class NotificationRegionActivity extends AppCompatActivity {
@@ -47,6 +51,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
     String regionSelectedExtra;
     ImageView imageview_notification_region;
     Context context;
+    String imageRegionPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +69,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
         imageview_notification_region = findViewById(R.id.imageview_notification_region);
 
         context = this;
-
+        imageRegionPath = context.getFilesDir().getAbsolutePath() + "/images/regions/";
         Bundle extras = getIntent().getExtras();
         regionSelectedExtra = extras.getString(REGION_SELECTED);
         Log.d(TAG, "onCreate: REGION_SELECTED: " +regionSelectedExtra);
@@ -84,27 +89,23 @@ public class NotificationRegionActivity extends AppCompatActivity {
 
     private void loadBackground(String regionSelected) {
 
-        DatabaseReference regionImageReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_regions))
-                .child(regionSelected)
-                .child(getString(R.string.regions_image));
+        //non serve fare la query se hai il region name e applichi i parametri di cambio lettere/spazi
+        String local_image =imageRegionPath+regionSelected.replace(" ", "")+".png";
 
-        regionImageReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String url_image = dataSnapshot.getValue(String.class);
+        RequestOptions options = new RequestOptions()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .error(R.drawable.ic_load);
 
-                RequestOptions options = new RequestOptions()
-                        .fitCenter()
-                        .error(R.drawable.ic_load);
-                Glide.with(context).load(url_image).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(imageview_notification_region);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-
+        Glide.with(context)
+                .load(new File(local_image)) // Uri of the picture
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade(500))
+                .into(imageview_notification_region);
+        Log.d(TAG, "loadBackground: IMMAGINE CARICATA DA LOCALE: "+imageRegionPath+local_image);
 
 
 
