@@ -79,6 +79,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String region = displayMatchDetailsList.get(i).getRegion();
         String year = displayMatchDetailsList.get(i).getYear();
         String dateTime = displayMatchDetailsList.get(i).getDatetime();
+        Long team1_score = displayMatchDetailsList.get(i).getTeam1_score();
+        Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
 
         Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
 
@@ -91,6 +93,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         thisMatch.setDate(match_date);
         thisMatch.setTime(match_time);
         thisMatch.setDatetime(dateTime);
+        thisMatch.setTeam1_score(team1_score);
+        thisMatch.setTeam2_score(team2_score);
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -147,15 +151,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             }
 
 
-
-
-
-
-
-
-
-
         viewHolder.textview_match_timer.setText(match_time);
+        viewHolder.textview_team1_score.setText(team1_score.toString());
+        viewHolder.textview_team2_score.setText(team2_score.toString());
 
         // se non ha scelto e il match è concluso
         getUserPick(thisMatch, viewHolder);
@@ -174,6 +172,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         private ImageView image_team_2;
         private ImageView opacity_team_2;
         private TextView textview_match_timer;
+        private TextView textview_team1_score;
+        private TextView textview_team2_score;
 
         private ImageView icon_prediction_correct_team1, icon_prediction_wrong_team1;
         private ImageView icon_prediction_correct_team2, icon_prediction_wrong_team2;
@@ -187,6 +187,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             opacity_team_1 = (ImageView) itemView.findViewById(R.id.opacity_team_1);
             opacity_team_2 = (ImageView) itemView.findViewById(R.id.opacity_team_2);
             textview_match_timer = (TextView) itemView.findViewById(R.id.textview_match_timer);
+            textview_team1_score = (TextView) itemView.findViewById(R.id.team1_score);
+            textview_team2_score = (TextView) itemView.findViewById(R.id.team2_score);
 
             icon_prediction_correct_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team1);
             icon_prediction_wrong_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team1);
@@ -232,7 +234,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         Log.d(TAG, "updateUserPick: "+thisMatch.getId());
 
-        Log.d(TAG, "updateUserPick: "+displayMatch.getId());
+        //Log.d(TAG, "updateUserPick: "+displayMatch.getId());
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("UserPicks")

@@ -19,6 +19,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
 
+    <TextView
+        android:id="@+id/team1_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/classicroman"
+        android:text="3"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/blue_light_opaque"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/logo_team_1"
+        app:layout_constraintStart_toEndOf="@+id/logo_team_1"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
     <ImageView
         android:id="@+id/opacity_team_1"
         android:layout_width="@dimen/teams_icons_dimens"
@@ -74,6 +87,19 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/logo_team_1"
         app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+
+    <TextView
+        android:id="@+id/team2_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/classicroman"
+        android:text="3"
+        android:textColor="@color/blue_light_opaque"
+        android:textSize="30sp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/logo_team_2"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_2" />
 
     <ImageView
         android:id="@+id/logo_team_2"

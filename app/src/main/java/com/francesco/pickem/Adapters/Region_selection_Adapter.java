@@ -84,7 +84,7 @@ public class Region_selection_Adapter extends PagerAdapter {
 
 
         String local_image =imageRegionPath+leaguesSelectedList.get(position).getName().replace(" ", "")+".png";
-        Log.d(TAG, "instantiateItem: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ "+imageRegionPath);
+        //Log.d(TAG, "instantiateItem: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ "+imageRegionPath);
 
         Glide.with(context)
                 .load(new File(local_image)) // Uri of the picture

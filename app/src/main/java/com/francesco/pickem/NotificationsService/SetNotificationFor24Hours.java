@@ -44,6 +44,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -55,7 +57,7 @@ public class SetNotificationFor24Hours extends JobService {
     ArrayList<TeamNotification> userTeamsNotifications;
     ArrayList <MatchNotification> tomorrowsMatches;
     ArrayList <String> tomorrowUserunpickedMatches;
-    ArrayList <MatchDetails> tomorrowMatches;
+    ArrayList <MatchDetails> tomorrowMatches, allTomorrowMatches;
     ArrayList <MatchDetails> firstsMatchOfTheDay;
     ArrayList <MatchNotification> notPickedMatchIDs;
     Calendar myCalendar;
@@ -94,7 +96,7 @@ public class SetNotificationFor24Hours extends JobService {
         today = getTodayDate();
         tomorrow = getTomorrowsDate();
         Integer jobID = jobParameters.getJobId();
-        Log.d(TAG, "onStartJob: jobID: "+jobID);
+        //Log.d(TAG, "onStartJob: jobID: "+jobID);
         switch (jobID){
             case 1:
                 loadSettingsForThisRegion(jobParameters);
@@ -103,14 +105,6 @@ public class SetNotificationFor24Hours extends JobService {
                 checkIfLocalImageFolderIsUpdated();
                 break;
         }
-
-
-
-        // per gli 1 fai una query delle partite di quella regione con data attuale o sucessiva
-        //setta gli alarm
-
-
-        //get userNotificationSettings Region, crea un arrayList di oggetti
 
         return true;
     }
@@ -153,9 +147,10 @@ public class SetNotificationFor24Hours extends JobService {
                     });
                 }
                 // immagini region in locale
+
                 ArrayList<String> local_regions_images = new ArrayList<>();
                 File folderRegions = new File(getFilesDir().getAbsolutePath()
-                        + "/images/regions");
+                        + (getString(R.string.folder_regions_images)));
                 File[] files_regions = folderRegions.listFiles();
                 if(files_regions != null){
                     for(File f : files_regions){
@@ -182,7 +177,7 @@ public class SetNotificationFor24Hours extends JobService {
                 // immagini teams in locale
                 ArrayList<String> local_teams_images = new ArrayList<>();
                 File folderTeams = new File(getFilesDir().getAbsolutePath()
-                        + "/images/teams");
+                        +getString(R.string.folder_teams_images));
                 File[] files_teams = folderTeams.listFiles();
                 if(files_teams != null){
                     for(File f : files_teams){ // loop and print all file
@@ -241,7 +236,7 @@ public class SetNotificationFor24Hours extends JobService {
                                 if (!cloud_regions_images.get(i).getDate().toString().equals(local_region_image.toString())){
                                     Log.d(TAG, "run: NOT EQUALS: "+cloud_regions_images.get(i).getDate() +" == "+ local_region_image +" for: "+cloud_regions_images.get(i).getName());
                                     //elimina l'immagine presente in locale
-                                    File folderRegionsImage = new File(getFilesDir() + "/images/regions/"+ cloud_regions_images.get(i).getName() );
+                                    File folderRegionsImage = new File(getFilesDir() + getString(R.string.folder_regions_images)+ cloud_regions_images.get(i).getName() );
                                     if (folderRegionsImage.exists()) {
                                         if (folderRegionsImage.delete()) {
                                             Log.d(TAG, "run: deleted: "+folderRegionsImage);
@@ -278,7 +273,7 @@ public class SetNotificationFor24Hours extends JobService {
                                 if (!cloud_teams_images.get(i).getDate().toString().equals(local_teams_image.toString())){
                                     Log.d(TAG, "run: NOT EQUALS: "+cloud_teams_images.get(i).getDate() +" == "+ local_teams_image);
                                     //elimina l'immagine presente in locale
-                                    File folderTeamsImage = new File(getFilesDir() + "/images/teams/"+ cloud_teams_images.get(i).getName() );
+                                    File folderTeamsImage = new File(getFilesDir() + getString(R.string.folder_teams_images)+ cloud_teams_images.get(i).getName() );
                                     if (folderTeamsImage.exists()) {
                                         folderTeamsImage.deleteOnExit();
                                         if (folderTeamsImage.delete()) {
@@ -297,7 +292,7 @@ public class SetNotificationFor24Hours extends JobService {
                                     gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                                         @Override
                                         public void onSuccess(StorageMetadata storageMetadata) {
-                                            Log.d(TAG, "onSuccess: scaricato,  modifico nel db questi dati: "+ team_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
+                                            //Log.d(TAG, "onSuccess: scaricato,  modifico nel db questi dati: "+ team_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
                                             sqLite.updateImageTeams(new ImageValidator(team_name,storageMetadata.getCreationTimeMillis()));
                                         }
                                     });
@@ -361,7 +356,7 @@ public class SetNotificationFor24Hours extends JobService {
                     RegionNotifications regionNotifications = snapshot.getValue(RegionNotifications.class);
                     if (regionNotifications !=null){
                         userRegionsNotifications.add(regionNotifications);
-                        Log.d(TAG, "onDataChange: "+regionNotifications.getRegion_name());
+                        //Log.d(TAG, "onDataChange: "+regionNotifications.getRegion_name());
                     }
 
                 }
@@ -380,19 +375,18 @@ public class SetNotificationFor24Hours extends JobService {
 
 
     private void thisUserNotificationPreference(ArrayList<RegionNotifications> regionNotifications)  {
-        Log.d(TAG, "thisUserNotificationPreference: ?????????????????????????????"+regionNotifications.size());
+        //Log.d(TAG, "thisUserNotificationPreference: ?????????????????????????????"+regionNotifications.size());
         tomorrowUserunpickedMatches = new ArrayList<>();
         tomorrowMatches = new ArrayList<>();
+        allTomorrowMatches = new ArrayList<>();
 
 
-        for (int i=0; i< regionNotifications.size(); i++){
+        /*for (int i=0; i< regionNotifications.size(); i++){
             Log.d(TAG, "thisUserNotificationPreference: region: "+regionNotifications.get(i).getRegion_name() );
             Log.d(TAG, "thisUserNotificationPreference: getNotification_first_match_otd: "+regionNotifications.get(i).getNotification_first_match_otd());
             Log.d(TAG, "thisUserNotificationPreference: getNotification_morning_reminder: "+regionNotifications.get(i).getNotification_morning_reminder());
             Log.d(TAG, "thisUserNotificationPreference: getNo_choice_made: "+regionNotifications.get(i).getNo_choice_made());
-
-        }
-
+        }*/
 
 
         for (int i=0; i< regionNotifications.size(); i++){
@@ -401,7 +395,6 @@ public class SetNotificationFor24Hours extends JobService {
             currentRegion.setRegion(regionNotifications.get(i).getRegion_name());
 
                 if (regionNotifications.get(i).getNo_choice_made()>0) {
-
 
                 reference = FirebaseDatabase.getInstance().getReference("Users")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -423,9 +416,7 @@ public class SetNotificationFor24Hours extends JobService {
                             if (data.equals(tomorrow)&&matchUserResult.equals("unpicked")){
                                 tomorrowUserunpickedMatches.add(match_ID);
                             }
-
                         }
-
                     }
 
                     @Override
@@ -462,11 +453,49 @@ public class SetNotificationFor24Hours extends JobService {
                                 // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
                                 if (data.equals(tomorrow)){
                                     match.setWinner(currentRegion.getRegion());
+                                    match.setDatetime(convertDatetimeZtoLocale(match.getDatetime()));
                                     tomorrowMatches.add(match);
                                 }
-
                             }
+                        }
 
+                        @Override
+                        public void onStart() {
+                            //Log.d(TAG, "onStart: ");
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            //Log.d(TAG, "onFailure: ");
+                        }
+                    });
+                }
+
+                if (regionNotifications.get(i).getNotification_morning_reminder()>0){
+                    // prendi tutti i match di domani (se ce ne sono) e crea una notifica da displayare domani mattina
+                    allTomorrowMatches = new ArrayList<>();
+                    reference = FirebaseDatabase.getInstance().getReference
+                            (getResources().getString(R.string.firebase_Matches))
+                            .child(regionNotifications.get(i).getRegion_name())
+                            .child(regionNotifications.get(i).getRegion_name()+year);
+
+                    readData(reference, new OnGetDataListener() {
+                        @Override
+                        public void onSuccess(DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                String match_ID = snapshot.getKey().toString();
+                                MatchDetails match = snapshot.getValue(MatchDetails.class);
+
+                                String[] datetime = match_ID.split("T");
+                                String data =datetime[0];
+                                // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
+                                if (data.equals(tomorrow)){
+                                    match.setWinner(currentRegion.getRegion());
+                                    match.setDatetime(convertDatetimeZtoLocale(match.getDatetime()));
+                                    allTomorrowMatches.add(match);
+                                }
+                            }
                         }
 
                         @Override
@@ -487,11 +516,17 @@ public class SetNotificationFor24Hours extends JobService {
                 public void run() {
                     // Actions to do after 10 seconds
                     if(tomorrowUserunpickedMatches.size()>0){
+                        Log.d(TAG, "run: trigger: unpicked");
                         setAlarmsBecauseThisMatchesHasNotBeenPicked(tomorrowUserunpickedMatches);
                     }
-
                     if(tomorrowMatches.size()>0){
+                        Log.d(TAG, "run: trigger at first match start");
                         setToTheFirstOfThisMatches(tomorrowMatches);
+                    }
+
+                    if (allTomorrowMatches.size()>0){
+                        Log.d(TAG, "run: trigger morning reminder");
+                        setNotificationWithTomorrowMatches(allTomorrowMatches);
                     }
 
                 }
@@ -505,72 +540,88 @@ public class SetNotificationFor24Hours extends JobService {
 
     }
 
+    private void setNotificationWithTomorrowMatches(ArrayList<MatchDetails> allTomorrowMatches) {
+        //Log.d(TAG, "setNotificationWithTomorrowMatches: "+allTomorrowMatches.size());
+        ArrayList<String> tomorrowStringArrayMatches = new ArrayList<>();
+
+        Collections.sort(allTomorrowMatches, new MatchDetails.ByDatetime());
+
+        for (int i=0; i<allTomorrowMatches.size(); i++){
+            tomorrowStringArrayMatches.add(allTomorrowMatches.get(i).getWinner()+" " +getTimeMinutesFromDatetime(allTomorrowMatches.get(i).getDatetime()) +" -  [ " + allTomorrowMatches.get(i).getTeam1() + " vs " + allTomorrowMatches.get(i).getTeam2() + " ]");
+        }
+        //Log.d(TAG, "setNotificationWithTomorrowMatches: tomorrowStringArrayMatches.size:"+tomorrowStringArrayMatches.size());
+
+        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+        intent.putExtra("TYPE", "ALL_TMATCHES");
+        intent.putStringArrayListExtra("ALL_T_MATCHES", tomorrowStringArrayMatches);
+        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
+        try {
+            calendar.setTime(formatter.parse(tomorrow+"T07:00:00"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "********************************************************* setNotificationWithTomorrowMatches: millis:"+calendar.getTimeInMillis());
+        //alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        // testing purpose
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+3000, alarmIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+6000, alarmIntent);
+
+    }
+
     private void setToTheFirstOfThisMatches(ArrayList<MatchDetails> tomorrowMatches) {
         Integer ora_minima =24;
-        //primo_match_otd = "";
+        primo_match_otd = "";
         CurrentRegion currentRegion =new CurrentRegion();
 
+
         firstsMatchOfTheDay= new ArrayList<>();
-        Log.d(TAG, "setToTheFirstOfThisMatches: userRegionsNotifications.size():"+userRegionsNotifications.size());
+        //Log.d(TAG, "setToTheFirstOfThisMatches: userRegionsNotifications.size():"+userRegionsNotifications.size());
         // dell'AL arrivato, dividi nelle regioni diverse e per ognuna trova la data piu recente
         for (int i=0; i<userRegionsNotifications.size();i++){
             currentRegion.setRegion(userRegionsNotifications.get(i).getRegion_name());
-            Log.d(TAG, "setToTheFirstOfThisMatches: userRegionsNotifications.size(): "+userRegionsNotifications.size());
+            //Log.d(TAG, "setToTheFirstOfThisMatches: userRegionsNotifications.size(): "+userRegionsNotifications.size());
             for (int j=0; j<tomorrowMatches.size();j++){
                 if(tomorrowMatches.get(j).getWinner().equals(userRegionsNotifications.get(i).getRegion_name())){
-                    Log.d(TAG, "setToTheFirstOfThisMatches:  tomorrowMatches.get(j).getDatetime():"+ tomorrowMatches.get(j).getDatetime());
-                    String[] datetime = tomorrowMatches.get(j).getDatetime().split("T");
+                    //Log.d(TAG, "setToTheFirstOfThisMatches:  tomorrowMatches.get(j).getDatetime():"+ tomorrowMatches.get(j).getDatetime());
 
-
-                    Log.d(TAG, "setToTheFirstOfThisMatches: datetime.length:"+datetime.length);
-                    if (datetime.length==2){
-                        String time =datetime[1];
-
-
-                        String[] time_array = time.split(":");
-
-                        String ora ="";
-                        String minuto = "";
-                        String secondo = "";
-
-
-
-                        if (time_array.length ==3){
-
-                            ora = time_array[0];
-                            Log.d(TAG, "setToTheFirstOfThisMatches: ora: "+ora);
-                            Integer int_ora =Integer.parseInt(ora);
-                            if (int_ora < ora_minima){
-                                ora_minima = int_ora;
-                                primo_match_otd = tomorrowMatches.get(j).getDatetime();
-                                Log.d(TAG, "setToTheFirstOfThisMatches: tomorrowMatches.get(j).getDatetime():" +tomorrowMatches.get(j).getDatetime() +" region: "+ tomorrowMatches.get(j).getWinner());
-                            }
-
-                        }
+                    Integer int_ora =Integer.parseInt(getTimeFromDatetime(tomorrowMatches.get(j).getDatetime()));
+                    if (int_ora < ora_minima){
+                        ora_minima = int_ora;
+                        primo_match_otd = tomorrowMatches.get(j).getDatetime();
+                        //Log.d(TAG, "setToTheFirstOfThisMatches: tomorrowMatches.get(j).getDatetime():" +tomorrowMatches.get(j).getDatetime() +" region: "+ tomorrowMatches.get(j).getWinner());
                     }
 
                 }
             }
 
-            Log.d(TAG, "setToTheFirstOfThisMatches: primo_match_otd:"+primo_match_otd);
+            if (!primo_match_otd.equals("")){
+                //Log.d(TAG, "setToTheFirstOfThisMatches: primo_match_otd:"+primo_match_otd);
 
-            Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
 
-            intent.putExtra(getResources().getString(R.string.TYPE) ,getResources().getString(R.string.FIRST_MATCH));
-            intent.putExtra("REGION", currentRegion.getRegion() );
+                intent.putExtra(getResources().getString(R.string.TYPE) ,getResources().getString(R.string.FIRST_MATCH));
+                intent.putExtra("REGION", currentRegion.getRegion() );
 
-            alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            try {
-                calendar.setTime(formatter.parse(primo_match_otd));
-            } catch (ParseException e) {
-                e.printStackTrace();
+                alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                try {
+                    calendar.setTime(formatter.parse(primo_match_otd));
+                    calendar.add(Calendar.MINUTE,5);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                Log.d(TAG, "******************************* questo è il primo match di domani: millis:"+calendar.getTimeInMillis()+" region: "+currentRegion.getRegion());
+                //alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+3000, alarmIntent);
             }
-            Log.d(TAG, "******************************* questo è il primo match di domani: millis:"+calendar.getTimeInMillis() +" region: "+currentRegion.getRegion());
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-
         }
 
     }
@@ -590,38 +641,20 @@ public class SetNotificationFor24Hours extends JobService {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
+        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
         try {
             calendar.setTime(formatter.parse(tomorrow+"T07:00:00"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: millis:"+calendar.getTimeInMillis());
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        Log.d(TAG, "********************************************* setAlarmsBecauseThisMatchesHasNotBeenPicked: millis:"+calendar.getTimeInMillis());
+        //Log.d(TAG, "********************************************* setAlarmsBecauseThisMatchesHasNotBeenPicked: millis:"+(System.currentTimeMillis()+2000));
+        //alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+2000, alarmIntent);
+
 
 
     }
-
-
-    /*private void getTheEarliestNotPickedMatchDate(ArrayList<String> match_IDs) throws ParseException {
-        Log.d(TAG, "setAlarmForTheRecentestMatchOfThose: size: "+match_IDs.size());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        String earliest_not_picked_match = year +"-12-30T23:59:59";
-
-
-
-        for(int i = 0; i < match_IDs.size(); i++){
-            Date earliest_date = sdf.parse(earliest_not_picked_match);
-            Date strDate = sdf.parse(match_IDs.get(i));
-            if (strDate.before(earliest_date)) {
-                earliest_not_picked_match = match_IDs.get(i).toString();
-            }
-
-        }
-
-        setAlarm1hBeforeThisDateTime(earliest_not_picked_match);
-
-    }*/
 
 
     private String getTodayDate(){
@@ -659,8 +692,64 @@ public class SetNotificationFor24Hours extends JobService {
 
     }
 
+    public String convertDatetimeZtoLocale(String datetime){
+        //Log.d(TAG, "convertDatetimeZtoLocale: eating this: "+datetime);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+        Date strDate = null;
 
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = null;
+        try {
+            date = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf.setTimeZone(TimeZone.getDefault());
+        String formattedDate = sdf.format(date);
 
+        //Log.d(TAG, "convertDatetimeZtoLocale: shitting this: "+formattedDate.toString());
+
+        return formattedDate.toString();
+    }
+
+    private String getTimeFromDatetime(String datetimeInput){
+
+        String ora = "";
+        String[] datetime = datetimeInput.split("T");
+
+        if (datetime.length==2) {
+            String time = datetime[1];
+
+            String[] time_array = time.split(":");
+
+            if (time_array.length == 3) {
+                ora = time_array[0];
+            }
+        }
+
+        return ora;
+    }
+
+    private String getTimeMinutesFromDatetime(String datetimeInput){
+
+        String time="";
+        String ora = "";
+        String minuto = "";
+        String[] datetime = datetimeInput.split("T");
+
+        if (datetime.length==2) {
+            time = datetime[1];
+
+            String[] time_array = time.split(":");
+
+            if (time_array.length == 3) {
+                ora = time_array[0];
+                minuto = time_array[1];
+            }
+        }
+
+        return ora+":"+minuto;
+    }
 
 }

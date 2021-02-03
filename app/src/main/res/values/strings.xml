@@ -6,53 +6,49 @@
     <string name="enter_an_email">Enter an Email</string>
     <string name="enter_a_password">Enter a Password</string>
     <string name="repeat_password">Repeat Password</string>
-    <string name="summoner_name">summoner_name</string>
     <string name="password">Password</string>
     <string name="email">email</string>
-    <string name="summoner_server">summoner_server</string>
 
     <string name="reset">Reset</string>
     <string name="new_password">New Password</string>
     <string name="repeat_new_password">Repeat new password</string>
     <string name="pmbe">Passwords must be equal</string>
 
-    <string name="lec">LEC</string>
-    <string name="lcs">LCS</string>
-    <string name="lck">LCK</string>
-    <string name="lpl">LPL</string>
-    <string name="tcl">TCL</string>
-    <string name="cblol">CBLOL</string>
-    <string name="opl">OPL</string>
-    <string name="lla">LLA</string>
-    <string name="pcs">PCS</string>
-    <string name="ljl">LJL</string>
-
-    <string name="lcs_academy">LCS Academy</string>
-    <string name="eu_masters">European Masters</string>
     <string name="reminder_if_nothing_has_been_chosen_on_match_day_1h_before_match_start">Reminder if nothing has been chosen on match day 1h before match start</string>
 
-    //day of the week
-    <string name="lunedi">Monday</string>
-    <string name="martedi">Tuesday</string>
-    <string name="mercoledi">Wednesday</string>
-    <string name="giovedi">Thursday</string>
-    <string name="venerdi">Friday</string>
-    <string name="sabato">Saturday</string>
-    <string name="domenica">Sunday</string>
+    // Elos for elo tracker
+    <string name="Challenger">Challenger</string>
+    <string name="Grandmaster">Grandmaster</string>
+    <string name="Master">Master</string>
+    <string name="Diamond_1">Diamond 1</string>
+    <string name="Diamond_2">Diamond 2</string>
+    <string name="Diamond_3">Diamond 3</string>
+    <string name="Diamond_4">Diamond 4</string>
+    <string name="Platinum_1">Platinum 1</string>
+    <string name="Platinum_2">Platinum 2</string>
+    <string name="Platinum_3">Platinum 3</string>
+    <string name="Platinum_4">Platinum 4</string>
+    <string name="Gold_1">Gold 1</string>
+    <string name="Gold_2">Gold 2</string>
+    <string name="Gold_3">Gold 3</string>
+    <string name="Gold_4">Gold 4</string>
+    <string name="Silver_1">Silver 1</string>
+    <string name="Silver_2">Silver 2</string>
+    <string name="Silver_3">Silver 3</string>
+    <string name="Silver_4">Silver 4</string>
+    <string name="Bronze_1">Bronze 1</string>
+    <string name="Bronze_2">Bronze 2</string>
+    <string name="Bronze_3">Bronze 3</string>
+    <string name="Bronze_4">Bronze 4</string>
+    <string name="Iron_1">Iron 1</string>
+    <string name="Iron_2">Iron 2</string>
+    <string name="Iron_3">Iron 3</string>
+    <string name="Iron_4">Iron 4</string>
 
-    //months of the year
-    <string name="gennaio">January </string>
-    <string name="febbraio">February</string>
-    <string name="marzo">March</string>
-    <string name="aprile">April</string>
-    <string name="maggio">May</string>
-    <string name="giugno">June</string>
-    <string name="luglio">July</string>
-    <string name="agosto">August</string>
-    <string name="settembre">September</string>
-    <string name="ottobre">October</string>
-    <string name="novembre">November</string>
-    <string name="dicembre">December</string>
+    <!--  - - - - - - - - - - - - - - - - - - STATIC STRINGS DONT CHANGE VALUES AFTER THIS - - - - - - - - - - - - - - - - -->
+
+    <string name="summoner_server">summoner_server</string>
+    <string name="summoner_name">summoner_name</string>
 
     // firebase children
     <string name="firebase_users">Users</string>
@@ -100,38 +96,6 @@
     <string name="notification_team_as_team_plays">notification_team_as_team_plays</string>
     <string name="notification_team_morning_reminder">notification_team_morning_reminder</string>
 
-    //firebase Matches
-    <string name="split1">S1</string>
-
-    // Elos for elo tracker
-    <string name="Challenger">Challenger</string>
-    <string name="Grandmaster">Grandmaster</string>
-    <string name="Master">Master</string>
-    <string name="Diamond_1">Diamond 1</string>
-    <string name="Diamond_2">Diamond 2</string>
-    <string name="Diamond_3">Diamond 3</string>
-    <string name="Diamond_4">Diamond 4</string>
-    <string name="Platinum_1">Platinum 1</string>
-    <string name="Platinum_2">Platinum 2</string>
-    <string name="Platinum_3">Platinum 3</string>
-    <string name="Platinum_4">Platinum 4</string>
-    <string name="Gold_1">Gold 1</string>
-    <string name="Gold_2">Gold 2</string>
-    <string name="Gold_3">Gold 3</string>
-    <string name="Gold_4">Gold 4</string>
-    <string name="Silver_1">Silver 1</string>
-    <string name="Silver_2">Silver 2</string>
-    <string name="Silver_3">Silver 3</string>
-    <string name="Silver_4">Silver 4</string>
-    <string name="Bronze_1">Bronze 1</string>
-    <string name="Bronze_2">Bronze 2</string>
-    <string name="Bronze_3">Bronze 3</string>
-    <string name="Bronze_4">Bronze 4</string>
-    <string name="Iron_1">Iron 1</string>
-    <string name="Iron_2">Iron 2</string>
-    <string name="Iron_3">Iron 3</string>
-    <string name="Iron_4">Iron 4</string>
-
     //Elotracker stuff
     <string name="elotracker_id">elotracker_id</string>
     <string name="elotracker_date">elotracker_date</string>
@@ -145,11 +109,20 @@
     <string name="channel_description">Pickem Notification Channel</string>
     <string name="channel_name">pickem_channel</string>
 
+    //Notifications types
     <string name="TYPE">TYPE</string>
     <string name="FIRST_MATCH">FIRST_MATCH</string>
     <string name="NOT_PICKED">NOT_PICKED</string>
     <string name="MATCHES">MATCHES</string>
     <string name="MATCH">MATCH</string>
+
+    //local folder location
+    <string name="folder_regions_images">/images/regions/</string>
+    <string name="folder_teams_images">/images/teams/</string>
+
+
+    <!--  - - - - - - - - - - - - - - - - - - STATIC STRINGS DONT CHANGE VALUES BEFORE THIS - - - - - - - - - - - - - - - - -->
+
 
 
 

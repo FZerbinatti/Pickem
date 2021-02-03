@@ -160,7 +160,7 @@ public class PicksActivity extends AppCompatActivity  {
         JobInfo info2 = new JobInfo.Builder(2, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setPeriodic( 24* 60 * 60 * 1000)
+                .setPeriodic(7* 24* 60* 60* 1000)
                 .build();
         JobScheduler scheduler2 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode2 = scheduler2.schedule(info2);
@@ -299,6 +299,8 @@ public class PicksActivity extends AppCompatActivity  {
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(pick_backgroundimage);
 
+
+
             }
 
             @Override
@@ -308,9 +310,6 @@ public class PicksActivity extends AppCompatActivity  {
 
                 loadSplitMatchesForThisRegion(selected_region_name);
 
-
-
-
             }
 
             @Override
@@ -318,9 +317,6 @@ public class PicksActivity extends AppCompatActivity  {
 
                 if (state ==1 ){
                     selected_region_name="";
-                }else {
-
-
                 }
 
             }
@@ -334,7 +330,7 @@ public class PicksActivity extends AppCompatActivity  {
         //Log.d(TAG, "ADESSO STO CERCANDO DELLE GIORNATE PER LA REGIONE SELEZIONATA: "+selected_region);
         String firebase_section = getString(R.string.firebase_Matches);
 
-        allFullDates = new ArrayList<>();
+
 
         // load da firebase le regioni
         //Log.d(TAG, "loadSplitMatchesForThisRegion: path: "+ firebase_section +"/"+ selected_region +"/"+ selected_region + year +"/"+selected_region + year+split);
@@ -347,12 +343,17 @@ public class PicksActivity extends AppCompatActivity  {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-
+                allFullDates = new ArrayList<>();
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
                     // prendi tutti i giorni disponibili per quell'anno per quella regione per quello split
                     String matchDayDetails = (snapshot.getKey().toString());
-                    allFullDates.add(getFullDateFromUnivDate(matchDayDetails));
+                    if(!allFullDates.contains(getFullDateFromUnivDate(matchDayDetails))){
+                        allFullDates.add(getFullDateFromUnivDate(matchDayDetails));
+                    }
+                    Log.d(TAG, "onDataChange: "+allFullDates.size());
+
+
 
 
                 }
@@ -505,7 +506,8 @@ public class PicksActivity extends AppCompatActivity  {
                 viewPager_match_day.setCurrentItem(selectedPage);
                 day_selected_fullDay = matchDays.get(selectedPage);
                 //Log.d(TAG, "loadViewPagerMatchDays: "+day_selected_fullDay.getId());
-                loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
+                // ATTENTION DANGER MODIFY
+                //loadRecyclerView(allMatchesForThisDate(allFullDates, day_selected_fullDay ),selected_region_name);
 
                 viewPager_match_day.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                     @Override
@@ -561,7 +563,7 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void loadRecyclerView(ArrayList <String> loadThisMatchesID, String selected_region_name){
-        //Log.d(TAG, "initRecyclerView: loadThisMatchesID.size(): "+loadThisMatchesID.size());
+        Log.d(TAG, "initRecyclerView: loadThisMatchesID.size(): "+loadThisMatchesID.size());
 
         //matchDetails
         matchListSplit = new ArrayList<>();
@@ -590,7 +592,7 @@ public class PicksActivity extends AppCompatActivity  {
                         matchListSplit.add(matchDetails);
                         //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
                         if (matchListSplit.size()==loadThisMatchesID.size()){
-                            //Log.d(TAG, "loadRecyclerView: "+matchListSplit.size());
+                            Log.d(TAG, "loadRecyclerView: "+matchListSplit.size());
                             fromMatchDaysToDisplayMatch(matchListSplit);
                         }
 
@@ -654,6 +656,8 @@ public class PicksActivity extends AppCompatActivity  {
             displayMatch.setPrediction("null");
             displayMatch.setRegion(selected_region_name);
             displayMatch.setYear(selected_region_name+year);
+            displayMatch.setTeam1_score(matchListForThisDay.get(i).getTeam1_score());
+            displayMatch.setTeam2_score(matchListForThisDay.get(i).getTeam2_score());
             //Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
 
             if (displayMatch.getTeam1()== null){}else {

@@ -5,7 +5,6 @@ public class DisplayMatch {
     private String datetime;
     private String year;
     private String region;
-
     private String id;
     private String date;
     private String time;
@@ -15,12 +14,14 @@ public class DisplayMatch {
     private String urlLogoteam2;
     private String prediction;
     private String winner;
+    private Long team1_score;
+    private Long team2_score;
 
     public DisplayMatch() {
     }
 
 
-    public DisplayMatch(String datetime, String year, String region, String id, String date, String time, String team1, String team2, String urlLogoteam1, String urlLogoteam2, String prediction, String winner) {
+    public DisplayMatch(String datetime, String year, String region, String id, String date, String time, String team1, String team2, String urlLogoteam1, String urlLogoteam2, String prediction, String winner, Long team1_score, Long team2_score) {
         this.datetime = datetime;
         this.year = year;
         this.region = region;
@@ -33,6 +34,8 @@ public class DisplayMatch {
         this.urlLogoteam2 = urlLogoteam2;
         this.prediction = prediction;
         this.winner = winner;
+        this.team1_score = team1_score;
+        this.team2_score = team2_score;
     }
 
     public String getDatetime() {
@@ -129,5 +132,21 @@ public class DisplayMatch {
 
     public void setWinner(String winner) {
         this.winner = winner;
+    }
+
+    public Long getTeam1_score() {
+        return team1_score;
+    }
+
+    public void setTeam1_score(Long team1_score) {
+        this.team1_score = team1_score;
+    }
+
+    public Long getTeam2_score() {
+        return team2_score;
+    }
+
+    public void setTeam2_score(Long team2_score) {
+        this.team2_score = team2_score;
     }
 }

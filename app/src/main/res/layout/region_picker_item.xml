@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
         android:paddingVertical="10dp"
-        android:text="@string/lec"
+        android:text="Test"
         android:textColor="@color/white"
         android:textSize="22sp"
         android:gravity="center"

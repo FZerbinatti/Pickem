@@ -69,7 +69,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
         imageview_notification_region = findViewById(R.id.imageview_notification_region);
 
         context = this;
-        imageRegionPath = context.getFilesDir().getAbsolutePath() + "/images/regions/";
+        imageRegionPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_regions_images));
         Bundle extras = getIntent().getExtras();
         regionSelectedExtra = extras.getString(REGION_SELECTED);
         Log.d(TAG, "onCreate: REGION_SELECTED: " +regionSelectedExtra);

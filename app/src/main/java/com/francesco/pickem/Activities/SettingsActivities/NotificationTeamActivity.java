@@ -68,7 +68,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
         checkbox_as_team_plays = findViewById(R.id.checkbox_as_team_plays);
         checkbox_team_morning_reminder = findViewById(R.id.checkbox_team_morning_reminder);
         context = this;
-        imageTeamPath = context.getFilesDir().getAbsolutePath() + "/images/teams/";
+        imageTeamPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_teams_images));
 
         notifications_teams_progressbar.setVisibility(View.VISIBLE);
 

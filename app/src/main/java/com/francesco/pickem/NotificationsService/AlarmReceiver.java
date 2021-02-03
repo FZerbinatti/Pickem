@@ -30,37 +30,26 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.FutureTarget;
-import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
+import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class AlarmReceiver extends BroadcastReceiver{
     private String TAG = "Drugs Alarm";
     private static String NOTIFICATION_ID = "1";
     public static String PACKAGE_NAME;
+    ArrayList<String> allTomorrowsMatches;
     //Bitmap bitmap;
     //Bitmap bitmap_region;
 
@@ -76,9 +65,10 @@ public class AlarmReceiver extends BroadcastReceiver{
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
             String notification_type = intent.getStringExtra("TYPE");
+            Log.d(TAG, "onReceive: "+notification_type);
 
                  if (notification_type.equals("NOT_PICKED")){
-
+                     Log.d(TAG, "onReceive: NOT_PICKED NOT_PICKED NOT_PICKED NOT_PICKED NOT_PICKED NOT_PICKED");
                     //intent per andare a PicksActivity quando si fa tap sulla notifica
                     Intent resultIntent = new Intent(context, PicksActivity.class);
                     PendingIntent goToPickem = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -125,9 +115,9 @@ public class AlarmReceiver extends BroadcastReceiver{
                     String imagepath = context.getFilesDir().getAbsolutePath() + "/images/regions/" +region +".png";
 
                     RemoteViews collapsedView = new RemoteViews(PACKAGE_NAME,
-                            R.layout.custom_notif_region_collapsed);
+                            R.layout.notification_region_collapsed);
                     RemoteViews expandedView = new RemoteViews(PACKAGE_NAME,
-                            R.layout.custom_notif_region);
+                            R.layout.notification_region_expanded);
 
 
                             expandedView.setTextViewText(R.id.custom_notif_region_regionname, region);
@@ -147,6 +137,160 @@ public class AlarmReceiver extends BroadcastReceiver{
 
 
                 }
+                 else if (notification_type.equals("ALL_TMATCHES")){
+
+                     allTomorrowsMatches = intent.getStringArrayListExtra("ALL_T_MATCHES");
+                     Integer size = allTomorrowsMatches.size();
+                     if (size>7){
+                         size=7;
+                     }
+                     String title ="Today's Matches";
+                     Log.d(TAG, "onReceive: size: "+ size);
+
+                     switch (size){
+                         case 1:
+                             Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification);
+                             break;
+                         case 2:
+                             Notification notification2 = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                             .addLine(allTomorrowsMatches.get(1))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification2);
+                             break;
+                         case 3:
+                             Notification notification3 = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                             .addLine(allTomorrowsMatches.get(1))
+                                             .addLine(allTomorrowsMatches.get(2))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification3);
+                             break;
+                         case 4:
+                             Notification notification4 = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                             .addLine(allTomorrowsMatches.get(1))
+                                             .addLine(allTomorrowsMatches.get(2))
+                                             .addLine(allTomorrowsMatches.get(3))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification4);
+                             break;
+                         case 5:
+                             Notification notification5 = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                             .addLine(allTomorrowsMatches.get(1))
+                                             .addLine(allTomorrowsMatches.get(2))
+                                             .addLine(allTomorrowsMatches.get(3))
+                                             .addLine(allTomorrowsMatches.get(4))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification5);
+                             break;
+                         case 6:
+                             Notification notification6 = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                             .addLine(allTomorrowsMatches.get(1))
+                                             .addLine(allTomorrowsMatches.get(2))
+                                             .addLine(allTomorrowsMatches.get(3))
+                                             .addLine(allTomorrowsMatches.get(4))
+                                             .addLine(allTomorrowsMatches.get(5))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification6);
+                             break;
+                         case 7:
+                             Notification notification7 = new NotificationCompat.Builder(context, NOTIFICATION_ID)
+                                     .setSmallIcon(R.drawable.ic_p)
+                                     .setColor(context.getResources().getColor(R.color.blue_light))
+                                     .setStyle(new NotificationCompat.InboxStyle()
+                                             .addLine(allTomorrowsMatches.get(0))
+                                             .addLine(allTomorrowsMatches.get(1))
+                                             .addLine(allTomorrowsMatches.get(2))
+                                             .addLine(allTomorrowsMatches.get(3))
+                                             .addLine(allTomorrowsMatches.get(4))
+                                             .addLine(allTomorrowsMatches.get(5))
+                                             .addLine(allTomorrowsMatches.get(6))
+                                     )
+                                     .setContentTitle(title)
+                                     .setPriority(NotificationCompat.PRIORITY_LOW)
+                                     .setAutoCancel(true)
+                                     .build();
+
+
+
+                             notificationManagerCompat.notify(1, notification7);
+                             break;
+                         default:
+                             break;
+
+                     }
+
+
+
+
+
+                 }
 
 
 
