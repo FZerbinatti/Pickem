@@ -570,7 +570,7 @@ public class SetNotificationFor24Hours extends JobService {
         //alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
         // testing purpose
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+3000, alarmIntent);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+6000, alarmIntent);
+
 
     }
 

@@ -174,6 +174,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         private TextView textview_match_timer;
         private TextView textview_team1_score;
         private TextView textview_team2_score;
+        private TextView match_live;
 
         private ImageView icon_prediction_correct_team1, icon_prediction_wrong_team1;
         private ImageView icon_prediction_correct_team2, icon_prediction_wrong_team2;
@@ -189,12 +190,12 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             textview_match_timer = (TextView) itemView.findViewById(R.id.textview_match_timer);
             textview_team1_score = (TextView) itemView.findViewById(R.id.team1_score);
             textview_team2_score = (TextView) itemView.findViewById(R.id.team2_score);
+            match_live = (TextView) itemView.findViewById(R.id.match_live);
 
             icon_prediction_correct_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team1);
             icon_prediction_wrong_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team1);
             icon_prediction_correct_team2 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team2);
             icon_prediction_wrong_team2 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team2);
-
 
 
             image_team_1.setOnClickListener(new View.OnClickListener() {

@@ -164,5 +164,20 @@
         app:layout_constraintStart_toStartOf="@+id/logo_team_1"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/match_live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/classicroman"
+        android:rotation="90"
+        android:text="LIVE"
+        android:visibility="invisible"
+        android:textColor="@color/blue_light"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/logo_team_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/logo_team_2"
+        app:layout_constraintTop_toTopOf="@+id/logo_team_2" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

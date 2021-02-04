@@ -281,6 +281,7 @@ public class PicksActivity extends AppCompatActivity  {
         selected_region_name=userSelectedRegions.get(0).getName();
         loadSplitMatchesForThisRegion(selected_region_name);
 
+
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
