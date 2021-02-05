@@ -82,7 +82,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         Long team1_score = displayMatchDetailsList.get(i).getTeam1_score();
         Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
 
-        Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
+        //Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
 
         thisMatch.setYear(year);
         thisMatch.setRegion(region);
@@ -233,7 +233,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     public void updateUserPick (DisplayMatch displayMatch){
 
-        Log.d(TAG, "updateUserPick: "+thisMatch.getId());
+        //Log.d(TAG, "updateUserPick: "+thisMatch.getId());
 
         //Log.d(TAG, "updateUserPick: "+displayMatch.getId());
         FirebaseDatabase.getInstance().getReference("Users")
@@ -263,7 +263,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 match_prediction = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "onDataChange: match_prediction: "+match_prediction);
+                //Log.d(TAG, "onDataChange: match_prediction: "+match_prediction);
                 displayMatch.setPrediction(match_prediction);
                 loadDataWithPrediction(displayMatch, viewHolder);
 

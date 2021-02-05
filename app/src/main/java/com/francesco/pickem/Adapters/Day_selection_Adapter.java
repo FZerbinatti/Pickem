@@ -17,14 +17,15 @@ import java.util.ArrayList;
 
 public class Day_selection_Adapter extends PagerAdapter {
 
-    private ArrayList<FullDate> matchDaysList;
+    private ArrayList<String> matchDaysList;
     private LayoutInflater layoutInflater;
     private Context context;
     private String TAG ="Adapter ";
     PicksActivity picksActivity = new PicksActivity();
 
 
-    public Day_selection_Adapter(ArrayList<FullDate> matchDaysList, Context context) {
+
+    public Day_selection_Adapter(ArrayList<String> matchDaysList, Context context) {
         this.matchDaysList = matchDaysList;
         this.context = context;
     }
@@ -51,7 +52,7 @@ public class Day_selection_Adapter extends PagerAdapter {
 
         textViewDay = view.findViewById(R.id.match_day_textview);
 
-        textViewDay.setText(((matchDaysList.get(position)).getCoolDate()));
+        textViewDay.setText(picksActivity.getDisplayDate(matchDaysList.get(position)));
 
         container.addView(view, 0);
         return view;

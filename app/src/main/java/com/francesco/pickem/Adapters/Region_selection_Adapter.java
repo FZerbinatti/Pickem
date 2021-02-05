@@ -24,14 +24,14 @@ import java.util.List;
 
 public class Region_selection_Adapter extends PagerAdapter {
 
-    private ArrayList<RegionDetails> leaguesSelectedList;
+    private ArrayList<String> leaguesSelectedList;
     private LayoutInflater layoutInflater;
     private Context context;
     private String TAG ="Adapter ";
     String imageRegionPath;
 
 
-    public Region_selection_Adapter(ArrayList<RegionDetails> leaguesSelectedList, Context context) {
+    public Region_selection_Adapter(ArrayList<String> leaguesSelectedList, Context context) {
         this.leaguesSelectedList = leaguesSelectedList;
         this.context = context;
     }
@@ -83,7 +83,7 @@ public class Region_selection_Adapter extends PagerAdapter {
                 .error(R.drawable.logo_lck);
 
 
-        String local_image =imageRegionPath+leaguesSelectedList.get(position).getName().replace(" ", "")+".png";
+        String local_image =imageRegionPath+leaguesSelectedList.get(position).replace(" ", "")+".png";
         //Log.d(TAG, "instantiateItem: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ "+imageRegionPath);
 
         Glide.with(context)

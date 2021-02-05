@@ -19,7 +19,7 @@ public class SQLite extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 4;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -40,6 +40,7 @@ public class SQLite extends SQLiteOpenHelper {
     public SQLite(Context context) {
         super(context, DB_NAME, null,DB_VERSION);
     }
+
 
 
     private void createTables(SQLiteDatabase db){
@@ -101,6 +102,7 @@ public class SQLite extends SQLiteOpenHelper {
 
 
         db.insert(TABLE_MATCH_DAYS, null, cv);
+        Log.d(TAG, "insertMatchDay: inserito: Year: "+matchDay.getYear() +" Region: " +matchDay.getRegion()+" Date: " +matchDay.getMatch_day());
         db.close();
 
     }
@@ -109,11 +111,12 @@ public class SQLite extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put(YEAR, match.getRegion());
-        cv.put(REGION, match.getDay_id()  );
-        cv.put(DAY, match.getMatch_datetime()  );
+        cv.put(REGION, match.getRegion());
+        cv.put(DAY, match.getDay_id()  );
+        cv.put(MATCH_ID, match.getMatch_datetime()  );
 
         db.insert(TABLE_MATCHES, null, cv);
+        Log.d(TAG, "insertMatch: inserito: Region: "+match.getRegion() +" Date: " +match.getDay_id()+" Datetime: " +match.getMatch_datetime());
         db.close();
 
     }
@@ -138,7 +141,7 @@ public class SQLite extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> match_ids = new ArrayList<>();
         //                                 0
-        String selectQuery = "SELECT "+ DAY +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + MATCH_ID + " = ?" ;
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ?" ;
         Cursor cursor = db.rawQuery(selectQuery, new String []{regionSelected, day_ID});
         if (cursor.moveToFirst()) {
             do {

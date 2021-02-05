@@ -201,7 +201,7 @@
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/login_button"
                     android:enabled="true"
-                    android:fontFamily="@font/simplex"
+                    android:fontFamily="@font/classicroman"
                     android:paddingHorizontal="10dp"
 
                     android:text="Sign Up"

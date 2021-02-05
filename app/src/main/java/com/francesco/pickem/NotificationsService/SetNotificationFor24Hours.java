@@ -8,7 +8,6 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -73,7 +72,6 @@ public class SetNotificationFor24Hours extends JobService {
     private Context context;
     CurrentRegion currentRegion;
     String primo_match_otd;
-    Bitmap bitmap;
     RegionNotifications regionNotifications;
     SQLite sqLite;
 

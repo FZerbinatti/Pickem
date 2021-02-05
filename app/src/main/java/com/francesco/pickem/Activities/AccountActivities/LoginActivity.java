@@ -21,7 +21,10 @@ import android.widget.Toast;
 
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Models.CurrentNumber;
+import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.ImageValidator;
+import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.SQLite;
@@ -32,6 +35,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
@@ -39,8 +47,13 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
 
 public class LoginActivity extends AppCompatActivity {
     Button login_button;
@@ -51,9 +64,11 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String TAG ="LoginActivity: ";
     ConstraintLayout personalized_dialog_background;
-    TextView personalized_dialog_description, personalized_dialog_percentage1, personalized_dialog_percentage2;
-    ProgressBar personalized_dialog_progressbar1, personalized_dialog_progressbar2;
+    TextView personalized_dialog_description, personalized_dialog_percentage1, personalized_dialog_percentage2, personalized_dialog_percentage3;
+    ProgressBar personalized_dialog_progressbar1, personalized_dialog_progressbar2, personalized_dialog_progressbar3;
     ColorStateList colorStateListGreen, colorStateListYellow;
+    String year;
+    Calendar myCalendar;
 
     // databse watcher
     TextView see_database;
@@ -84,6 +99,8 @@ public class LoginActivity extends AppCompatActivity {
         personalized_dialog_progressbar2 = findViewById(R.id.personalized_dialog_progressbar2);
 
         sqLite = new SQLite(this);
+        myCalendar = Calendar.getInstance();
+        year = String.valueOf(myCalendar.get(Calendar.YEAR));
 
 
         forgot_password.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +134,8 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful() && (firebaseUser != null && (firebaseUser).isEmailVerified())){
+
+                                downloadUserRegions();
 
                                 Log.d(TAG, "onComplete: QUI");
 
@@ -248,8 +267,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
+
                                         }
-                                    }, 2000);
+                                    }, 3000);
 
                                 }else {
                                     Log.d(TAG, "onComplete: il root esiste!");
@@ -285,7 +306,87 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    private void downloadUserRegions() {
 
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_users_generealities))
+                .child(getString(R.string.firebase_user_choosen_regions));
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                //prendi tutte le regioni di interesse dello user
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String userRegion = snapshot.getValue(String.class);
+                    //per ognuna delle regioni trovate, ti scarichi i matchDays di quella regione
+                    downloadMatchDays(userRegion);
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void downloadMatchDays(String selected_region){
+        String firebase_section = getString(R.string.firebase_Matches);
+        CurrentRegion currentRegion = new CurrentRegion();
+        currentRegion.setRegion(selected_region);
+
+
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(firebase_section)
+                .child(selected_region)
+                .child(selected_region + year);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                String current_date = "";
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    // prendi tutti i giorni disponibili per quell'anno per quella regione
+                    String match_id = (snapshot.getKey());
+                    String date =getLocalDateFromDateTime(match_id);
+                    // pusha i match nell'SQL locale tabella Matches
+                    sqLite.insertMatch( new Sqlite_Match(currentRegion.getRegion(), date, match_id));
+                    //filtra tutti i match e ottieni solo i matchdays univoci
+
+                    if (!date.equals(current_date)){
+                        sqLite.insertMatchDay(new Sqlite_MatchDay(year, currentRegion.getRegion(), date));
+                        current_date=date;
+                    }
+
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private String getLocalDateFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalDateFromDateTime: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+        Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
+
+        return localDatetime;
+    }
 
     public void changeNavBarColor() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
