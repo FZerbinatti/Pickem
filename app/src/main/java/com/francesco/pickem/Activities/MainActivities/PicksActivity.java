@@ -11,6 +11,8 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -305,43 +307,56 @@ public class PicksActivity extends AppCompatActivity  {
         // query sqlite per avere gli ID dei match di quel giorno di quella regione,
         matchesForThisDate = sqLite.getMatchIds(selected_region_name, loadMatchesForThisDate);
 
-        // query firebase per avere gli oggetti MatchDetails
-        for (int i = 0; i < matchesForThisDate.size(); i++){
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
-                    .child(selected_region_name)
-                    .child(selected_region_name + year)
-                    .child(matchesForThisDate.get(i));
+        if (isNetworkAvailable()){
 
-            //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year +"/"+matchesForThisDate.get(i));
+            for (int i = 0; i < matchesForThisDate.size(); i++){
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
+                        .child(selected_region_name)
+                        .child(selected_region_name + year)
+                        .child(matchesForThisDate.get(i));
 
-            readData(reference, new OnGetDataListener() {
-                @Override
-                public void onSuccess(DataSnapshot dataSnapshot) {
-                    //Log.d(TAG, "onSuccess: ");
-                    MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
-                    //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
-                    if (matchDetails!=null){
+                //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year +"/"+matchesForThisDate.get(i));
 
-                        matchListSplit.add(matchDetails);
-                        //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;
-                        //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
-                        if (matchListSplit.size()== matchesForThisDate.size()){
-                            fromMatchDaysToDisplayMatch(matchListSplit);
+                readData(reference, new OnGetDataListener() {
+                    @Override
+                    public void onSuccess(DataSnapshot dataSnapshot) {
+                        //Log.d(TAG, "onSuccess: ");
+                        MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
+                        //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
+                        if (matchDetails!=null){
+
+                            matchListSplit.add(matchDetails);
+                            //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;
+                            //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
+                            if (matchListSplit.size()== matchesForThisDate.size()){
+                                fromMatchDaysToDisplayMatch(matchListSplit);
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onStart() {
-                    //Log.d(TAG, "onStart: ");
-                }
+                    @Override
+                    public void onStart() {
+                        //Log.d(TAG, "onStart: ");
+                    }
 
-                @Override
-                public void onFailure() {
-                    //Log.d(TAG, "onFailure: ");
-                }
-            });
+                    @Override
+                    public void onFailure() {
+                        //Log.d(TAG, "onFailure: ");
+                    }
+                });
+            }
+
+        }else{
+            Log.d(TAG, "downloadMatches:  network off");
+            no_match_found.setText("Network offline, Please go online to load matches");
+            no_match_found.setVisibility(View.VISIBLE);
+            pick_progressbar_matches.setVisibility(View.GONE);
+            pick_progressbar.setVisibility(View.GONE);
+            viewPager_match_day.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
         }
+        // query firebase per avere gli oggetti MatchDetails
+
     }
 
     public String getDisplayDate(String dateString) {
@@ -647,6 +662,19 @@ public class PicksActivity extends AppCompatActivity  {
         Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
 
         return localDatetime;
+    }
+
+    private boolean isNetworkAvailable() {
+        Log.d(TAG, "isNetworkAvailable: NETWORK OFF");
+        ConnectivityManager manager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Network is present and connected
+            isAvailable = true;
+        }
+        return isAvailable;
     }
 
 }
