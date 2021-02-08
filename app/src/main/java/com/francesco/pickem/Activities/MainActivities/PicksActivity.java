@@ -11,8 +11,6 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +46,7 @@ import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.NotificationsService.SetNotificationFor24Hours;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
-import com.francesco.pickem.Services.SQLite;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -94,7 +92,7 @@ public class PicksActivity extends AppCompatActivity  {
     SetNotificationFor24Hours setNotificationFor24Hours;
     ImageView test;
     String imageRegionPath;
-    SQLite sqLite;
+    DatabaseHelper databaseHelper;
     Integer selectedPage;
 
 
@@ -110,7 +108,7 @@ public class PicksActivity extends AppCompatActivity  {
         viewPager_match_day = findViewById(R.id.viewPager_match_day);
         test = findViewById(R.id.topper_pick_backgroundimage);
         viewPagerRegions = findViewById(R.id.viewPager_picksActivity);
-        sqLite = new SQLite(this);
+        databaseHelper = new DatabaseHelper(this);
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         pick_background = findViewById(R.id.pick_background);
@@ -235,7 +233,7 @@ public class PicksActivity extends AppCompatActivity  {
     public void loadMatchDays(String selected_region){
 
         ArrayList<String> matchDays = new ArrayList<>();
-        matchDays = sqLite.getMatchDays(year, selected_region);
+        matchDays = databaseHelper.getMatchDays(year, selected_region);
 
                 if (matchDays.isEmpty()){
                     no_match_found.setVisibility(View.VISIBLE);
@@ -305,58 +303,45 @@ public class PicksActivity extends AppCompatActivity  {
         matchesForThisDate = new ArrayList<>();
 
         // query sqlite per avere gli ID dei match di quel giorno di quella regione,
-        matchesForThisDate = sqLite.getMatchIds(selected_region_name, loadMatchesForThisDate);
+        matchesForThisDate = databaseHelper.getMatchIds(selected_region_name, loadMatchesForThisDate);
 
-        if (isNetworkAvailable()){
+        // query firebase per avere gli oggetti MatchDetails
+        for (int i = 0; i < matchesForThisDate.size(); i++){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
+                    .child(selected_region_name)
+                    .child(selected_region_name + year)
+                    .child(matchesForThisDate.get(i));
 
-            for (int i = 0; i < matchesForThisDate.size(); i++){
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
-                        .child(selected_region_name)
-                        .child(selected_region_name + year)
-                        .child(matchesForThisDate.get(i));
+            //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year +"/"+matchesForThisDate.get(i));
 
-                //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year +"/"+matchesForThisDate.get(i));
+            readData(reference, new OnGetDataListener() {
+                @Override
+                public void onSuccess(DataSnapshot dataSnapshot) {
+                    //Log.d(TAG, "onSuccess: ");
+                    MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
+                    //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
+                    if (matchDetails!=null){
 
-                readData(reference, new OnGetDataListener() {
-                    @Override
-                    public void onSuccess(DataSnapshot dataSnapshot) {
-                        //Log.d(TAG, "onSuccess: ");
-                        MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
-                        //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
-                        if (matchDetails!=null){
-
-                            matchListSplit.add(matchDetails);
-                            //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;
-                            //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
-                            if (matchListSplit.size()== matchesForThisDate.size()){
-                                fromMatchDaysToDisplayMatch(matchListSplit);
-                            }
+                        matchListSplit.add(matchDetails);
+                        //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;
+                        //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
+                        if (matchListSplit.size()== matchesForThisDate.size()){
+                            fromMatchDaysToDisplayMatch(matchListSplit);
                         }
                     }
+                }
 
-                    @Override
-                    public void onStart() {
-                        //Log.d(TAG, "onStart: ");
-                    }
+                @Override
+                public void onStart() {
+                    //Log.d(TAG, "onStart: ");
+                }
 
-                    @Override
-                    public void onFailure() {
-                        //Log.d(TAG, "onFailure: ");
-                    }
-                });
-            }
-
-        }else{
-            Log.d(TAG, "downloadMatches:  network off");
-            no_match_found.setText("Network offline, Please go online to load matches");
-            no_match_found.setVisibility(View.VISIBLE);
-            pick_progressbar_matches.setVisibility(View.GONE);
-            pick_progressbar.setVisibility(View.GONE);
-            viewPager_match_day.setVisibility(View.INVISIBLE);
-            recyclerView.setVisibility(View.INVISIBLE);
+                @Override
+                public void onFailure() {
+                    //Log.d(TAG, "onFailure: ");
+                }
+            });
         }
-        // query firebase per avere gli oggetti MatchDetails
-
     }
 
     public String getDisplayDate(String dateString) {
@@ -444,7 +429,7 @@ public class PicksActivity extends AppCompatActivity  {
 
 
     }
-    
+
     private boolean isUserAlreadyLogged() {
 
          //PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
@@ -662,19 +647,6 @@ public class PicksActivity extends AppCompatActivity  {
         Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
 
         return localDatetime;
-    }
-
-    private boolean isNetworkAvailable() {
-        Log.d(TAG, "isNetworkAvailable: NETWORK OFF");
-        ConnectivityManager manager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        boolean isAvailable = false;
-        if (networkInfo != null && networkInfo.isConnected()) {
-            // Network is present and connected
-            isAvailable = true;
-        }
-        return isAvailable;
     }
 
 }

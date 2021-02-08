@@ -20,7 +20,7 @@ import com.francesco.pickem.Models.MatchNotification;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.R;
-import com.francesco.pickem.Services.SQLite;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.android.gms.common.api.internal.TaskUtil;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -38,12 +38,10 @@ import com.google.firebase.storage.StorageReference;
 import static com.google.android.gms.tasks.Tasks.await;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
@@ -73,7 +71,7 @@ public class SetNotificationFor24Hours extends JobService {
     CurrentRegion currentRegion;
     String primo_match_otd;
     RegionNotifications regionNotifications;
-    SQLite sqLite;
+    DatabaseHelper databaseHelper;
 
     //il servizio viene chiamato ogni volta che si apre l'app, ogni volta che si riprende la rete, reboot e ogni 24 ore
     //il servizio setta alarmManager in base ai NotificationSettings scelti che rientrano nelle prossime 24 ore
@@ -115,7 +113,7 @@ public class SetNotificationFor24Hours extends JobService {
     // 2- prendi la lista delle immagini nelle cartelle cloud
         // se differiscono riscarica le differenze
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        sqLite = new SQLite(getApplicationContext());
+        databaseHelper = new DatabaseHelper(getApplicationContext());
 
         //immagini regions sul cloud
         StorageReference regionReference = storage.getReference("region_img");
@@ -229,7 +227,7 @@ public class SetNotificationFor24Hours extends JobService {
                         //controlla che le immagini presenti siano le stesse delle immagini sul cloud
                         for (int i=0; i<cloud_regions_images.size(); i++){
                             String region_name = cloud_regions_images.get(i).getName();
-                            Long local_region_image = sqLite.getMillisCreationRegionImage(region_name);
+                            Long local_region_image = databaseHelper.getMillisCreationRegionImage(region_name);
                             if (local_region_image >0){
                                 if (!cloud_regions_images.get(i).getDate().toString().equals(local_region_image.toString())){
                                     Log.d(TAG, "run: NOT EQUALS: "+cloud_regions_images.get(i).getDate() +" == "+ local_region_image +" for: "+cloud_regions_images.get(i).getName());
@@ -252,7 +250,7 @@ public class SetNotificationFor24Hours extends JobService {
                                         @Override
                                         public void onSuccess(StorageMetadata storageMetadata) {
                                             //Log.d(TAG, "onSuccess: modifico nel db questi dati: "+ region_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
-                                            sqLite.updateImageRegion(new ImageValidator(region_name,storageMetadata.getCreationTimeMillis()));
+                                            databaseHelper.updateImageRegion(new ImageValidator(region_name,storageMetadata.getCreationTimeMillis()));
                                         }
                                     });
 
@@ -265,7 +263,7 @@ public class SetNotificationFor24Hours extends JobService {
                         // controllo sincronizzazione immagini localie  cloud per Teams
                         for (int i=0; i<cloud_teams_images.size(); i++){
                             String team_name = cloud_teams_images.get(i).getName();
-                            Long local_teams_image = sqLite.getMillisCreationTeamImage(team_name);
+                            Long local_teams_image = databaseHelper.getMillisCreationTeamImage(team_name);
                             if (local_teams_image>0){
 
                                 if (!cloud_teams_images.get(i).getDate().toString().equals(local_teams_image.toString())){
@@ -291,7 +289,7 @@ public class SetNotificationFor24Hours extends JobService {
                                         @Override
                                         public void onSuccess(StorageMetadata storageMetadata) {
                                             //Log.d(TAG, "onSuccess: scaricato,  modifico nel db questi dati: "+ team_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
-                                            sqLite.updateImageTeams(new ImageValidator(team_name,storageMetadata.getCreationTimeMillis()));
+                                            databaseHelper.updateImageTeams(new ImageValidator(team_name,storageMetadata.getCreationTimeMillis()));
                                         }
                                     });
                                 }

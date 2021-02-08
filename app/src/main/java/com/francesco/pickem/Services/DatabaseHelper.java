@@ -2,6 +2,7 @@ package com.francesco.pickem.Services;
 
 import android.content.ContentValues;
 import android.content.Context;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -13,7 +14,7 @@ import com.francesco.pickem.Models.Sqlite_MatchDay;
 
 import java.util.ArrayList;
 
-public class SQLite extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String TAG = "DatabaseHelper: ";
 
@@ -37,7 +38,7 @@ public class SQLite extends SQLiteOpenHelper {
     private static final String MATCH_ID = "MATCH_ID";
 
 
-    public SQLite(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, DB_NAME, null,DB_VERSION);
     }
 
@@ -237,5 +238,29 @@ public class SQLite extends SQLiteOpenHelper {
         return image_creation_date;
     }
 
+
+    public void removeFromDatabase(String regionToRemove) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String whereClause = REGION+"=?";
+        String[] whereArgs = new String[] { regionToRemove};
+        db.delete(TABLE_MATCH_DAYS, whereClause, whereArgs);
+        db.delete(TABLE_MATCHES, whereClause, whereArgs);
+
+
+    }
+
+    public void removePastYear(String pastYear) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String whereClause = YEAR+"=?";
+        String[] whereArgs = new String[] { pastYear};
+        db.delete(TABLE_MATCH_DAYS, whereClause, whereArgs);
+        db.delete(TABLE_MATCHES, whereClause, whereArgs);
+
+
+    }
 }
 

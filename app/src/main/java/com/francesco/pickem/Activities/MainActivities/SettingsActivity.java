@@ -36,10 +36,14 @@ import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
 import com.francesco.pickem.Activities.SettingsActivities.NotificationRegionActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
+import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.SimpleRegion;
+import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -51,7 +55,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -86,9 +95,12 @@ public class SettingsActivity extends AppCompatActivity {
     ArrayList<SimpleRegion> full_list_withUserChoiche;
     ArrayList<String> finalRegions;
     SimpleRegionRecyclerViewAdapter adapter;
-    ArrayList<String> choosen_regions;
+    ArrayList<String> removed_regionss;
     ArrayList<String> old_choosen_regions;
-    ArrayList<String> new_choosen_regions;
+    ArrayList<String> added_regionss;
+    DatabaseHelper databaseHelper;
+    Calendar myCalendar;
+    String year;
 
     ImageView info;
 
@@ -109,6 +121,7 @@ public class SettingsActivity extends AppCompatActivity {
         settings_recycler_regioni = findViewById(R.id.settings_recyclerview_regioni);
         parentScrollListener = findViewById(R.id.parentScrollListener);
         info = findViewById(R.id.info_button);
+
 
         userChoosenRegionsfromDB = new ArrayList<>();
 
@@ -322,7 +335,7 @@ public class SettingsActivity extends AppCompatActivity {
                             edittext_emailaddress.setText(database_email);
 
                             userChoosenRegionsfromDB = userProfile.getChoosen_regions();
-                            old_choosen_regions = userChoosenRegionsfromDB;
+                            old_choosen_regions.addAll(userChoosenRegionsfromDB);
                             //per ogni regione esistente
                             for (int i=0; i<all_databaseRegions.size(); i++){
                                 //se tutte le regioni contiene la regione scelta dall'utente
@@ -369,45 +382,64 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 settings_progressbar.setVisibility(View.VISIBLE);
-                new_choosen_regions = new ArrayList<>();
-                choosen_regions = new ArrayList<>();
-                Log.d(TAG, "onClick: 1+++++++++++++++++++++++++++++++"+finalRegions.size());
+                ArrayList <String> added_regions = new ArrayList<>();
+                added_regions.addAll(finalRegions);
+
+                ArrayList <String> removed_regions = new ArrayList<>();
+                removed_regions.addAll(old_choosen_regions);
+
+
+/*                Log.d(TAG, "onClick: 1+++++++++++++++++++++++++++++++"+finalRegions.size());
                 for (int i=0; i< finalRegions.size(); i++){
-                    Log.d(TAG, "/////////////////////////////////////////////////////////////: "+finalRegions.get(i));
+                    Log.d(TAG, " TUTTE LE REGIONI SELEZIONATE ::::::::::: "+finalRegions.get(i));
                 }
 
-                choosen_regions.addAll(finalRegions);
-
-                new_choosen_regions.addAll(finalRegions);
-
-
+                for (int i=0; i< old_choosen_regions.size(); i++){
+                    Log.d(TAG, "VECCHIE REGIONI SELEZIONATE ????????????????  "+old_choosen_regions.get(i));
+                }*/
 
 
 
 
-                if (choosen_regions.isEmpty()) {
+
+
+
+
+                if (finalRegions.isEmpty()) {
                     Toast.makeText(SettingsActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                     settings_progressbar.setVisibility(View.INVISIBLE);
                 }else {
+
                     UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", finalRegions, "");
                     updateUserGeneralities(userGeneralities);
+                    databaseHelper = new DatabaseHelper(context);
 
 
-                    for (int i=0; i< old_choosen_regions.size(); i++){
-                        if (choosen_regions.contains(old_choosen_regions.get(i))){
-                            old_choosen_regions.remove(old_choosen_regions.get(i));
-                        }
-                    }removeNotificationNoChoosenMatchForThisRegion(old_choosen_regions);
 
-                    //LEC LCK LCS
-                    //LEC LPL
-                    for (int i=0; i< new_choosen_regions.size(); i++){
-                        if (old_choosen_regions.contains(new_choosen_regions.get(i))){
-                            new_choosen_regions.remove(new_choosen_regions.get(i));
-                        }
+                    // LE REGIONI CHE CI SONO IN old_choosen_regions E NON IN FINAL_REGIONS SONO LE REGIONI ELIMINATE
+                    //removed_regions = old_choosen_regions.REMOVE(FINAL_REGIONS)
+
+                    removed_regions.removeAll(finalRegions);
+
+                    removeNotificationNoChoosenMatchForThisRegion(removed_regions);
+
+                    for(int i = 0; i< removed_regions.size(); i++){
+                        Log.d(TAG, "REMOVING SQL MATCHES FOR THIS REGION: "+ removed_regions.get(i));
+                        databaseHelper.removeFromDatabase(removed_regions.get(i));
                     }
-                    addNotificationNoChoosenMatchForThisRegion(new_choosen_regions);
 
+
+                    //LE REGIONI CHE CI SONO IN FINAL_REGIONS E NON IN old_choosen_regions SONO LE REGIONI NUOVE AGGIUNTE
+                    //added_regions = FINAL_REGIONS.REMOVE(old_choosen_regions)
+
+                    added_regions.removeAll(old_choosen_regions);
+
+                    addNotificationNoChoosenMatchForThisRegion(added_regions);
+
+                    for(int i = 0; i< added_regions.size(); i++){
+                        Log.d(TAG, "ADDING SQL MATCHES FOR THIS REGION: "+ added_regions.get(i));
+                        downloadMatchDays(added_regions.get(i));
+                    }
 
                     Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
                     settings_progressbar.setVisibility(View.INVISIBLE);
@@ -415,12 +447,6 @@ public class SettingsActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-
-
-
-
-
-
 
             }
         });
@@ -430,6 +456,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void removeNotificationNoChoosenMatchForThisRegion(ArrayList<String> old_choosen_regions) {
 
         for (int i=0; i<old_choosen_regions.size();i++){
+            Log.d(TAG, "removeNotificationNoChoosenMatchForThisRegion: REMOVING NOTIFICATION FOR: "+old_choosen_regions.get(i));
 
             FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -447,6 +474,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void addNotificationNoChoosenMatchForThisRegion(ArrayList<String> new_choosen_regions) {
 
         for (int i=0; i<new_choosen_regions.size();i++){
+            Log.d(TAG, "addNotificationNoChoosenMatchForThisRegion: ADDING NOTIFICATION FOR: "+new_choosen_regions.get(i));
 
             RegionNotifications regionNotifications = new RegionNotifications();
             regionNotifications.setNo_choice_made(1);
@@ -752,9 +780,6 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     }
 
-
-
-
                 }
             }
 
@@ -766,6 +791,67 @@ public class SettingsActivity extends AppCompatActivity {
 
         settings_progressbar.setVisibility(View.INVISIBLE);
 
+
+    }
+
+
+    private String getLocalDateFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalDateFromDateTime: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+        Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
+
+        return localDatetime;
+    }
+
+    public void downloadMatchDays(String selected_region){
+        String firebase_section = getString(R.string.firebase_Matches);
+        CurrentRegion currentRegion = new CurrentRegion();
+        currentRegion.setRegion(selected_region);
+        myCalendar = Calendar.getInstance();
+        year = String.valueOf(myCalendar.get(Calendar.YEAR));
+
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(firebase_section)
+                .child(selected_region)
+                .child(selected_region + year);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                String current_date = "";
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    // prendi tutti i giorni disponibili per quell'anno per quella regione
+                    String match_id = (snapshot.getKey());
+                    String date =getLocalDateFromDateTime(match_id);
+                    // pusha i match nell'SQL locale tabella Matches
+                    databaseHelper.insertMatch( new Sqlite_Match(currentRegion.getRegion(), date, match_id));
+                    //filtra tutti i match e ottieni solo i matchdays univoci
+
+                    if (!date.equals(current_date)){
+                        databaseHelper.insertMatchDay(new Sqlite_MatchDay(year, currentRegion.getRegion(), date));
+                        current_date=date;
+                    }
+
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

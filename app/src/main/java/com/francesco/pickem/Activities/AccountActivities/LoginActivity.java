@@ -27,7 +27,7 @@ import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
-import com.francesco.pickem.Services.SQLite;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -49,10 +49,8 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 import java.util.TimeZone;
 
 public class LoginActivity extends AppCompatActivity {
@@ -72,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // databse watcher
     TextView see_database;
-    SQLite sqLite;
+    DatabaseHelper databaseHelper;
 
 
 
@@ -98,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         personalized_dialog_progressbar1 = findViewById(R.id.personalized_dialog_progressbar1);
         personalized_dialog_progressbar2 = findViewById(R.id.personalized_dialog_progressbar2);
 
-        sqLite = new SQLite(this);
+        databaseHelper = new DatabaseHelper(this);
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
 
@@ -203,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(StorageMetadata storageMetadata) {
                                                         Log.d(TAG, "onSuccess: inserisco nel db questi dati: "+ file_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
-                                                        sqLite.insertImageRegion(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
+                                                        databaseHelper.insertImageRegion(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
                                                     }
                                                 });
 
@@ -259,7 +257,7 @@ public class LoginActivity extends AppCompatActivity {
                                                         String name =datetime[0];*/
                                                         Log.d(TAG, "onSuccess: inserisco nel db questi dati: "+ file_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
 
-                                                        sqLite.insertImageTeam(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
+                                                        databaseHelper.insertImageTeam(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
                                                     }
                                                 });
 
@@ -350,11 +348,11 @@ public class LoginActivity extends AppCompatActivity {
                     String match_id = (snapshot.getKey());
                     String date =getLocalDateFromDateTime(match_id);
                     // pusha i match nell'SQL locale tabella Matches
-                    sqLite.insertMatch( new Sqlite_Match(currentRegion.getRegion(), date, match_id));
+                    databaseHelper.insertMatch( new Sqlite_Match(currentRegion.getRegion(), date, match_id));
                     //filtra tutti i match e ottieni solo i matchdays univoci
 
                     if (!date.equals(current_date)){
-                        sqLite.insertMatchDay(new Sqlite_MatchDay(year, currentRegion.getRegion(), date));
+                        databaseHelper.insertMatchDay(new Sqlite_MatchDay(year, currentRegion.getRegion(), date));
                         current_date=date;
                     }
 
