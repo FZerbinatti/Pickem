@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     SwitchCompat switch_notification, switch_user_settings;
     ConstraintLayout show_notifications_box, show_user_box;
-    private String TAG ="NotificationActivity: ";
+    private String TAG ="SettingsActivity: ";
     Context context;
     ImageButton button_logout;
     private FirebaseUser user;
@@ -837,7 +837,7 @@ public class SettingsActivity extends AppCompatActivity {
                     String match_id = (snapshot.getKey());
                     String date =getLocalDateFromDateTime(match_id);
                     // pusha i match nell'SQL locale tabella Matches
-                    databaseHelper.insertMatch( new Sqlite_Match(currentRegion.getRegion(), date, match_id));
+                    databaseHelper.insertMatch( new Sqlite_Match(year,currentRegion.getRegion(), date, match_id));
                     //filtra tutti i match e ottieni solo i matchdays univoci
 
                     if (!date.equals(current_date)){

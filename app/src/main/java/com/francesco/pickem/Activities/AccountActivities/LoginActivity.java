@@ -348,7 +348,7 @@ public class LoginActivity extends AppCompatActivity {
                     String match_id = (snapshot.getKey());
                     String date =getLocalDateFromDateTime(match_id);
                     // pusha i match nell'SQL locale tabella Matches
-                    databaseHelper.insertMatch( new Sqlite_Match(currentRegion.getRegion(), date, match_id));
+                    databaseHelper.insertMatch( new Sqlite_Match(year, currentRegion.getRegion(), date, match_id));
                     //filtra tutti i match e ottieni solo i matchdays univoci
 
                     if (!date.equals(current_date)){

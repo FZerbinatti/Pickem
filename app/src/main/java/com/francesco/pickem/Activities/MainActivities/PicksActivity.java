@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.job.JobInfo;
@@ -94,6 +95,7 @@ public class PicksActivity extends AppCompatActivity  {
     String imageRegionPath;
     DatabaseHelper databaseHelper;
     Integer selectedPage;
+    SwipeRefreshLayout pullToRefresh;
 
 
     @Override
@@ -112,7 +114,7 @@ public class PicksActivity extends AppCompatActivity  {
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         pick_background = findViewById(R.id.pick_background);
-
+        //pullToRefresh = findViewById(R.id.pullToRefresh);
         selected_region_name ="";
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
@@ -130,7 +132,10 @@ public class PicksActivity extends AppCompatActivity  {
 
 
 
+
     }
+
+
 
     private void downloadUserRegions() {
 
@@ -234,6 +239,7 @@ public class PicksActivity extends AppCompatActivity  {
         ArrayList<String> matchDays = new ArrayList<>();
         matchDays = databaseHelper.getMatchDays(year, selected_region);
 
+
                 if (matchDays.isEmpty()){
                     no_match_found.setVisibility(View.VISIBLE);
                     pick_progressbar_matches.setVisibility(View.GONE);
@@ -302,7 +308,7 @@ public class PicksActivity extends AppCompatActivity  {
         matchesForThisDate = new ArrayList<>();
 
         // query sqlite per avere gli ID dei match di quel giorno di quella regione,
-        matchesForThisDate = databaseHelper.getMatchIds(selected_region_name, loadMatchesForThisDate);
+        matchesForThisDate = databaseHelper.getMatchIdsForThisDate(year, selected_region_name, loadMatchesForThisDate);
 
         // query firebase per avere gli oggetti MatchDetails
         for (int i = 0; i < matchesForThisDate.size(); i++){
@@ -643,6 +649,19 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER2");
         }else {
             Log.d(TAG, "onCreate: DIO PORCO2");
+        }
+
+        JobInfo info3 = new JobInfo.Builder(3, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(1* 24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
+                .build();
+        JobScheduler scheduler3 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode3 = scheduler3.schedule(info3);
+        if (resultCode3 == JobScheduler.RESULT_SUCCESS){
+            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER3");
+        }else {
+            Log.d(TAG, "onCreate: DIO PORCO3");
         }
 
 

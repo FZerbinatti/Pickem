@@ -14,6 +14,10 @@ public class MatchDetails implements Comparable<MatchDetails>{
     private String winner;
     private Long team1_score;
     private Long team2_score;
+    private String team1_image;
+    private String team2_image;
+    private String state;
+
 
 
     public MatchDetails() {
@@ -84,6 +88,30 @@ public class MatchDetails implements Comparable<MatchDetails>{
 
     public void setTeam2_score(Long team2_score) {
         this.team2_score = team2_score;
+    }
+
+    public String getTeam1_image() {
+        return team1_image;
+    }
+
+    public void setTeam1_image(String team1_image) {
+        this.team1_image = team1_image;
+    }
+
+    public String getTeam2_image() {
+        return team2_image;
+    }
+
+    public void setTeam2_image(String team2_image) {
+        this.team2_image = team2_image;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     @Override

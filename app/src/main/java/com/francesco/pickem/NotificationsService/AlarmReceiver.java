@@ -78,7 +78,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                             .setSmallIcon(R.drawable.ic_p)
                             .setColor(context.getResources().getColor(R.color.blue_light))
                             .setContentTitle("Pick EM!")
-                            .setContentText("You have not picked all matches of today for: "+regionOfMatchesNotPicked +", Hurry up!")
+                            .setContentText("You have not picked all matches of today for "+regionOfMatchesNotPicked +", Hurry up!")
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setContentIntent(goToPickem)
                             .setAutoCancel(true);

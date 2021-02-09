@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -68,6 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String CREATE_TABLE_MATCHES = "CREATE TABLE " + TABLE_MATCHES +
                 "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + YEAR + " TEXT ,  "
                 + REGION + " TEXT ,  "
                 + DAY + " TEXT ,  "
                 + MATCH_ID + " TEXT  );";
@@ -116,12 +117,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
+        cv.put(YEAR, match.getYear());
         cv.put(REGION, match.getRegion());
         cv.put(DAY, match.getDay_id()  );
         cv.put(MATCH_ID, match.getMatch_datetime()  );
 
         db.insert(TABLE_MATCHES, null, cv);
-        Log.d(TAG, "insertMatch: inserito: Region: "+match.getRegion() +" Date: " +match.getDay_id()+" Datetime: " +match.getMatch_datetime());
+        Log.d(TAG, "insertMatch: inserito: Year:  "+match.getYear()+ " Region: "+match.getRegion() +" Date: " +match.getDay_id()+" Datetime: " +match.getMatch_datetime());
         db.close();
 
     }
@@ -142,12 +144,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return match_days;
     }
 
-    public ArrayList<String> getMatchIds (String regionSelected, String day_ID ){
+    public ArrayList<String> getMatchIdsForThisDate(String year, String regionSelected, String day_ID ){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> match_ids = new ArrayList<>();
         //                                 0
-        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ?" ;
-        Cursor cursor = db.rawQuery(selectQuery, new String []{regionSelected, day_ID});
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ YEAR +" = ? AND " +REGION +"= ? AND " + DAY + " = ?" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{year, regionSelected, day_ID});
+        if (cursor.moveToFirst()) {
+            do {
+                match_ids .add( cursor.getString(0)) ;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return match_ids;
+    }
+
+    public ArrayList<String> getAllMatchIds(String year, String regionSelected ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> match_ids = new ArrayList<>();
+        //                                 0
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ YEAR +" = ? AND " +REGION +"= ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{year, regionSelected});
         if (cursor.moveToFirst()) {
             do {
                 match_ids .add( cursor.getString(0)) ;

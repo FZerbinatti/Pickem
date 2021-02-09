@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 
 import com.francesco.pickem.Interfaces.OnGetDataListener;
@@ -20,6 +21,8 @@ import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.MatchNotification;
 import com.francesco.pickem.Models.RegionNotifications;
+import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
@@ -51,7 +54,7 @@ import java.util.TimeZone;
 
 public class BackgroundTasks extends JobService {
     private static final String CHANNEL_ID = "1";
-    String TAG = "SetNotificationFor24Hours";
+    String TAG = "BackgroundTasks";
     ArrayList<RegionNotifications> userRegionsNotifications;
     ArrayList<TeamNotification> userTeamsNotifications;
     ArrayList <MatchNotification> tomorrowsMatches;
@@ -105,13 +108,149 @@ public class BackgroundTasks extends JobService {
             case 2:
                 checkIfLocalImageFolderIsUpdated(jobParameters);
                 break;
-
+            case 3:
+                checkIfCurrentUserMatchDaysUpdated(jobParameters);
+                break;
         }
 
         return true;
     }
 
+    private void checkIfCurrentUserMatchDaysUpdated(JobParameters parameters){
+        Log.d(TAG, "checkIfCurrentUserMatchDaysUpdated: ");
 
+        // get user choosen regions
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_users_generealities))
+                .child(getString(R.string.firebase_user_choosen_regions));
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                int int_user_regions_selected = (int) dataSnapshot.getChildrenCount();
+                int counter = 0;
+                ArrayList <String> userRegions = new ArrayList<>();
+
+                //prendi tutte le regioni di interesse dello user
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    counter++;
+                    String userRegion = snapshot.getValue(String.class);
+                    userRegions.add(userRegion);
+
+                }
+                if (counter==int_user_regions_selected){
+                    // get all matches for that region/year
+
+                    downloadMatchDays(userRegions);
+
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+            }
+        });
+
+
+
+    }
+
+
+    public void downloadMatchDays(ArrayList<String> userSelectedRegions){
+        Log.d(TAG, "downloadMatchDays: user regions: "+userSelectedRegions.size());
+        String firebase_section = getString(R.string.firebase_Matches);
+        // get all matches for that region/year
+
+        for(int i=0; i<userSelectedRegions.size(); i++){
+
+            CurrentRegion currentRegion = new CurrentRegion();
+            currentRegion.setRegion(userSelectedRegions.get(i));
+            Log.d(TAG, "downloadMatchDays: under inspection: "+currentRegion.getRegion());
+
+            ArrayList <String> cloudmatchDays = new ArrayList<>();
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(firebase_section)
+                    .child(currentRegion.getRegion())
+                    .child(currentRegion.getRegion() + year);
+
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                    cloudmatchDays.clear();
+                    int matches_available = (int) dataSnapshot.getChildrenCount();
+                    Log.d(TAG, "onDataChange: cloud matches number: "+matches_available);
+                    int counter = 0;
+                    String current_date = "";
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        counter++;
+                        String match_id = (snapshot.getKey());
+                        if (match_id!=null){
+                            cloudmatchDays.add(match_id);
+                        }
+                    }
+
+                    if (counter==matches_available){
+                        Log.d(TAG, "onDataChange: "+counter +" == " +matches_available);
+                        // get local matches for region/year
+                        ArrayList <String> localmatchIDs = new ArrayList<>();
+                        localmatchIDs = databaseHelper.getAllMatchIds(year, currentRegion.getRegion());
+                        Log.d(TAG, "onDataChange: "+year +" "+ currentRegion.getRegion());
+                        Log.d(TAG, "onDataChange: local matches number: " + localmatchIDs.size());
+                        Log.d(TAG, "onDataChange: cloud matches number: "+cloudmatchDays.size());
+
+                        //quando hai scaricato tutti i match togli da cloud_match tutti i local match
+
+                        Integer difference_Cloud_Local = cloudmatchDays.size() - localmatchIDs.size();
+                        Log.d(TAG, "onDataChange: cloud - local = " +difference_Cloud_Local);
+                        if (difference_Cloud_Local!=0){
+                            Log.d(TAG, "onDataChange: DISTRUGGO TUTTO");
+                            //se ci sono differenze tra il db locale e il db cloud matches, cancella i record del db locale per quella regione e ripopolalo
+                            /*for(int i=0; i<cloudmatchDays.size(); i++){
+                                Log.d(TAG, "onDataChange: i:"+i);
+                                String date = getLocalDateFromDateTime(cloudmatchDays.get(i));
+                                databaseHelper.insertMatch( new Sqlite_Match(year, currentRegion.getRegion(), date, cloudmatchDays.get(i)));
+                                if (!date.equals(current_date)){
+                                    databaseHelper.insertMatchDay(new Sqlite_MatchDay(year, currentRegion.getRegion(), date));
+                                    current_date=date;
+                                }
+                            }*/
+                            databaseHelper.removeFromDatabase(currentRegion.getRegion());
+                            // quindi ripopolalo con i nuovi records
+                            Log.d(TAG, "onDataChange: RIPOPOLO TUTTO");
+                            for(int i=0; i<cloudmatchDays.size(); i++){
+                                Log.d(TAG, "onDataChange: "+i);
+
+                                String date = getLocalDateFromDateTime(cloudmatchDays.get(i));
+                                // pusha i match nell'SQL locale tabella Matches
+                                databaseHelper.insertMatch( new Sqlite_Match(year, currentRegion.getRegion(), date, cloudmatchDays.get(i)));
+                                //filtra tutti i match e ottieni solo i matchdays univoci
+
+                                if (!date.equals(current_date)){
+                                    databaseHelper.insertMatchDay(new Sqlite_MatchDay(year, currentRegion.getRegion(), date));
+                                    current_date=date;
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+
+                }
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+    }
 
     private void checkIfLocalImageFolderIsUpdated(JobParameters parameters) {
         //Log.d(TAG, "checkIfLocalImageFolderIsUpdated: ");
@@ -762,6 +901,26 @@ public class BackgroundTasks extends JobService {
         }
 
         return ora+":"+minuto;
+    }
+
+    private String getLocalDateFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalDateFromDateTimeeee: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+        Log.d(TAG, "getLocalDateFromDateTimeeeee: localDatetime: "+localDatetime);
+
+        return localDatetime;
     }
 
 }
