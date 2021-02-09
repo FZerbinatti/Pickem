@@ -43,7 +43,7 @@ import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
-import com.francesco.pickem.NotificationsService.SetNotificationFor24Hours;
+import com.francesco.pickem.NotificationsService.BackgroundTasks;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.DatabaseHelper;
@@ -89,7 +89,7 @@ public class PicksActivity extends AppCompatActivity  {
     String logo_URL;
     TextView no_match_found;
     ArrayList <String> list_of_splits;
-    SetNotificationFor24Hours setNotificationFor24Hours;
+    BackgroundTasks backgroundTasks;
     ImageView test;
     String imageRegionPath;
     DatabaseHelper databaseHelper;
@@ -121,8 +121,7 @@ public class PicksActivity extends AppCompatActivity  {
 
 
         if(isUserAlreadyLogged()){
-            //downloadSelectedRegions();
-            //startBackgorundTasks();
+            startBackgorundTasks();
             downloadUserRegions();
         }
 
@@ -396,40 +395,6 @@ public class PicksActivity extends AppCompatActivity  {
         return 0;
     }
 
-    private void startBackgorundTasks() {
-
-        ComponentName componentName = new ComponentName(this, SetNotificationFor24Hours.class);
-        JobInfo info1 = new JobInfo.Builder(1, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .setPeriodic( 24* 60 * 60 * 1000)
-                .build();
-        JobScheduler scheduler1 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        int resultCode1 =  scheduler1.schedule(info1);
-        if (resultCode1 == JobScheduler.RESULT_SUCCESS){
-            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
-        }else {
-            Log.d(TAG, "onCreate: DIO PORCO");
-        }
-
-        Log.d(TAG, "startBackgorundTasks: ");
-        JobInfo info2 = new JobInfo.Builder(2, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .setPeriodic(7* 24* 60* 60* 1000)
-                .build();
-        JobScheduler scheduler2 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        int resultCode2 = scheduler2.schedule(info2);
-        if (resultCode2 == JobScheduler.RESULT_SUCCESS){
-            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
-        }else {
-            Log.d(TAG, "onCreate: DIO PORCO");
-        }
-
-
-
-    }
-
     private boolean isUserAlreadyLogged() {
 
          //PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
@@ -647,6 +612,40 @@ public class PicksActivity extends AppCompatActivity  {
         Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
 
         return localDatetime;
+    }
+
+    private void startBackgorundTasks() {
+        Log.d(TAG, "startBackgorundTasks: ");
+
+        ComponentName componentName = new ComponentName(this, BackgroundTasks.class);
+        JobInfo info1 = new JobInfo.Builder(1, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic( 60 * 60 * 1000) //una volta all'ora controlla se ci sono notifiche da settare
+                .build();
+        JobScheduler scheduler1 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode1 =  scheduler1.schedule(info1);
+        if (resultCode1 == JobScheduler.RESULT_SUCCESS){
+            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
+        }else {
+            Log.d(TAG, "onCreate: DIO PORCO");
+        }
+
+
+        JobInfo info2 = new JobInfo.Builder(2, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(7* 24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
+                .build();
+        JobScheduler scheduler2 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode2 = scheduler2.schedule(info2);
+        if (resultCode2 == JobScheduler.RESULT_SUCCESS){
+            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER2");
+        }else {
+            Log.d(TAG, "onCreate: DIO PORCO2");
+        }
+
+
     }
 
 }

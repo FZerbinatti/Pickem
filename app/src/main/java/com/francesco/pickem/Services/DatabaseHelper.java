@@ -12,7 +12,11 @@ import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -262,5 +266,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     }
+
+    public String firstMatchForRegion_Date(String region, String date){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String match_id = "";
+        //                                 0
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? LIMIT 1" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+        if (cursor.moveToFirst()) {
+            do {
+                match_id = ( cursor.getString(0)) ;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        if (match_id.equals("")){return "0";
+        } else {
+            Log.d(TAG, "firstMatchForRegion_Date: match_id: "+match_id);
+            return getLocalDateTimeFromDateTime(match_id);
+        }
+
+
+    }
+
+    public ArrayList<String> MatchesForRegion_Date(String region, String date){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> match_id = new ArrayList<>();
+        //                                 0
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+        if (cursor.moveToFirst()) {
+            do {
+                match_id.add( getLocalDateTimeFromDateTime( cursor.getString(0)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+            return match_id;
+
+    }
+
+    private String getLocalDateTimeFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalDateTimeFromDateTime: datetime: " + datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+
+        return localDatetime;
+    }
+
+    public Integer numberOfMatchesForThisRegion_date(String region, String date){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Integer count = 0;
+
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+        count = cursor.getCount();
+        cursor.close();
+        db.close();
+        return count;
+
+    }
+
+
 }
 

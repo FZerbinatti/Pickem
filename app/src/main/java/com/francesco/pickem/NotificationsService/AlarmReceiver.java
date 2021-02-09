@@ -69,6 +69,7 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                  if (notification_type.equals("NOT_PICKED")){
                      Log.d(TAG, "onReceive: NOT_PICKED NOT_PICKED NOT_PICKED NOT_PICKED NOT_PICKED NOT_PICKED");
+                     String regionOfMatchesNotPicked = intent.getStringExtra("REGION");
                     //intent per andare a PicksActivity quando si fa tap sulla notifica
                     Intent resultIntent = new Intent(context, PicksActivity.class);
                     PendingIntent goToPickem = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -77,7 +78,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                             .setSmallIcon(R.drawable.ic_p)
                             .setColor(context.getResources().getColor(R.color.blue_light))
                             .setContentTitle("Pick EM!")
-                            .setContentText("Dont forget to do your picks for today's matches!")
+                            .setContentText("You have not picked all matches of today for: "+regionOfMatchesNotPicked +", Hurry up!")
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setContentIntent(goToPickem)
                             .setAutoCancel(true);
