@@ -160,21 +160,28 @@ public class NotificationRegionActivity extends AppCompatActivity {
                         .child(regionSelectedExtra);
 
                     // per ogni checkbox  setta a 0 o 1
-                if (checkbox_not_picked.isChecked()){
-                    notificationRegionReference.child(getString(R.string.notification_no_choice_made)).setValue(1);
+                if (!checkbox_not_picked.isChecked() && !checkbox_morning_reminder.isChecked() && !checkbox_at_match_start.isChecked()){
+                    //se sono tutti a 0 elimina la regione dal db
+                    notificationRegionReference.removeValue();
                 }else {
-                    notificationRegionReference.child(getString(R.string.notification_no_choice_made)).setValue(0);
+                    if (checkbox_not_picked.isChecked()){
+                        notificationRegionReference.child(getString(R.string.notification_no_choice_made)).setValue(1);
+                    }else {
+                        notificationRegionReference.child(getString(R.string.notification_no_choice_made)).setValue(0);
+                    }
+                    if (checkbox_morning_reminder.isChecked()){
+                        notificationRegionReference.child(getString(R.string.notification_morning_reminder)).setValue(1);
+                    }else {
+                        notificationRegionReference.child(getString(R.string.notification_morning_reminder)).setValue(0);
+                    }
+                    if (checkbox_at_match_start.isChecked()){
+                        notificationRegionReference.child(getString(R.string.notification_first_match_otd)).setValue(1);
+                    }else {
+                        notificationRegionReference.child(getString(R.string.notification_first_match_otd)).setValue(0);
+                    }
+
                 }
-                if (checkbox_morning_reminder.isChecked()){
-                    notificationRegionReference.child(getString(R.string.notification_morning_reminder)).setValue(1);
-                }else {
-                    notificationRegionReference.child(getString(R.string.notification_morning_reminder)).setValue(0);
-                }
-                if (checkbox_at_match_start.isChecked()){
-                    notificationRegionReference.child(getString(R.string.notification_first_match_otd)).setValue(1);
-                }else {
-                    notificationRegionReference.child(getString(R.string.notification_first_match_otd)).setValue(0);
-                }
+
 
                 Toast.makeText(NotificationRegionActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(NotificationRegionActivity.this, SettingsActivity.class);

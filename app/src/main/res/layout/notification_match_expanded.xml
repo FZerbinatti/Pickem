@@ -6,7 +6,7 @@
     android:background="@color/background"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/default_text1"
+        android:id="@+id/custom_notif_textview_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -40,7 +40,7 @@
             android:paddingEnd="7dp"
             android:src="@drawable/vsv2"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/default_text1"        />
+            android:layout_below="@+id/custom_notif_textview_action"        />
 
         <ImageView
             android:id="@+id/custom_imageview_notification_team2"

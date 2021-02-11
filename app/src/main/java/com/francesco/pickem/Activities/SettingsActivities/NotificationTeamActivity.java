@@ -74,93 +74,9 @@ public class NotificationTeamActivity extends AppCompatActivity {
         setInfoTeamDetailsForRegionForTeam(regionSelectedExtra, teamSelectedExtra);
         loadSettingsForThisTeam(regionSelectedExtra, teamSelectedExtra);
 
-
-/*        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_teams))
-                .child(regionSelectedExtra)
-                .child(teamSelectedExtra);
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                TeamDetails databaseTeamDetails = dataSnapshot.getValue(TeamDetails.class);
-                if (databaseTeamDetails!= null){
-                    NotificationTeamActivity.this.team_name.setText(databaseTeamDetails.getName());
-
-                    RequestOptions options = new RequestOptions()
-                            .fitCenter()
-                            .error(R.drawable.ic_load);
-                    Glide.with(context).load(databaseTeamDetails.getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(background_team);
-
-                    notifications_teams_progressbar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
-/*        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                teamDetails.setCode(dataSnapshot.child(getString(R.string.team_code)).getValue().toString());
-                String team_image = dataSnapshot.child(getString(R.string.team_image)).getValue().toString();
-                teamDetails.setImage(team_image);
-                Log.d(TAG, "onDataChange: dataSnapshot.child(getString(R.string.team_id)).getValue().toString()"+dataSnapshot.child(getString(R.string.team_id)).getValue().toString());
-                teamDetails.setId(dataSnapshot.child(getString(R.string.team_id)).getValue().toString());
-                String team_name = dataSnapshot.child(getString(R.string.team_name)).getValue().toString();
-                teamDetails.setName(team_name);
-                NotificationTeamActivity.this.team_name.setText(team_name);
-
-                RequestOptions options = new RequestOptions()
-                        .fitCenter()
-                        .error(R.drawable.ic_load);
-                Glide.with(context).load(team_image).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(background_team);
-
-                notifications_teams_progressbar.setVisibility(View.GONE);
-            }
-
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
     }
 
     public void setInfoTeamDetailsForRegionForTeam (String region , String team){
-
-/*        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_teams))
-                .child(region)
-                .child(team);
-
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                TeamDetails databaseTeamDetails = dataSnapshot.getValue(TeamDetails.class);
-                if (databaseTeamDetails!= null){
-                    NotificationTeamActivity.this.team_name.setText(databaseTeamDetails.getName());
-
-                    RequestOptions options = new RequestOptions()
-                            .fitCenter()
-                            .error(R.drawable.ic_load);
-                    Glide.with(context).load(databaseTeamDetails.getImage()).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(background_team);
-
-                    notifications_teams_progressbar.setVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
-
 
         String local_image =imageTeamPath +team+".png";
 
@@ -178,34 +94,6 @@ public class NotificationTeamActivity extends AppCompatActivity {
                 .into(background_team);
 
 
-/*        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                teamDetails.setCode(dataSnapshot.child(getString(R.string.team_code)).getValue().toString());
-                String team_image = dataSnapshot.child(getString(R.string.team_image)).getValue().toString();
-                teamDetails.setImage(team_image);
-                Log.d(TAG, "onDataChange: dataSnapshot.child(getString(R.string.team_id)).getValue().toString()"+dataSnapshot.child(getString(R.string.team_id)).getValue().toString());
-                teamDetails.setId(dataSnapshot.child(getString(R.string.team_id)).getValue().toString());
-                String team_name = dataSnapshot.child(getString(R.string.team_name)).getValue().toString();
-                teamDetails.setName(team_name);
-                NotificationTeamActivity.this.team_name.setText(team_name);
-
-                RequestOptions options = new RequestOptions()
-                        .fitCenter()
-                        .error(R.drawable.ic_load);
-                Glide.with(context).load(team_image).apply(options).transition(DrawableTransitionOptions.withCrossFade(500)).into(background_team);
-
-                notifications_teams_progressbar.setVisibility(View.GONE);
-            }
-
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
 
     }
 
@@ -223,16 +111,24 @@ public class NotificationTeamActivity extends AppCompatActivity {
                         .child(teamSelectedExtra);
 
                 // per ogni checkbox  setta a 0 o 1
-                if (checkbox_as_team_plays.isChecked()){
-                    notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(1);
+                if (!checkbox_as_team_plays.isChecked() && !checkbox_team_morning_reminder.isChecked()){
+                    //se sono tutti a 0 elimina la regione dal db
+                    notificationTeamReference.removeValue();
                 }else {
-                    notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(0);
+
+                    if (checkbox_as_team_plays.isChecked()){
+                        notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(1);
+                    }else {
+                        notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(0);
+                    }
+                    if (checkbox_team_morning_reminder.isChecked()){
+                        notificationTeamReference.child(getString(R.string.notification_team_morning_reminder)).setValue(1);
+                    }else {
+                        notificationTeamReference.child(getString(R.string.notification_team_morning_reminder)).setValue(0);
+                    }
                 }
-                if (checkbox_team_morning_reminder.isChecked()){
-                    notificationTeamReference.child(getString(R.string.notification_team_morning_reminder)).setValue(1);
-                }else {
-                    notificationTeamReference.child(getString(R.string.notification_team_morning_reminder)).setValue(0);
-                }
+
+
 
                 Toast.makeText(NotificationTeamActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(NotificationTeamActivity.this, NotificationRegionActivity.class);

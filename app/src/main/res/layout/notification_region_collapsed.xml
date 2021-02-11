@@ -17,12 +17,12 @@
         android:weightSum="5">
 
         <TextView
-            android:id="@+id/default_text1"
+            android:id="@+id/custom_notif_textview_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:fontFamily="@font/classicroman"
-            android:text="Currently starting:"
+            android:text="Starting soon:"
             android:textColor="@color/blue_light"
             android:textSize="20sp"
             android:layout_alignParentTop="true" />

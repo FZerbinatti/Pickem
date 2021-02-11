@@ -12,6 +12,8 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -114,7 +116,7 @@ public class PicksActivity extends AppCompatActivity  {
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         pick_background = findViewById(R.id.pick_background);
-        //pullToRefresh = findViewById(R.id.pullToRefresh);
+        pullToRefresh = findViewById(R.id.pullToRefresh);
         selected_region_name ="";
         context = this;
         pick_progressbar.setVisibility(View.VISIBLE);
@@ -124,17 +126,29 @@ public class PicksActivity extends AppCompatActivity  {
 
         if(isUserAlreadyLogged()){
             startBackgorundTasks();
+
             downloadUserRegions();
         }
 
         changeNavBarColor();
         setupBottomNavView();
 
-
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData(); // your code
+                pullToRefresh.setRefreshing(false);
+            }
+        });
 
 
     }
 
+    private void refreshData() {
+
+        loadMatchDays(selected_region_name);
+
+    }
 
 
     private void downloadUserRegions() {
@@ -624,7 +638,7 @@ public class PicksActivity extends AppCompatActivity  {
         Log.d(TAG, "startBackgorundTasks: ");
 
         ComponentName componentName = new ComponentName(this, BackgroundTasks.class);
-        JobInfo info1 = new JobInfo.Builder(1, componentName)
+/*        JobInfo info1 = new JobInfo.Builder(1, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
                 .setPeriodic( 60 * 60 * 1000) //una volta all'ora controlla se ci sono notifiche da settare
@@ -654,7 +668,7 @@ public class PicksActivity extends AppCompatActivity  {
         JobInfo info3 = new JobInfo.Builder(3, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setPeriodic(1* 24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
+                .setPeriodic(24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
                 .build();
         JobScheduler scheduler3 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode3 = scheduler3.schedule(info3);
@@ -662,9 +676,36 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER3");
         }else {
             Log.d(TAG, "onCreate: DIO PORCO3");
+        }*/
+
+        JobInfo info4 = new JobInfo.Builder(4, componentName)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .setPeriodic(24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
+                .build();
+        JobScheduler scheduler4 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+        int resultCode4 = scheduler4.schedule(info4);
+        if (resultCode4 == JobScheduler.RESULT_SUCCESS){
+            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER4");
+        }else {
+            Log.d(TAG, "onCreate: DIO PORCO4");
         }
 
 
     }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager manager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        boolean isAvailable = false;
+        if (networkInfo != null && networkInfo.isConnected()) {
+            // Network is present and connected
+            isAvailable = true;
+        }
+        return isAvailable;
+    }
+
+
 
 }

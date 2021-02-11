@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
@@ -308,7 +309,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<String> MatchesForRegion_Date(String region, String date){
+    public String firstMatchForRegion_Date_PastCurrentTime(String region, String date){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> match_ids = new ArrayList<>();
+        //                                 0
+        String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+        if (cursor.moveToFirst()) {
+            do {
+                match_ids.add( getLocalDateTimeFromDateTime( cursor.getString(0)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        // ora vedi quale di quei datetime è past il datetime attuale
+
+        for (int i=0; i< match_ids.size();i++){
+            // Log.d(TAG, "loadMatchDays: "+matchDays.get(i));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date strDate = null;
+            try {
+                strDate = sdf.parse(match_ids.get(i));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            // Log.d(TAG, "selectMatchDay: System.currentTimeMillis(): "+System.currentTimeMillis());;
+            long matchTimeMillis = strDate.getTime();
+            // Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
+            if (System.currentTimeMillis() <= matchTimeMillis) {
+                return match_ids.get(i);
+            }
+        }
+
+        return "0";
+
+    }
+
+
+    public ArrayList<String> matchesForRegion_Date(String region, String date){
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> match_id = new ArrayList<>();
@@ -327,7 +365,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private String getLocalDateTimeFromDateTime(String datetime) {
-        Log.d(TAG, "getLocalDateTimeFromDateTime: datetime: " + datetime);
+        //Log.d(TAG, "getLocalDateTimeFromDateTime: datetime: " + datetime);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date value = null;

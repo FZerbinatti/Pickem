@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.text.format.Time;
 import android.util.Log;
 
 import androidx.annotation.LongDef;
@@ -77,20 +79,17 @@ public class BackgroundTasks extends JobService {
     String primo_match_otd;
     RegionNotifications regionNotifications;
     DatabaseHelper databaseHelper;
+    BackgroundTasks backgroundTasks;
     private final Integer FIREBASE_STORAGE_RESPONSE_TIME =5000;
     private final Integer REALTIME_DATABASE_RESPONSE_TIME =3000;
+    ArrayList <String> todayMatches;
 
-
-    //il servizio viene chiamato ogni volta che si apre l'app, ogni volta che si riprende la rete, reboot e ogni 24 ore
-    //il servizio setta alarmManager in base ai NotificationSettings scelti che rientrano nelle prossime 24 ore
 
     public BackgroundTasks(Context context){
         this.context=context;
     }
 
-    public BackgroundTasks(){
-
-    }
+    public BackgroundTasks(){}
 
 
     @Override
@@ -103,17 +102,47 @@ public class BackgroundTasks extends JobService {
         //Log.d(TAG, "onStartJob: jobID: "+jobID);
         switch (jobID){
             case 1:
-                loadSettingsForThisRegion(jobParameters);
+                //loadSettingsForThisRegion(jobParameters);
                 break;
             case 2:
                 checkIfLocalImageFolderIsUpdated(jobParameters);
                 break;
             case 3:
                 checkIfCurrentUserMatchDaysUpdated(jobParameters);
+
+                break;
+            case 4:
+                startAlarmManager7AM();
                 break;
         }
 
         return true;
+    }
+
+    private void startAlarmManager7AM() {
+        Log.d(TAG, "startAlarmManager7AM: ");
+        // un allarme che ogni mattina alle 7 controlla i match della giornata per le regioni scelte
+        // se c'è un match e lo user ha getNo_choice_made()>0 per quella regione setta un allarme 1h prima dell'inizio del primo match
+        // questo allarme controlla se lo user ha fatto il pick, se non l'ha fatto, setta la notifica insta
+
+        AlarmManager alarmMgr0 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent0 = new Intent(this, AlarmReceiver.class);
+        intent0.putExtra("TYPE", "7AMTASK");
+        PendingIntent pendingIntent0 = PendingIntent.getBroadcast(this, 1, intent0, 0);
+        Calendar task7AM = Calendar.getInstance();
+
+        task7AM.set(Calendar.HOUR_OF_DAY, 7);
+        task7AM.set(Calendar.MINUTE, 00);
+        task7AM.set(Calendar.SECOND, 0);
+
+        task7AM.setTimeZone(TimeZone.getDefault());
+
+        Log.d(TAG, "startAlarmManager7AM: "+utcToLocal(task7AM.getTimeInMillis()));
+/*        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
+                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
+        alarmMgr0.set(AlarmManager.RTC_WAKEUP, utcToLocal(task7AM.getTimeInMillis()), pendingIntent0);
+
     }
 
     private void checkIfCurrentUserMatchDaysUpdated(JobParameters parameters){
@@ -158,7 +187,6 @@ public class BackgroundTasks extends JobService {
 
 
     }
-
 
     public void downloadMatchDays(ArrayList<String> userSelectedRegions){
         Log.d(TAG, "downloadMatchDays: user regions: "+userSelectedRegions.size());
@@ -538,7 +566,7 @@ public class BackgroundTasks extends JobService {
             currentRegion.setRegion(regionNotifications.get(i).getRegion_name());
 
 
-                if (regionNotifications.get(i).getNo_choice_made()>0) {
+                /*if (regionNotifications.get(i).getNo_choice_made()>0) {
 
                     //voglio essere notificato se non ho pickato i picks la mattina del giorno
 
@@ -546,12 +574,15 @@ public class BackgroundTasks extends JobService {
 
                     // prendo tutti i match per questa giornata
 
-                    ArrayList<String> todayMatches = databaseHelper.MatchesForRegion_Date(currentRegion.getRegion(), today);
+                    todayMatches = new ArrayList<>();
+
+                    todayMatches = databaseHelper.MatchesForRegion_Date(currentRegion.getRegion(), today);
 
                     // se è 0 vuol dire che non ci sono match in programma per oggi
                     Log.d(TAG, "thisUserNotificationPreference: firstTodayMatch: "+todayMatches.size());
 
                     if (todayMatches.size()>0){
+
 
                         ArrayList <String> userPicks = new ArrayList<>();
 
@@ -600,7 +631,7 @@ public class BackgroundTasks extends JobService {
                     }
 
 
-                }
+                }*/
 
                 /*if (regionNotifications.get(i).getNotification_first_match_otd()>0){
                     tomorrowMatches = new ArrayList<>();
@@ -808,7 +839,7 @@ public class BackgroundTasks extends JobService {
 
     }
 
-    private String getTodayDate(){
+    public String getTodayDate(){
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -922,5 +953,17 @@ public class BackgroundTasks extends JobService {
 
         return localDatetime;
     }
+
+    public static long utcToLocal(long utcTime) {
+        try {
+            Time timeFormat = new Time();
+            timeFormat.set(utcTime + TimeZone.getDefault().getOffset(utcTime));
+            return timeFormat.toMillis(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return utcTime;
+    }
+
 
 }
