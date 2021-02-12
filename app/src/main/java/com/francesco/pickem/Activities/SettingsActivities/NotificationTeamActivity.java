@@ -1,6 +1,5 @@
 package com.francesco.pickem.Activities.SettingsActivities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -69,6 +68,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
         imageTeamPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_teams_images));
 
         notifications_teams_progressbar.setVisibility(View.VISIBLE);
+        team_name.setText(teamSelectedExtra);
 
         saveButton();
         setInfoTeamDetailsForRegionForTeam(regionSelectedExtra, teamSelectedExtra);
@@ -116,6 +116,9 @@ public class NotificationTeamActivity extends AppCompatActivity {
                     notificationTeamReference.removeValue();
                 }else {
 
+                    notificationTeamReference.child(getString(R.string.regions_region)).setValue(regionSelectedExtra);
+                    notificationTeamReference.child(getString(R.string.team)).setValue(teamSelectedExtra);
+
                     if (checkbox_as_team_plays.isChecked()){
                         notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(1);
                     }else {
@@ -157,15 +160,16 @@ public class NotificationTeamActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 TeamNotification teamNotification = dataSnapshot.getValue(TeamNotification.class);
-                if (teamNotification !=null){
-                    Integer atp = teamNotification.getNotification_team_as_team_plays();
-                    Integer mr = teamNotification.getNotification_team_morning_reminder();
 
-                    checkbox_as_team_plays.setChecked(atp > 0);
-                    checkbox_team_morning_reminder.setChecked(mr > 0);
+                    if (teamNotification !=null){
+                        Integer atp = teamNotification.getNotification_team_as_team_plays();
+                        Integer mr = teamNotification.getNotification_team_morning_reminder();
 
+                        checkbox_as_team_plays.setChecked(atp > 0);
+                        checkbox_team_morning_reminder.setChecked(mr > 0);
 
-                }
+                    }
+
             }
 
             @Override

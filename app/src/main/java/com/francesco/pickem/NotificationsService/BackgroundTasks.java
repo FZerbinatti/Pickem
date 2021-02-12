@@ -80,8 +80,8 @@ public class BackgroundTasks extends JobService {
     RegionNotifications regionNotifications;
     DatabaseHelper databaseHelper;
     BackgroundTasks backgroundTasks;
-    private final Integer FIREBASE_STORAGE_RESPONSE_TIME =5000;
-    private final Integer REALTIME_DATABASE_RESPONSE_TIME =3000;
+    private final Integer FIREBASE_STORAGE_RESPONSE_TIME = 5000;
+    private final Integer REALTIME_DATABASE_RESPONSE_TIME = 3000;
     ArrayList <String> todayMatches;
 
 
@@ -131,9 +131,11 @@ public class BackgroundTasks extends JobService {
         PendingIntent pendingIntent0 = PendingIntent.getBroadcast(this, 1, intent0, 0);
         Calendar task7AM = Calendar.getInstance();
 
+
         task7AM.set(Calendar.HOUR_OF_DAY, 7);
-        task7AM.set(Calendar.MINUTE, 00);
+        task7AM.set(Calendar.MINUTE, 0);
         task7AM.set(Calendar.SECOND, 0);
+        task7AM.add(Calendar.DAY_OF_MONTH,1);
 
         task7AM.setTimeZone(TimeZone.getDefault());
 
@@ -141,7 +143,8 @@ public class BackgroundTasks extends JobService {
 /*        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
                 AlarmManager.INTERVAL_DAY, pendingIntent0);*/
-        alarmMgr0.set(AlarmManager.RTC_WAKEUP, utcToLocal(task7AM.getTimeInMillis()), pendingIntent0);
+        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, utcToLocal(task7AM.getTimeInMillis()), pendingIntent0);
+        alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
 
     }
 
@@ -954,14 +957,18 @@ public class BackgroundTasks extends JobService {
         return localDatetime;
     }
 
-    public static long utcToLocal(long utcTime) {
+    public long utcToLocal(long utcTime) {
+        Log.d(TAG, "utcToLocal: utcTime enter: "+utcTime);
         try {
+
             Time timeFormat = new Time();
             timeFormat.set(utcTime + TimeZone.getDefault().getOffset(utcTime));
+            Log.d(TAG, "utcToLocal: timeFormat.toMillis(true): "+timeFormat.toMillis(true));
             return timeFormat.toMillis(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "utcToLocal: return utcTime: "+utcTime);
         return utcTime;
     }
 

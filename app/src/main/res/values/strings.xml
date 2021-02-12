@@ -86,6 +86,7 @@
     <string name="team_code">code</string>
     <string name="team_image">image</string>
     <string name="team_name">name</string>
+    <string name="team">team</string>
 
     //firebase notification regions
     <string name="notification_no_choice_made">no_choice_made</string>
