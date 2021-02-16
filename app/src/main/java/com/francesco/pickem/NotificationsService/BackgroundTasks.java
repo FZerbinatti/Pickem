@@ -135,14 +135,15 @@ public class BackgroundTasks extends JobService {
         task7AM.set(Calendar.HOUR_OF_DAY, 7);
         task7AM.set(Calendar.MINUTE, 0);
         task7AM.set(Calendar.SECOND, 0);
-        task7AM.add(Calendar.DAY_OF_MONTH,1);
+        //COMMENTED FOR TESTING PURPOSE
+        //task7AM.add(Calendar.DAY_OF_MONTH,1);
 
         task7AM.setTimeZone(TimeZone.getDefault());
+        Log.d(TAG, "startAlarmManager7AM: task7AM.getTimeInMillis()"+task7AM.getTimeInMillis());
 
-        Log.d(TAG, "startAlarmManager7AM: "+utcToLocal(task7AM.getTimeInMillis()));
-/*        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
-                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
+                AlarmManager.INTERVAL_DAY, pendingIntent0);
         //alarmMgr0.set(AlarmManager.RTC_WAKEUP, utcToLocal(task7AM.getTimeInMillis()), pendingIntent0);
         alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
 

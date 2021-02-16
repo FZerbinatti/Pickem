@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.ImageValidator;
+import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 
@@ -25,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 6;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -38,6 +39,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String YEAR = "YEAR";
     private static final String REGION = "REGION";
     private static final String DAY = "DAY";
+    private static final String TEAM1 = "TEAM1";
+    private static final String TEAM2 = "TEAM2";
 
     static final String TABLE_MATCHES = "TABLE_MATCHES";
     private static final String MATCH_ID = "MATCH_ID";
@@ -72,9 +75,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + YEAR + " TEXT ,  "
                 + REGION + " TEXT ,  "
                 + DAY + " TEXT ,  "
-                + MATCH_ID + " TEXT  );";
-
-
+                + MATCH_ID + " TEXT ,  "
+                + TEAM1 + " TEXT ,  "
+                + TEAM2 + " TEXT  );";
 
         db.execSQL(CREATE_TABLE_IMAGE_REGIONS);
         db.execSQL(CREATE_TABLE_IMAGE_TEAMS);
@@ -122,10 +125,113 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(REGION, match.getRegion());
         cv.put(DAY, match.getDay_id()  );
         cv.put(MATCH_ID, match.getMatch_datetime()  );
+        cv.put(TEAM1, "");
+        cv.put(TEAM2, "");
 
         db.insert(TABLE_MATCHES, null, cv);
         Log.d(TAG, "insertMatch: inserito: Year:  "+match.getYear()+ " Region: "+match.getRegion() +" Date: " +match.getDay_id()+" Datetime: " +match.getMatch_datetime());
         db.close();
+
+    }
+
+    public void insertMatchDetails(String region, String match_id, String team1, String team2){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(TEAM1, team1);
+        cv.put(TEAM2, team2);
+
+        db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_id});
+        Log.d(TAG, "insertMatchDetails: inserito: Region: "+region +" DateTime: " +match_id +" team1: " +team1 + " team2: "+ team2);
+        db.close();
+
+    }
+
+    public ArrayList<String> getTeamsForRegionMatchID(String region, String date){
+        Log.d(TAG, "getTeamsForRegionMatchID: "+region +" date: " +date);
+        ArrayList <String> teams = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String team1 = "";
+        String team2 = "";
+        //                                 0            1
+        String selectQuery = "SELECT "+ TEAM1 +" , " +TEAM2 +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + MATCH_ID + " = ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+        //Log.d(TAG, "getTeamsForRegionMatchID: "+cursor.getCount());
+        if (cursor.moveToFirst()) {
+            do {
+
+                team1 = cursor.getString(0);
+                team2 = cursor.getString(1);
+                teams.add(team1);
+                teams.add(team2);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return teams;
+
+    }
+
+    public Boolean teamsInsertedForRegionDay(String region, String date){
+        Log.d(TAG, "teamsInsertedForRegionDay: "+ region + " date: "+ date);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String team1 = "";
+
+        //                                 0            1
+        String selectQuery = "SELECT "+ TEAM1 +" , " +TEAM2 +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? LIMIT 1" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                team1 = cursor.getString(0);
+                if (team1.equals("")){
+                    Log.d(TAG, "teamsInsertedForRegionDay: - FALSE - THERE ARE NOT TEAMS INSERTED FOR THIS DATE");
+                    return false;
+                }else {
+                    Log.d(TAG, "teamsInsertedForRegionDay: - TRUE -  THERE ARE TEAMS INSERTED FOR THIS DATE");
+                    return true;
+                }
+
+            } while (cursor.moveToNext());
+        }
+
+
+        cursor.close();
+        db.close();
+        Log.d(TAG, "teamsInsertedForRegionDay: ERROR teamsInsertedForRegionDay");
+        return false;
+
+    }
+
+    public String timeAtTeamPlaysThisDay(String region, String date, String team){
+        ArrayList <String> teams = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String datetime = "";
+
+        //                                 0
+        String selectQuery = "SELECT "+ MATCH_ID + " FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ?  AND + " + TEAM1 + " = ? OR + " + TEAM2 + " = ? LIMIT 1" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date, team , team});
+
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor!=null){
+                    //Log.d(TAG, "timeAtTeamPlaysThisDay: NON HO TROVATO NULLA");
+                    datetime = cursor.getString(0);
+                }else return "0";
+            } while (cursor.moveToNext());
+        }
+
+
+
+        cursor.close();
+        db.close();
+        //Log.d(TAG, "timeAtTeamPlaysThisDay: "+datetime);
+        return getLocalHourFromDateTime(datetime);
 
     }
 
@@ -293,11 +399,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //                                 0
         String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? LIMIT 1" ;
         Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
-        if (cursor.moveToFirst()) {
-            do {
-                match_id = ( cursor.getString(0)) ;
-            } while (cursor.moveToNext());
-        }
         cursor.close();
         db.close();
         if (match_id.equals("")){return "0";
@@ -305,8 +406,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(TAG, "firstMatchForRegion_Date: match_id: "+match_id);
             return getLocalDateTimeFromDateTime(match_id);
         }
-
-
     }
 
     public String firstMatchForRegion_Date_PastCurrentTime(String region, String date){
@@ -395,6 +494,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count;
 
+    }
+
+    private String getLocalHourFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalHourFromDateTime: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("HH");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+
+        return localDatetime;
     }
 
 

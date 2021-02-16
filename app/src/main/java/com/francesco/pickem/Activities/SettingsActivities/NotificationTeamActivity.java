@@ -107,7 +107,6 @@ public class NotificationTeamActivity extends AppCompatActivity {
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(getString(R.string.firebase_user_notification))
                         .child(getString(R.string.firebase_teams))
-                        .child(regionSelectedExtra)
                         .child(teamSelectedExtra);
 
                 // per ogni checkbox  setta a 0 o 1
@@ -150,25 +149,33 @@ public class NotificationTeamActivity extends AppCompatActivity {
         DatabaseReference notificationTeamReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(getString(R.string.firebase_user_notification))
-                .child(getString(R.string.firebase_teams))
-                .child(regionSelected)
-                .child(teamSelected);
+                .child(getString(R.string.firebase_teams));
 
         Log.d(TAG, "loadSettingsForThisRegion: regionSelected: "+regionSelected);
 
         notificationTeamReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                TeamNotification teamNotification = dataSnapshot.getValue(TeamNotification.class);
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String team_name = snapshot.getKey().toString();
+                    TeamNotification teamsNotifications = snapshot.getValue(TeamNotification.class);
+                    if (teamsNotifications !=null ){
+                        Log.d(TAG, "onDataChange: "+teamsNotifications.getRegion() +" " +team_name);
+                        if (teamsNotifications.getRegion().equals(regionSelectedExtra) && team_name.equals(teamSelectedExtra)){
+                            //Log.d(TAG, "onDataChange: "+regionNotifications.getRegion_name());
+                            Integer atp = teamsNotifications.getNotification_team_as_team_plays();
+                            Integer mr = teamsNotifications.getNotification_team_morning_reminder();
 
-                    if (teamNotification !=null){
-                        Integer atp = teamNotification.getNotification_team_as_team_plays();
-                        Integer mr = teamNotification.getNotification_team_morning_reminder();
-
-                        checkbox_as_team_plays.setChecked(atp > 0);
-                        checkbox_team_morning_reminder.setChecked(mr > 0);
+                            checkbox_as_team_plays.setChecked(atp > 0);
+                            checkbox_team_morning_reminder.setChecked(mr > 0);
+                        }
 
                     }
+
+                }
+
+
+
 
             }
 

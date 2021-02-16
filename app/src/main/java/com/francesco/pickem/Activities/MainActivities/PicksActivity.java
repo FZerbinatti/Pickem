@@ -1,4 +1,4 @@
-package com.francesco.pickem.Activities.MainActivities;
+ package com.francesco.pickem.Activities.MainActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -340,7 +340,11 @@ public class PicksActivity extends AppCompatActivity  {
                     MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
                     //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
                     if (matchDetails!=null){
+                        //vedi se hai gia inserito i dettagli per questo match in locale
 
+                        if (!databaseHelper.teamsInsertedForRegionDay(selected_region_name, getLocalDateFromDateTime(matchDetails.getDatetime()))){
+                            databaseHelper.insertMatchDetails(selected_region_name, getLocalDateFromDateTime( matchDetails.getDatetime()) , matchDetails.getTeam1(), matchDetails.getTeam2() );
+                        }
                         matchListSplit.add(matchDetails);
                         //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;
                         //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
@@ -638,7 +642,7 @@ public class PicksActivity extends AppCompatActivity  {
         Log.d(TAG, "startBackgorundTasks: ");
 
         ComponentName componentName = new ComponentName(this, BackgroundTasks.class);
-/*        JobInfo info1 = new JobInfo.Builder(1, componentName)
+        JobInfo info1 = new JobInfo.Builder(1, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
                 .setPeriodic( 60 * 60 * 1000) //una volta all'ora controlla se ci sono notifiche da settare
@@ -676,7 +680,7 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER3");
         }else {
             Log.d(TAG, "onCreate: DIO PORCO3");
-        }*/
+        }
 
         JobInfo info4 = new JobInfo.Builder(4, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
