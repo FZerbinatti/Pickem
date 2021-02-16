@@ -144,8 +144,9 @@ public class BackgroundTasks extends JobService {
         alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
                 AlarmManager.INTERVAL_DAY, pendingIntent0);
-        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, utcToLocal(task7AM.getTimeInMillis()), pendingIntent0);
-        alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+
+        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+        alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
 
     }
 

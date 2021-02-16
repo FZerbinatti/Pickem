@@ -2,17 +2,17 @@ package com.francesco.pickem.Models;
 
 public class TeamNotification {
 
-
-    Integer notification_team_morning_reminder;
-    Integer notification_team_as_team_plays;
-    String team;
     String region;
+    Integer notification_team_as_team_plays;
+    Integer notification_team_morning_reminder;
+    String team;
 
-    public TeamNotification(Integer notification_team_morning_reminder, Integer notification_team_as_team_plays, String team, String region) {
-        this.notification_team_morning_reminder = notification_team_morning_reminder;
-        this.notification_team_as_team_plays = notification_team_as_team_plays;
-        this.team = team;
+
+    public TeamNotification(String region, Integer notification_team_as_team_plays, Integer notification_team_morning_reminder, String team) {
         this.region = region;
+        this.notification_team_as_team_plays = notification_team_as_team_plays;
+        this.notification_team_morning_reminder = notification_team_morning_reminder;
+        this.team = team;
     }
 
     public TeamNotification() {

@@ -20,6 +20,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.TeamDetails;
 import com.francesco.pickem.Models.TeamNotification;
+import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -107,7 +108,9 @@ public class NotificationTeamActivity extends AppCompatActivity {
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(getString(R.string.firebase_user_notification))
                         .child(getString(R.string.firebase_teams))
+                        .child(regionSelectedExtra)
                         .child(teamSelectedExtra);
+
 
                 // per ogni checkbox  setta a 0 o 1
                 if (!checkbox_as_team_plays.isChecked() && !checkbox_team_morning_reminder.isChecked()){
@@ -146,19 +149,25 @@ public class NotificationTeamActivity extends AppCompatActivity {
 
     private void loadSettingsForThisTeam(String regionSelected, String teamSelected ) {
 
+
         DatabaseReference notificationTeamReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(getString(R.string.firebase_user_notification))
-                .child(getString(R.string.firebase_teams));
+                .child(getString(R.string.firebase_teams))
+                .child(regionSelected)
+                .child(teamSelected);
 
+
+        Log.d(TAG, "loadSettingsForThisTeam: path: "+ getString(R.string.firebase_users) +"/"+FirebaseAuth.getInstance().getCurrentUser().getUid()  +"/"+  getString(R.string.firebase_user_notification)    +"/"+   getString(R.string.firebase_teams)   +"/"+ regionSelected +"/"+ teamSelected);
         Log.d(TAG, "loadSettingsForThisRegion: regionSelected: "+regionSelected);
 
         notificationTeamReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String team_name = snapshot.getKey().toString();
-                    TeamNotification teamsNotifications = snapshot.getValue(TeamNotification.class);
+                TeamNotification teamsNotifications = dataSnapshot.getValue(TeamNotification.class);
+                    String team_name = dataSnapshot.getKey().toString();
+                    Log.d(TAG, "onDataChange: team_name: "+team_name);
+
                     if (teamsNotifications !=null ){
                         Log.d(TAG, "onDataChange: "+teamsNotifications.getRegion() +" " +team_name);
                         if (teamsNotifications.getRegion().equals(regionSelectedExtra) && team_name.equals(teamSelectedExtra)){
@@ -172,7 +181,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
 
                     }
 
-                }
+
 
 
 

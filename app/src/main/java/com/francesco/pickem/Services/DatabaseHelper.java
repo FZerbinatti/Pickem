@@ -225,14 +225,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }else return "0";
             } while (cursor.moveToNext());
         }
-
-
-
         cursor.close();
         db.close();
         //Log.d(TAG, "timeAtTeamPlaysThisDay: "+datetime);
         return getLocalHourFromDateTime(datetime);
 
+    }
+
+    public ArrayList<String> getPlayingRegions (String currentYear, String date ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> regions = new ArrayList<>();
+        //                                 0
+        String selectQuery = "SELECT "+ REGION +" FROM "+ TABLE_MATCH_DAYS +" WHERE "+ YEAR +" = ? AND " + DAY + " = ?" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{currentYear, date});
+        if (cursor.moveToFirst()) {
+            do {
+                regions .add( cursor.getString(0)) ;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return regions;
     }
 
     public ArrayList<String> getMatchDays (String currentYear, String regionSelected ){
@@ -514,6 +527,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return localDatetime;
     }
+
+
 
 
 }
