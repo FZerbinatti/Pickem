@@ -156,21 +156,18 @@ public class AlarmReceiver extends BroadcastReceiver{
                                      if (regionNotifications !=null){
                                          userFullRegionsNotifications.add(regionNotifications);
                                      }
-
                                  }
                                  if (counter == count){
                                      Log.d(TAG, " ho finito di fare il gathering delle regioni per cui lo user vuole ricevere notifiche");
                                      thisUserRegionsNotificationPreference(userFullRegionsNotifications, context, playingRegions);
                                  }
-
-
                              }
                              @Override
                              public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
                              }
                          });
                         //teams
-                         /*DatabaseReference notificationTeamsReference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_users))
+                         DatabaseReference notificationTeamsReference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_users))
                                  .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                  .child(context.getString(R.string.firebase_user_notification))
                                  .child(context.getString(R.string.firebase_teams));
@@ -187,18 +184,15 @@ public class AlarmReceiver extends BroadcastReceiver{
                                      regionsOfTeamsNotifications.add(regionForTeamsNotifications);
 
                                      if (counter == count){
-                                         Log.d(TAG, "onDataChange: counter == count");
-                                         //thisUserTeamsNotificationPreference(regionsOfTeamsNotifications, context ,false, playingRegions);
+                                         Log.d(TAG, " ho finito di fare il gathering delle regioni dei temas per cui lo user vuole ricevere notifiche");
+                                         thisUserTeamsNotificationPreference(regionsOfTeamsNotifications, context, playingRegions);
                                      }
-
                                  }
-
-
                              }
                              @Override
                              public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
                              }
-                         });*/
+                         });
 
 
 
@@ -253,13 +247,12 @@ public class AlarmReceiver extends BroadcastReceiver{
                 }
                 else if (notification_type.equals("ALL_TMATCHES")){
                      allTomorrowsMatches = intent.getStringArrayListExtra("ALL_T_MATCHES");
+                    Log.d(TAG, "onReceive: ALL_TMATCHES, lunghezza della lista ricevuta: "+ allTomorrowsMatches.size());
                      Integer size = allTomorrowsMatches.size();
                      if (size>7){
                          size=7;
                      }
                      String title ="Today's Matches";
-
-
                      switch (size){
                          case 1:
                              Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_ID)
@@ -462,7 +455,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                                  NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                                          .setSmallIcon(R.drawable.ic_p)
                                          .setColor(context.getResources().getColor(R.color.blue_light))
-                                         .setContentTitle("Pick EM!")
+                                         .setContentTitle("Missed Picks alert:")
                                          .setContentText("You have not picked all matches of today for "+region +", Hurry up!")
                                          .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                          .setContentIntent(goToPickem)
@@ -493,8 +486,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                      NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                              .setSmallIcon(R.drawable.ic_p)
                              .setColor(context.getResources().getColor(R.color.blue_light))
-                             .setContentTitle("Pick EM!")
-                             .setContentText( team + "is gonna play today at " + time )
+                             .setContentText( team + " is gonna play today at " + time +":00" )
                              .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                              .setAutoCancel(true);
 
@@ -507,7 +499,6 @@ public class AlarmReceiver extends BroadcastReceiver{
                      NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                              .setSmallIcon(R.drawable.ic_p)
                              .setColor(context.getResources().getColor(R.color.blue_light))
-                             .setContentTitle("Pick EM!")
                              .setContentText( team +" will play soon!" )
                              .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                              .setAutoCancel(true);
@@ -551,8 +542,6 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                     if (!firstMatchOfToday.equals("0")){
 
-
-
                         Intent intent = new Intent(context, AlarmReceiver.class);
                         intent.putExtra("TYPE", "UNPICKED");
                         intent.putExtra("REGION", currentRegion.getRegion());
@@ -560,18 +549,19 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                         Calendar calendar = Calendar.getInstance();
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+
 
                         alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
+
                         try {
                             calendar.setTime(formatter.parse(firstMatchOfToday));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+                        calendar.add(Calendar.HOUR, -1);
 
-                        Log.d(TAG, " allarme un'ora prima dell'inizio del primo match. ");
-                        alarmManager.set(AlarmManager.RTC_WAKEUP, (calendar.getTimeInMillis()-3600000), alarmIntent);
+                        Log.d(TAG, " allarme un'ora prima dell'inizio del primo match: "+ calendar.getTime());
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
                         //testing
                         //alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+2000, alarmIntent);
                     }
@@ -605,30 +595,30 @@ public class AlarmReceiver extends BroadcastReceiver{
                         //alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+2000, alarmIntent);
                     }
                 }
-               /* if (fullUserRegionsNotifications.get(i).getNotification_morning_reminder()>0) {
+                if (fullUserRegionsNotifications.get(i).getNotification_morning_reminder()>0) {
                     Log.d(TAG, "thisUserNotificationPreference: found region that want morning reminder, adding :" +fullUserRegionsNotifications.get(i).getRegion_name());
                     regionsWithMorningReminder.add(fullUserRegionsNotifications.get(i).getRegion_name());
-                }*/
+                }
 
             }
         }
 
-/*        for(int i=0; i<regionsWithMorningReminder.size(); i++){
-            Log.d(TAG, "thisUserNotificationPreference: <regionsWithMorningReminder.size(): "+regionsWithMorningReminder.size());
+        for(int i=0; i<regionsWithMorningReminder.size(); i++){
+            Log.d(TAG, " quante regions con Morning Reminder? : "+regionsWithMorningReminder.size());
             currentRegion.setRegion(regionsWithMorningReminder.get(i));
             allTodayMatches = new ArrayList<>();
             ArrayList <String> allTodayMatchesForThisRegion = new ArrayList<>();
             allTodayMatchesForThisRegion=(databaseHelper.matchesForRegion_Date(regionsWithMorningReminder.get(i), backgroundTasks.getTodayDate()));
             Log.d(TAG, "thisUserNotificationPreference: allTodayMatchesForThisRegion.size(): "+allTodayMatchesForThisRegion.size());
             for(int j=0; j<allTodayMatchesForThisRegion.size(); j++){
-                Log.d(TAG, "thisUserNotificationPreference: cycling: "+j+" -> "+allTodayMatchesForThisRegion.get(j)+"Z");
+                Log.d(TAG, "thisUserNotificationPreference: cycling: "+j+" -> "+allTodayMatchesForThisRegion.get(j));
                 //query per avere per ognuno dei datetime un MatchDetails
 
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference
                         (context.getResources().getString(R.string.firebase_Matches))
                         .child(currentRegion.getRegion())
                         .child(currentRegion.getRegion()+year)
-                        .child(allTodayMatchesForThisRegion.get(j)+"Z");
+                        .child(allTodayMatchesForThisRegion.get(j));
 
                 readData(reference, new OnGetDataListener() {
                     @Override
@@ -657,181 +647,182 @@ public class AlarmReceiver extends BroadcastReceiver{
                     }
                 });
             }
-        }*/
 
-/*        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                // Actions to do after 10 seconds
-                Log.d(TAG, "run: gathered? ");
-                if (allTodayMatches.size()>0){
-                    Log.d(TAG, "run: allTodayMatches: "+allTodayMatches.size());
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 10 seconds
+                    Log.d(TAG, "run: allTodayMatches????????????????????? "+allTodayMatches.size());
+                    if (allTodayMatches.size()>0){
 
-                    Intent intent = new Intent(context, AlarmReceiver.class);
-                    intent.putExtra("TYPE", "ALL_TMATCHES");
 
-                    alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                        Intent intent = new Intent(context, AlarmReceiver.class);
+                        intent.putExtra("TYPE", "ALL_TMATCHES");
 
-                    ArrayList<String> tomorrowStringArrayMatches = new ArrayList<>();
+                        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-                    Collections.sort(allTodayMatches, new MatchDetails.ByDatetime());
+                        ArrayList<String> tomorrowStringArrayMatches = new ArrayList<>();
 
-                    for (int i=0; i<allTodayMatches.size(); i++){
-                        tomorrowStringArrayMatches.add(allTodayMatches.get(i).getWinner()+" " +getTimeFromDateTime(allTodayMatches.get(i).getDatetime()) +" -  [ " + allTodayMatches.get(i).getTeam1() + " vs " + allTodayMatches.get(i).getTeam2() + " ]");
+                        Collections.sort(allTodayMatches, new MatchDetails.ByDatetime());
+
+                        for (int i=0; i<allTodayMatches.size(); i++){
+                            tomorrowStringArrayMatches.add(allTodayMatches.get(i).getWinner()+" " +getTimeFromDateTime(allTodayMatches.get(i).getDatetime()) +" -  [ " + allTodayMatches.get(i).getTeam1() + " vs " + allTodayMatches.get(i).getTeam2() + " ]");
+                        }
+
+                        Log.d(TAG, " setto una notifica instantanea con questo numero di match: "+tomorrowStringArrayMatches.size());
+                        intent.putStringArrayListExtra("ALL_T_MATCHES", tomorrowStringArrayMatches);
+                        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
+                        //testing
+
                     }
-                    //Log.d(TAG, "setNotificationWithTomorrowMatches: tomorrowStringArrayMatches.size:"+tomorrowStringArrayMatches.size());
-
-                    intent.putStringArrayListExtra("ALL_T_MATCHES", tomorrowStringArrayMatches);
-                    alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                    //Log.d(TAG, "thisUserNotificationPreference: calendar.getTimeInMillis()-3600000: "+ (calendar.getTimeInMillis()-3600000));
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
-                    //testing
-                    //alarmManager.set(AlarmManager.RTC_WAKEUP, , alarmIntent);
                 }
-            }
-        }, 10000);*/
+            }, 10000);
+
+        }
+
+
 
     }
 
-//this
-/*
-    private void thisUserTeamsNotificationPreference(ArrayList<String> userTeamsNotifications, Context context, Boolean giaControllato, ArrayList <String> playingTodayRegions) {
-        Log.d(TAG, "thisUserTeamsNotificationPreference: userTeamsNotifications.size(): "+userTeamsNotifications.size());
-        // ho tutti i TeamsNotification dei teams di cui voglio essere notificato: userTeamsNotifications
-
+    private void thisUserTeamsNotificationPreference(ArrayList<String> regionOfuserTeamsNotifications, Context context, ArrayList <String> playingTodayRegions) {
+        Log.d(TAG, "thisUserTeamsNotificationPreference: regionOfuserTeamsNotifications: "+ regionOfuserTeamsNotifications.size() +" playingTodayRegions: "+playingTodayRegions.size());
         //devo verificare se uno dei match di oggi contiene la squadra scelta
         String today = backgroundTasks.getTodayDate();
 
-        for(int i=0; i<userTeamsNotifications.size(); i++){
+        //arrayList di String delle regioni dei teams che giocano oggi che gli frega all'utente
+        playingTodayRegions.retainAll(regionOfuserTeamsNotifications);
+        //per ognuna delle regioni di temas che giocano oggi prendi i teams su cui fai le notifiche
+        Log.d(TAG, "thisUserTeamsNotificationPreference: quante regioni ci sono per i teams per cui lo user vuole ricevere notifiche? " + playingTodayRegions.size());
+        for(int i=0; i<playingTodayRegions.size(); i++){
 
+            DatabaseReference notificationTeamsReference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(context.getString(R.string.firebase_user_notification))
+                    .child(context.getString(R.string.firebase_teams))
+                    .child(playingTodayRegions.get(i));
 
-
-            if (databaseHelper.teamsInsertedForRegionDay(userTeamsNotifications.get(i).getRegion(), today )){
-                //se ci sono teams nei matches della giornata di oggi, check se c'è il team scelto tra quelli
-                String timeAtThisTeamPlays = databaseHelper.timeAtTeamPlaysThisDay(userTeamsNotifications.get(i).getRegion(),today, userTeamsNotifications.get(i).getTeam());
-                //addTeamNotification (userTeamsNotifications.get(i), timeAtThisTeamPlays, context);
-
-            }else if (!giaControllato) {
-                Log.d(TAG, "thisUserTeamsNotificationPreference: ERROR: non ci sono i team nella giornata di oggi, allora query per inserirli");
-                //se non ci sono i team nella giornata di oggi, allora query per inserirli
-                //downloadMatches(today, userTeamsNotifications.get(i).getRegion(), context , userTeamsNotifications);
-
-            }
-
-        }
-
-
-    }
-*/
-
-/*
-    private void addTeamNotification(TeamNotification teamNotification, String timeAtThisTeamPlays, Context context) {
-
-        if (teamNotification.getNotification_team_morning_reminder()>0){
-            //setta una notifica istantanea con scritto quando la squadra gioca
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            intent.putExtra("TYPE", "TEAM_MORNING");
-            intent.putExtra("TEAM", teamNotification.getTeam());
-            intent.putExtra("TIME", timeAtThisTeamPlays);
-
-            alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-            alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
-
-        }
-        if (teamNotification.getNotification_team_as_team_plays()>0){
-            //setta una notifica un'ora prima che la squadra giochi
-
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            intent.putExtra("TYPE", "AS_TEAM_PLAY");
-            intent.putExtra("TEAM", teamNotification.getTeam());
-            intent.putExtra("TIME", timeAtThisTeamPlays);
-            alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            Log.d(TAG, "addTeamNotification: timeAtThisTeamPlays: "+timeAtThisTeamPlays);
-            Calendar matchStartCalendart = Calendar.getInstance();
-
-
-            matchStartCalendart.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeAtThisTeamPlays));
-            matchStartCalendart.set(Calendar.MINUTE, 0);
-            matchStartCalendart.set(Calendar.SECOND, 0);
-
-            Log.d(TAG, "addTeamNotification: "+matchStartCalendart.getTime());
-            Log.d(TAG, "addTeamNotification: "+matchStartCalendart.getTimeInMillis() +teamNotification.getTeam() +" " +teamNotification.getRegion());
-
-            alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            Log.d(TAG, "thisUserNotificationPreference: calendar.getTimeInMillis()-300000: "+ (matchStartCalendart.getTimeInMillis()-300000));
-            alarmManager.set(AlarmManager.RTC_WAKEUP, (matchStartCalendart.getTimeInMillis()-300000), alarmIntent);
-            //testing
-            //laarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
-
-
-
-
-
-        }
-
-    }
-*/
-
-/*
-    private void downloadMatches(String loadMatchesForThisDate, String selected_region_name, Context context, ArrayList<TeamNotification> userTeamsNotifications){
-        //Log.d(TAG, "downloadMatches: loading matchs for this day: "+loadMatchesForThisDate +" - region: " +selected_region_name);
-
-        matchListSplit = new ArrayList<>();
-        matchesForThisDate = new ArrayList<>();
-
-        // query sqlite per avere gli ID dei match di quel giorno di quella regione,
-        matchesForThisDate = databaseHelper.getMatchIdsForThisDate(year, selected_region_name, loadMatchesForThisDate);
-
-        // query firebase per avere gli oggetti MatchDetails
-        for (int i = 0; i < matchesForThisDate.size(); i++){
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_Matches))
-                    .child(selected_region_name)
-                    .child(selected_region_name + year)
-                    .child(matchesForThisDate.get(i).toString());
-
-            //Log.d(TAG, "loadRecyclerView: "+selected_region_name+"/"+selected_region_name + year+"/"+selected_region_name + year +"/"+matchesForThisDate.get(i));
-
-            readData(reference, new OnGetDataListener() {
+            notificationTeamsReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onSuccess(DataSnapshot dataSnapshot) {
-                    //Log.d(TAG, "onSuccess: ");
-                    MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
-                    //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
-                    if (matchDetails!=null){
-                       databaseHelper.insertMatchDetails(selected_region_name, matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                    int count = (int) (dataSnapshot.getChildrenCount());
+                    int counter =0;
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        counter++;
+                        TeamNotification userTeamNotifications = snapshot.getValue(TeamNotification.class);
+                        //ho un TeamNotification di una squadra la cui regione gioca oggi
+                        // la squadra gioca oggi?
+                        //ci sono teams nelle partite di oggi?
+                        if (databaseHelper.teamsInsertedForRegionDay(userTeamNotifications.getRegion(), today)){
+                            String timeAtTeamPlays = databaseHelper.timeAtTeamPlaysThisDay(userTeamNotifications.getRegion(), today, userTeamNotifications.getTeam());
+                            if (timeAtTeamPlays.equals("0")){
+                                Log.d(TAG, "onDataChange: la suqdra "+userTeamNotifications.getTeam() +" non gioca oggi");
+                            }else {
+                                if (!timeAtTeamPlays.equals("")){
+                                    //hai trovato l'ora a cui questo team gioca oggi, setta le notifiche
+                                    if (userTeamNotifications.getNotification_team_as_team_plays()>0){
+                                        //setta la notifica 4 minuti prima dello start
+                                        Log.d(TAG, "onDataChange: setto la notifica per TEAM  as team play");
+
+                                        Intent intent = new Intent(context, AlarmReceiver.class);
+                                        intent.putExtra("TYPE", "AS_TEAM_PLAY");
+                                        intent.putExtra("TEAM", userTeamNotifications.getTeam());
+                                        intent.putExtra("TIME", timeAtTeamPlays);
+                                        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                                        Log.d(TAG, "addTeamNotification: timeAtThisTeamPlays: "+timeAtTeamPlays);
+                                        Calendar matchStartCalendart = Calendar.getInstance();
+
+                                        matchStartCalendart.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeAtTeamPlays));
+                                        matchStartCalendart.set(Calendar.MINUTE, 0);
+                                        matchStartCalendart.set(Calendar.SECOND, 0);
+                                        matchStartCalendart.add(Calendar.MINUTE, -4);
+
+                                        Log.d(TAG, "addTeamNotification: "+matchStartCalendart.getTime());
+                                        Log.d(TAG, "addTeamNotification: "+matchStartCalendart.getTimeInMillis() +" "+userTeamNotifications.getTeam() +" " +userTeamNotifications.getRegion());
+
+                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+                                        alarmManager.set(AlarmManager.RTC_WAKEUP, (matchStartCalendart.getTimeInMillis()), alarmIntent);
+                                        //testing
+                                        //laarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
+
+
+                                    }
+                                    if (userTeamNotifications.getNotification_team_morning_reminder()>0){
+                                        Log.d(TAG, "onDataChange: TEST setto la notifica per TEAM morning reminder y");
+                                        //setta la notifica instantanea con l'ora a cui gioca
+                                        Intent intent = new Intent(context, AlarmReceiver.class);
+                                        intent.putExtra("TYPE", "TEAM_MORNING");
+                                        intent.putExtra("TEAM", userTeamNotifications.getTeam());
+                                        intent.putExtra("TIME", timeAtTeamPlays);
+
+                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+                                        alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
+                                    }
+                                }else {
+                                    Log.d(TAG, "onDataChange: la suqdra "+userTeamNotifications.getTeam() +" non gioca oggi");
+                                }
+                            }
+
+                        }else {
+                            // inserisci i teams in sqlite per la giornata di oggi
+                            Log.d(TAG, "onDataChange: non ci sono i team inseriti per le partite di oggi, rimedio.");
+
+                            matchesForThisDate = new ArrayList<>();
+                            // query sqlite per avere gli ID dei match di quel giorno di quella regione,
+                            matchesForThisDate = databaseHelper.getMatchIdsForThisDate(year, userTeamNotifications.getRegion(), today);
+                            Log.d(TAG, "onDataChange: numero di partite di oggi: "+matchesForThisDate.size());
+
+                            // query firebase per avere gli oggetti MatchDetails
+                            for (int i = 0; i < matchesForThisDate.size(); i++){
+                                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_Matches))
+                                        .child(userTeamNotifications.getRegion())
+                                        .child(userTeamNotifications.getRegion() + year)
+                                        .child(matchesForThisDate.get(i).toString());
+
+
+                                Log.d(TAG, "path: "+userTeamNotifications.getRegion()+"/"+userTeamNotifications.getRegion() + year+"/"+userTeamNotifications.getRegion() + year +"/"+matchesForThisDate.get(i));
+
+                                readData(reference, new OnGetDataListener() {
+                                    @Override
+                                    public void onSuccess(DataSnapshot dataSnapshot) {
+                                        //Log.d(TAG, "onSuccess: ");
+                                        MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
+                                        //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
+                                        if (matchDetails!=null){
+                                           databaseHelper.insertMatchDetails(userTeamNotifications.getRegion(),  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onStart() {
+                                        //Log.d(TAG, "onStart: ");
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        //Log.d(TAG, "onFailure: ");
+                                    }
+                                });
+                            }
+
+                        }
 
                     }
                 }
-
                 @Override
-                public void onStart() {
-                    //Log.d(TAG, "onStart: ");
-                }
-
-                @Override
-                public void onFailure() {
-                    //Log.d(TAG, "onFailure: ");
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
                 }
             });
         }
 
-        //wait for insert
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                // Actions to do after 10 seconds
-                thisUserTeamsNotificationPreference(userTeamsNotifications, context ,true);
-
-            }
-        }, 10000);
 
 
 
     }
-*/
 
     private String getTimeFromDateTime(String datetime) {
         Log.d(TAG, "getLocalDateFromDateTime: datetime: "+datetime);

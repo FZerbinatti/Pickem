@@ -343,7 +343,7 @@ public class PicksActivity extends AppCompatActivity  {
                         //vedi se hai gia inserito i dettagli per questo match in locale
 
                         if (!databaseHelper.teamsInsertedForRegionDay(selected_region_name, getLocalDateFromDateTime(matchDetails.getDatetime()))){
-                            databaseHelper.insertMatchDetails(selected_region_name, getLocalDateFromDateTime( matchDetails.getDatetime()) , matchDetails.getTeam1(), matchDetails.getTeam2() );
+                            databaseHelper.insertMatchDetails(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                         }
                         matchListSplit.add(matchDetails);
                         //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;

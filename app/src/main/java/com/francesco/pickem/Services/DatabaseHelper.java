@@ -134,15 +134,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertMatchDetails(String region, String match_id, String team1, String team2){
+    public void insertMatchDetails(String region, String dateTime, String team1, String team2){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         cv.put(TEAM1, team1);
         cv.put(TEAM2, team2);
 
-        db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_id});
-        Log.d(TAG, "insertMatchDetails: inserito: Region: "+region +" DateTime: " +match_id +" team1: " +team1 + " team2: "+ team2);
+        db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, dateTime});
+        Log.d(TAG, "insertMatchDetails: inserito: Region: "+region +" DateTime: " +dateTime +" team1: " +team1 + " team2: "+ team2);
         db.close();
 
     }
@@ -209,6 +209,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String timeAtTeamPlaysThisDay(String region, String date, String team){
+        Log.d(TAG, "timeAtTeamPlaysThisDay: at what time does "+ team +" from "+ region +" date: "+ date + " plays?");
         ArrayList <String> teams = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         String datetime = "";
@@ -225,10 +226,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }else return "0";
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
+
         //Log.d(TAG, "timeAtTeamPlaysThisDay: "+datetime);
-        return getLocalHourFromDateTime(datetime);
+        if (datetime.equals("")){
+            Log.d(TAG, "timeAtTeamPlaysThisDay: "+ team +" from "+ region +" date: "+ date + " DOESNT PLAY TODAY");
+            return "";
+        }else if (!getLocalDateFromDateTime(datetime).equals(date) ){
+            Log.d(TAG, "timeAtTeamPlaysThisDay: "+ team +" from "+ region +" date: "+ date + " DOESNT PLAY TODAY");
+            return "0";
+        }
+        else {
+            return getLocalHourFromDateTime(datetime);
+        }
+
 
     }
 
@@ -459,6 +472,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     public ArrayList<String> matchesForRegion_Date(String region, String date){
+        Log.d(TAG, "matchesForRegion_Date: region: "+region + " date: "+date);
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> match_id = new ArrayList<>();
@@ -467,11 +481,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
         if (cursor.moveToFirst()) {
             do {
-                match_id.add( getLocalDateTimeFromDateTime( cursor.getString(0)));
+                //match_id.add( getLocalDateTimeFromDateTime( cursor.getString(0)));
+                match_id.add( ( cursor.getString(0)));
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
+        Log.d(TAG, "matchesForRegion_Date: match_id: "+match_id);
             return match_id;
 
     }
@@ -524,6 +540,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dateFormatter.setTimeZone(TimeZone.getDefault());
 
         String localDatetime = dateFormatter.format(value);
+
+        return localDatetime;
+    }
+
+    private String getLocalDateFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalDateFromDateTime: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+        Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
 
         return localDatetime;
     }
