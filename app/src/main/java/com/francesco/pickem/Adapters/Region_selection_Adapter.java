@@ -62,16 +62,7 @@ public class Region_selection_Adapter extends PagerAdapter {
         //imageView.setImageResource(leaguesSelectedList.get(position).getImage());
         //title.setText(leaguesSelectedList.get(position).getLeague_name());
 
-/*
-        RequestOptions options = new RequestOptions()
-                .centerCrop()
-                .placeholder(R.drawable.logo_lec)
-                .error(R.drawable.logo_lck);
 
-
-        Glide.with(context).load(leaguesSelectedList.get(position).getImage()).placeholder(R.drawable.ic_load).apply(options).into(imageView);
-
-*/
 
 
         imageRegionPath = context.getFilesDir().getAbsolutePath() + "/images/regions/";
@@ -91,7 +82,6 @@ public class Region_selection_Adapter extends PagerAdapter {
                 .apply(options2)
                 .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(imageView);
-
 
 
         container.addView(view, 0);

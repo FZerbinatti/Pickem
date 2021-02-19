@@ -8,8 +8,6 @@
     tools:context=".Activities.MainActivities.PicksActivity">
 
 
-
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager_picksActivity"
         android:background="@color/background"
