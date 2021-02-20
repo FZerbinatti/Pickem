@@ -9,20 +9,20 @@
 
 
     <ImageView
-        android:id="@+id/logo_team_1"
+        android:id="@+id/item_logo_team1"
         android:layout_width="@dimen/calendar_icons_dimens"
         android:layout_height="@dimen/calendar_icons_dimens"
         android:padding="3dp"
         android:background="@drawable/background_round_corners"
         android:src="@color/transparent"
-        app:layout_constraintEnd_toStartOf="@+id/icon_vs1"
+        app:layout_constraintEnd_toStartOf="@+id/item_vs"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
 
 
 
     <TextView
-        android:id="@+id/team1_score"
+        android:id="@+id/item_score_team1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
@@ -31,12 +31,12 @@
         android:textColor="@color/blue_light_opaque"
         android:textSize="20sp"
         android:layout_marginEnd="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/logo_team_1"
-        app:layout_constraintEnd_toStartOf="@+id/logo_team_1"
-        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
+        app:layout_constraintEnd_toStartOf="@+id/item_logo_team1"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
     <TextView
-        android:id="@+id/team2_score"
+        android:id="@+id/item_score_team2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
@@ -45,32 +45,32 @@
         android:textSize="20sp"
         android:layout_marginStart="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/logo_team_2"
-        app:layout_constraintTop_toTopOf="@+id/logo_team_2" />
+        app:layout_constraintStart_toEndOf="@+id/item_logo_team2"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team2" />
 
 
 
     <TextView
-        android:id="@+id/icon_vs1"
+        android:id="@+id/item_vs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="VS"
-        app:layout_constraintBottom_toBottomOf="@+id/logo_team_1"
-        app:layout_constraintEnd_toStartOf="@+id/logo_team_2"
-        app:layout_constraintStart_toEndOf="@+id/logo_team_1"
-        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
+        app:layout_constraintEnd_toStartOf="@+id/item_logo_team2"
+        app:layout_constraintStart_toEndOf="@+id/item_logo_team1"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
 
 
     <ImageView
-        android:id="@+id/logo_team_2"
+        android:id="@+id/item_logo_team2"
         android:layout_width="@dimen/calendar_icons_dimens"
         android:layout_height="@dimen/calendar_icons_dimens"
         android:padding="3dp"
         android:background="@drawable/background_round_corners"
         android:src="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_vs1"
+        app:layout_constraintStart_toEndOf="@+id/item_vs"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
 
 
@@ -82,12 +82,12 @@
         android:text="17:00"
         android:textColor="@color/white"
         android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@+id/textview_match_date"
-        app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
-        app:layout_constraintStart_toStartOf="@+id/logo_team_1" />
+        app:layout_constraintTop_toBottomOf="@+id/item_calendar_date"
+        app:layout_constraintEnd_toEndOf="@+id/item_logo_team2"
+        app:layout_constraintStart_toStartOf="@+id/item_logo_team1" />
 
     <TextView
-        android:id="@+id/textview_match_date"
+        android:id="@+id/item_calendar_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
@@ -95,8 +95,8 @@
         android:textColor="@color/white"
         android:textSize="30sp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
-        app:layout_constraintStart_toStartOf="@+id/logo_team_1"
+        app:layout_constraintEnd_toEndOf="@+id/item_logo_team2"
+        app:layout_constraintStart_toStartOf="@+id/item_logo_team1"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -106,7 +106,7 @@
         android:background="@color/background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_team_1" />
+        app:layout_constraintTop_toBottomOf="@+id/item_logo_team1" />
 
 
 

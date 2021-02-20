@@ -8,9 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.ImageValidator;
-import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 
@@ -172,8 +170,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return teams;
-
     }
+/*
+    public ArrayList<String> getIdMatchesForRegionsDate(ArrayList<String> regions, String date){
+
+        ArrayList <String> matchIds = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String team1 = "";
+
+        //
+        //                                 0            1
+        for(int i=0; i<regions.size(); i++){
+            String selectQuery = "SELECT "+ MATCH_ID +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? " ;
+            Cursor cursor = db.rawQuery(selectQuery, new String []{regions.get(i), date});
+            //Log.d(TAG, "getTeamsForRegionMatchID: "+cursor.getCount());
+            if (cursor.moveToFirst()) {
+                do {
+
+                    team1 = cursor.getString(0);
+
+                    matchIds.add(team1);
+
+
+                } while (cursor.moveToNext());
+            }
+        }
+
+
+        cursor.close();
+        db.close();
+
+        return matchIds;
+    }*/
 
     public Boolean teamsInsertedForRegionDay(String region, String date){
         Log.d(TAG, "teamsInsertedForRegionDay: "+ region + " date: "+ date);

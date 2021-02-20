@@ -3,7 +3,6 @@ package com.francesco.pickem.Adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,13 +182,13 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            image_team_1 = (ImageView) itemView.findViewById(R.id.logo_team_1);
-            image_team_2 = (ImageView) itemView.findViewById(R.id.logo_team_2);
+            image_team_1 = (ImageView) itemView.findViewById(R.id.item_logo_team1);
+            image_team_2 = (ImageView) itemView.findViewById(R.id.item_logo_team2);
             opacity_team_1 = (ImageView) itemView.findViewById(R.id.opacity_team_1);
             opacity_team_2 = (ImageView) itemView.findViewById(R.id.opacity_team_2);
             textview_match_timer = (TextView) itemView.findViewById(R.id.textview_match_timer);
-            textview_team1_score = (TextView) itemView.findViewById(R.id.team1_score);
-            textview_team2_score = (TextView) itemView.findViewById(R.id.team2_score);
+            textview_team1_score = (TextView) itemView.findViewById(R.id.item_score_team1);
+            textview_team2_score = (TextView) itemView.findViewById(R.id.item_score_team2);
             match_live = (TextView) itemView.findViewById(R.id.match_live);
 
             icon_prediction_correct_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team1);

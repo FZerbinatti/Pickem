@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
@@ -9,20 +9,20 @@
 
 
     <ImageView
-        android:id="@+id/logo_team_1"
+        android:id="@+id/item_logo_team1"
         android:layout_width="@dimen/calendar_icons_dimens"
         android:layout_height="@dimen/calendar_icons_dimens"
+        android:background="@drawable/background_round_corners_smol"
         android:padding="3dp"
-        android:background="@drawable/background_round_corners"
+        android:layout_marginEnd="30dp"
         android:src="@color/transparent"
-        app:layout_constraintEnd_toStartOf="@+id/icon_vs1"
+        app:layout_constraintEnd_toStartOf="@+id/item_calendar_time"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textview_match_date" />
-
-
+        app:layout_constraintTop_toBottomOf="@+id/item_calendar_date" />
 
     <TextView
-        android:id="@+id/team1_score"
+        android:id="@+id/item_calendar_team1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
@@ -30,55 +30,53 @@
         android:layout_marginStart="5dp"
         android:textColor="@color/blue_light_opaque"
         android:textSize="20sp"
-        android:layout_marginEnd="5dp"
-        app:layout_constraintBottom_toBottomOf="@+id/logo_team_1"
-        app:layout_constraintEnd_toStartOf="@+id/logo_team_1"
-        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
+        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
+        app:layout_constraintStart_toEndOf="@+id/item_logo_team1"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
+
 
     <TextView
-        android:id="@+id/team2_score"
+        android:id="@+id/item_calendar_team2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
         android:text="SKT"
+        android:layout_marginEnd="5dp"
         android:textColor="@color/blue_light_opaque"
         android:textSize="20sp"
-        android:layout_marginStart="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/logo_team_2"
-        app:layout_constraintTop_toTopOf="@+id/logo_team_2" />
-
-
+        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team2"
+        app:layout_constraintEnd_toStartOf="@+id/item_logo_team2"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team2" />
 
     <TextView
-        android:id="@+id/icon_vs1"
+        android:id="@+id/item_calendar_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="17:00"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/logo_team_1"
-        app:layout_constraintEnd_toStartOf="@+id/logo_team_2"
-        app:layout_constraintStart_toEndOf="@+id/logo_team_1"
-        app:layout_constraintTop_toTopOf="@+id/logo_team_1" />
-
+        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
+        app:layout_constraintEnd_toStartOf="@+id/item_logo_team2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/item_logo_team1"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
 
     <ImageView
-        android:id="@+id/logo_team_2"
+        android:id="@+id/item_logo_team2"
         android:layout_width="@dimen/calendar_icons_dimens"
         android:layout_height="@dimen/calendar_icons_dimens"
+        android:layout_marginStart="30dp"
+        android:background="@drawable/background_round_corners_smol"
         android:padding="3dp"
-        android:background="@drawable/background_round_corners"
         android:src="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/icon_vs1"
-        app:layout_constraintTop_toBottomOf="@+id/textview_match_date" />
-
-
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/item_calendar_time"
+        app:layout_constraintTop_toBottomOf="@+id/item_calendar_date" />
 
 
     <TextView
-        android:id="@+id/textview_match_date"
+        android:id="@+id/item_calendar_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
@@ -86,19 +84,20 @@
         android:textColor="@color/white"
         android:textSize="30sp"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="@+id/logo_team_2"
-        app:layout_constraintStart_toStartOf="@+id/logo_team_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/line_separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:id="@+id/line_separator"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:background="@color/blue_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_team_1" />
+        app:layout_constraintTop_toBottomOf="@+id/item_logo_team1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

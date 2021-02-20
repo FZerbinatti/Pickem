@@ -376,7 +376,7 @@ public class BackgroundTasks extends JobService {
                         // se ci sono piu immagini regions sul cloud di quelle locali
                         ArrayList<String> moreRegions = new ArrayList<>();
                         //Integer cloud_regions_images_size =cloud_regions_images.size();
-                        Log.d(TAG, "run:******************************************************* is: "+region_image_size +" > "+local_regions_images.size() +" ?");
+                        //Log.d(TAG, "run:******************************************************* is: "+region_image_size +" > "+local_regions_images.size() +" ?");
                         if (region_image_size>local_regions_images.size()){
                             //Log.d(TAG, "run:*******************************************************  TRUE");
                             for (int i=0; i<region_image_size; i++){

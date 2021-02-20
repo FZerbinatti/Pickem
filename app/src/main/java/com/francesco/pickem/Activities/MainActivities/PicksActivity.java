@@ -496,11 +496,6 @@ public class PicksActivity extends AppCompatActivity  {
         fullDate.setTime(ora);
         fullDate.setCoolDate(coolLocalDatetime);
 
-/*        Log.d(TAG, "getFullDateFromUnivDate: Id: "+fullDate.getId());
-        Log.d(TAG, "getFullDateFromUnivDate: local: : "+fullDate.getLocalDateTime());
-        Log.d(TAG, "getFullDateFromUnivDate: date: "+fullDate.getDate());
-        Log.d(TAG, "getFullDateFromUnivDate: time: "+fullDate.getTime());*/
-
         return fullDate;
     }
 
@@ -556,9 +551,6 @@ public class PicksActivity extends AppCompatActivity  {
 
         }
 
-
-
-        //Log.d(TAG, "loadRecyclerView: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"+displayMatchListSplit.size());
         adapterRecycler = new RecyclerView_Picks_Adapter(this, displayMatchListSplit);
         adapterRecycler.notifyDataSetChanged();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

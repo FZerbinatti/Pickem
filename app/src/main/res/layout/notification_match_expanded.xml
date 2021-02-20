@@ -32,7 +32,7 @@
             android:layout_alignParentStart="true"/>
 
         <ImageView
-            android:id="@+id/icon_vs1"
+            android:id="@+id/item_vs"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="80dp"

@@ -604,32 +604,34 @@ public class AlarmReceiver extends BroadcastReceiver{
         }
 
         for(int i=0; i<regionsWithMorningReminder.size(); i++){
-            Log.d(TAG, " quante regions con Morning Reminder? : "+regionsWithMorningReminder.size());
-            currentRegion.setRegion(regionsWithMorningReminder.get(i));
+            Log.d(TAG, " quante regions con Morning Reminder? : "+regionsWithMorningReminder.size() +" current: "+ regionsWithMorningReminder.get(i));
+            CurrentRegion currentRegion1 = new CurrentRegion();
+            currentRegion1.setRegion(regionsWithMorningReminder.get(i));
             allTodayMatches = new ArrayList<>();
             ArrayList <String> allTodayMatchesForThisRegion = new ArrayList<>();
             allTodayMatchesForThisRegion=(databaseHelper.matchesForRegion_Date(regionsWithMorningReminder.get(i), backgroundTasks.getTodayDate()));
             Log.d(TAG, "thisUserNotificationPreference: allTodayMatchesForThisRegion.size(): "+allTodayMatchesForThisRegion.size());
             for(int j=0; j<allTodayMatchesForThisRegion.size(); j++){
-                Log.d(TAG, "thisUserNotificationPreference: cycling: "+j+" -> "+allTodayMatchesForThisRegion.get(j));
+                Log.d(TAG, "regionsWithMorningReminder: cycling: "+j+" -> "+allTodayMatchesForThisRegion.get(j));
                 //query per avere per ognuno dei datetime un MatchDetails
 
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference
                         (context.getResources().getString(R.string.firebase_Matches))
-                        .child(currentRegion.getRegion())
-                        .child(currentRegion.getRegion()+year)
+                        .child(currentRegion1.getRegion())
+                        .child(currentRegion1.getRegion()+year)
                         .child(allTodayMatchesForThisRegion.get(j));
 
                 readData(reference, new OnGetDataListener() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
 
-                        //Log.d(TAG, "onSuccess: ");
+                        Log.d(TAG, "onSuccess: ");
                         MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
 
                         if (matchDetails!=null){
-                            Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
-                            matchDetails.setWinner(currentRegion.getRegion());
+
+                            matchDetails.setWinner(currentRegion1.getRegion());
+                            Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() +" team: "+ matchDetails.getWinner());
                             matchDetails.setDatetime(convertDatetimeZtoLocale(matchDetails.getDatetime()));
                             allTodayMatches.add(matchDetails);
                         }
@@ -646,6 +648,8 @@ public class AlarmReceiver extends BroadcastReceiver{
                         //Log.d(TAG, "onFailure: ");
                     }
                 });
+
+
             }
 
             Handler handler = new Handler();
