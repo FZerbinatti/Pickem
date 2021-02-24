@@ -114,7 +114,7 @@ public class StatsActivity extends AppCompatActivity{
         RegionStats regionStats = new RegionStats();
 
         for(int i=0; i<userRegions.size(); i++){
-            regionStats = databaseHelper.getCorrectPicksPercentageForRegion(year, userRegions.get(i));
+            regionStats = databaseHelper.getRegionStats(year, userRegions.get(i));
             listOfRegionStats.add(regionStats);
         }
         loadRecyclerViewStats(listOfRegionStats);

@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -342,7 +344,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return match_ids;
     }
 
-    public RegionStats getCorrectPicksPercentageForRegion(String year, String regionSelected ){
+    public RegionStats getRegionStats(String year, String regionSelected ){
         SQLiteDatabase db = this.getReadableDatabase();
 
         //la data deve essere anteriore alla data attuale, aggiungi un IF statement
@@ -358,7 +360,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String prediction = cursor.getString(0);
                 String winner = cursor.getString(1);
 
-                if (!prediction.equals("") || !winner.equals("")){
+                if (!prediction.equals("") && !winner.equals("")){
                     counter_total+=1;
 
                     if (prediction.equals(winner)){
@@ -371,7 +373,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
-        Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
+        //Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
         return new RegionStats(regionSelected ,counter_right, counter_total);
     }
 
@@ -429,7 +431,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(PREDICTION, prediction);
 
         db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_ID});
-        Log.d(TAG, "updatePrediction: done.");
+        Log.d(TAG, "updatePrediction: done: "+region +" " + match_ID +" "+ prediction);
         db.close();
     }
 
@@ -440,7 +442,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(WINNER, winner);
 
         db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_ID});
-        Log.d(TAG, "updateWinner: done.");
+        Log.d(TAG, "updateWinner: done: "+region +" " + match_ID +" "+ winner);
         db.close();
     }
 
@@ -643,6 +645,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d(TAG, "getLocalDateFromDateTime: localDatetime: "+localDatetime);
 
         return localDatetime;
+    }
+
+    public ArrayList<Cursor> getData(String Query){
+        //get writable database
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        String[] columns = new String[] { "message" };
+        //an array list of cursor to save two cursors one has results from the query
+        //other cursor stores error message if any errors are triggered
+        ArrayList<Cursor> alc = new ArrayList<Cursor>(2);
+        MatrixCursor Cursor2= new MatrixCursor(columns);
+        alc.add(null);
+        alc.add(null);
+
+        try{
+            String maxQuery = Query ;
+            //execute the query results will be save in Cursor c
+            Cursor c = sqlDB.rawQuery(maxQuery, null);
+
+            //add value to cursor2
+            Cursor2.addRow(new Object[] { "Success" });
+
+            alc.set(1,Cursor2);
+            if (null != c && c.getCount() > 0) {
+
+                alc.set(0,c);
+                c.moveToFirst();
+
+                return alc ;
+            }
+            return alc;
+        } catch(SQLException sqlEx){
+            Log.d("printing exception", sqlEx.getMessage());
+            //if any exceptions are triggered save the error message to cursor an return the arraylist
+            Cursor2.addRow(new Object[] { ""+sqlEx.getMessage() });
+            alc.set(1,Cursor2);
+            return alc;
+        } catch(Exception ex){
+            Log.d("printing exception", ex.getMessage());
+
+            //if any exceptions are triggered save the error message to cursor an return the arraylist
+            Cursor2.addRow(new Object[] { ""+ex.getMessage() });
+            alc.set(1,Cursor2);
+            return alc;
+        }
     }
 
 

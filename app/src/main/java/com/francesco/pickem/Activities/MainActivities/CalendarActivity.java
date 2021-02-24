@@ -386,7 +386,6 @@ public class CalendarActivity extends AppCompatActivity{
                             progressbar_calendar.setMax(sum_all_matches_all_regions.getNumber());
                             //Log.d(TAG, "onDataChange: sum_all_matches_all_regions: "+sum_all_matches_all_regions.getNumber());
 
-
                             CurrentTeam currentDate = new CurrentTeam();
                             currentDate.setRegion("");
                             //prendi tutte le regioni
@@ -426,7 +425,7 @@ public class CalendarActivity extends AppCompatActivity{
                                 }
 
                                 if (global_counter.getNumber().toString().equals(sum_all_matches_all_regions.getNumber().toString())){
-
+                               // if (global_counter.getNumber()==sum_all_matches_all_regions.getNumber()){
                                     Handler handler = new Handler();
                                     handler.postDelayed(new Runnable() {
                                         public void run() {
@@ -441,14 +440,8 @@ public class CalendarActivity extends AppCompatActivity{
                                                 description_calendar.setText("No matches fond for: "+selectedDate);
                                                 progressbar_calendar.setVisibility(View.GONE);
                                             }
-
-
-
-
                                         }
                                     }, 1000);
-
-
                                 }
                             }
                         }
@@ -457,14 +450,8 @@ public class CalendarActivity extends AppCompatActivity{
                         public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
                         }
                     });
-
                 }
-
-
         }
-
-
-
     }
 
     private void loadMatchesForThisLeaguesThisWeek(ArrayList<String> selectedCalendarRegions, ArrayList<String>dates) {

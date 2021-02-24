@@ -48,6 +48,7 @@ import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.NotificationsService.BackgroundTasks;
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.AndroidDatabaseManager;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -98,6 +99,7 @@ public class PicksActivity extends AppCompatActivity  {
     DatabaseHelper databaseHelper;
     Integer selectedPage;
     SwipeRefreshLayout pullToRefresh;
+    ImageButton databaseOpener;
 
 
     @Override
@@ -122,6 +124,16 @@ public class PicksActivity extends AppCompatActivity  {
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
         imageRegionPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_regions_images));
+
+        databaseOpener = findViewById(R.id.databaseOpener);
+
+        databaseOpener.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent dbmanager = new Intent(PicksActivity.this, AndroidDatabaseManager.class);
+                startActivity(dbmanager);
+            }
+        });
 
 
         if(isUserAlreadyLogged()){
@@ -346,8 +358,7 @@ public class PicksActivity extends AppCompatActivity  {
                             databaseHelper.insertMatchDetails(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                         }
                         if(!matchDetails.getWinner().equals(" ")){
-                            databaseHelper.updateWinner(selected_region_name, matchDetails.getId(), matchDetails.getWinner());
-
+                            databaseHelper.updateWinner(selected_region_name, matchDetails.getDatetime(), matchDetails.getWinner());
                         }
                         matchListSplit.add(matchDetails);
                         //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;

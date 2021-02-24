@@ -31,6 +31,7 @@
         <activity android:name=".Activities.AccountActivities.RegisterActivity" />
         <activity android:name=".Activities.AccountActivities.LoginActivity" />
         <activity android:name=".Activities.MainActivities.CalendarActivity" />
+        <activity android:name=".Services.AndroidDatabaseManager" />
         <activity android:name=".Activities.MainActivities.PicksActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

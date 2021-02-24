@@ -86,7 +86,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         Long team1_score = displayMatchDetailsList.get(i).getTeam1_score();
         Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
 
-        //Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID);
+
+        Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID +" datetime: "+dateTime);
 
         thisMatch.setYear(year);
         thisMatch.setRegion(region);
@@ -154,10 +155,16 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }
 
-        if (match_winner.equals(" ") && System.currentTimeMillis()>datetimeToMillis(dateTime)){
+/*        if (!match_winner.trim().isEmpty())    {
+            Log.d(TAG, "onBindViewHolder: "+region+" "+dateTime+" "+match_winner);
+            databaseHelper.updateWinner(region, dateTime, match_winner);
+        }*/
+
+        if (match_winner.trim().isEmpty() && System.currentTimeMillis()>datetimeToMillis(dateTime)){
             viewHolder.match_live.setVisibility(View.VISIBLE);
         }else {
             viewHolder.match_live.setVisibility(View.INVISIBLE);
+
         }
 
 
@@ -216,6 +223,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 public void onClick(View view) {
                     DisplayMatch displayMatchClicked = displayMatchDetailsList.get(getAdapterPosition());
                     displayMatchClicked.setPrediction(displayMatchDetailsList.get(getAdapterPosition()).getTeam1());
+                    displayMatchClicked.setDatetime(displayMatchDetailsList.get(getAdapterPosition()).getDatetime());
 
                     updateUserPick(displayMatchClicked);
                     opacity_team_2.setVisibility(View.VISIBLE);
@@ -229,6 +237,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 public void onClick(View view) {
                     DisplayMatch displayMatchClicked = displayMatchDetailsList.get(getAdapterPosition());
                     displayMatchClicked.setPrediction(displayMatchDetailsList.get(getAdapterPosition()).getTeam2());
+                    displayMatchClicked.setDatetime(displayMatchDetailsList.get(getAdapterPosition()).getDatetime());
 
                     updateUserPick(displayMatchClicked);
                     opacity_team_1.setVisibility(View.VISIBLE);
@@ -246,6 +255,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     public void updateUserPick (DisplayMatch displayMatch){
 
+        
         databaseHelper= new DatabaseHelper(context);
 
         FirebaseDatabase.getInstance().getReference("Users")
@@ -256,6 +266,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child(displayMatch.getDatetime())
                 .setValue(displayMatch.getPrediction());
 
+        Log.d(TAG, "updateUserPick: debug point 2");
         databaseHelper.updatePrediction(displayMatch.getRegion(), displayMatch.getDatetime(), displayMatch.getPrediction());
 
     }

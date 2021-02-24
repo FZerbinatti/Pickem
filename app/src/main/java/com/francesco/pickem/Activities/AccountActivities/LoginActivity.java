@@ -20,9 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
+import com.francesco.pickem.Interfaces.OnGetDataListener;
 import com.francesco.pickem.Models.CurrentNumber;
 import com.francesco.pickem.Models.CurrentRegion;
+import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.ImageValidator;
+import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.R;
@@ -49,6 +52,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -145,6 +149,8 @@ public class LoginActivity extends AppCompatActivity {
                                     personalized_dialog_progressbar1.setProgressTintList(colorStateListYellow);
                                     personalized_dialog_progressbar2.setProgressTintList(colorStateListGreen);
 
+
+
                                     Log.d(TAG, "onComplete: root non esiste");
 
                                     //show toast / alertDialog
@@ -240,7 +246,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                                         if (currentNumber2.getNumber() == teams_image_size){
 
-
                                                             login_progressbar.setVisibility(View.GONE);
                                                             PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
                                                             Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
@@ -263,9 +268,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                             }
 
-
-
-
+                                            downloadUserPicksForStatsActivity();
 
                                         }
                                     }, 3000);
@@ -303,6 +306,138 @@ public class LoginActivity extends AppCompatActivity {
         changeNavBarColor();
     }
 
+    private void downloadUserPicksForStatsActivity() {
+        CurrentNumber global_counter = new CurrentNumber();
+        global_counter.setNumber(0);
+        ArrayList <String> userRegionPicks = new ArrayList<>();
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_users_picks));
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                //prendi tutte le regioni di interesse dello user
+                int number_of_userPicksRegions = (int) dataSnapshot.getChildrenCount();
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String userRegionPick = snapshot.getKey();
+                    //francString userRegionPick = snapshot.getValue(String.class);
+                    global_counter.setNumber(global_counter.getNumber()+1);
+                    userRegionPicks.add(userRegionPick);
+                    if (global_counter.getNumber()==number_of_userPicksRegions){
+                        downloadMatchDetailsForUserPicks(userRegionPicks);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    private void downloadMatchDetailsForUserPicks(ArrayList<String> userRegionPicks) {
+
+        CurrentNumber sum_all_matches_all_regions = new CurrentNumber();
+        CurrentNumber global_counter = new CurrentNumber();
+        sum_all_matches_all_regions.setNumber(0);
+        global_counter.setNumber(0);
+
+        for(int i=0; i<userRegionPicks.size(); i++){
+            CurrentRegion currentRegion = new CurrentRegion();
+            currentRegion.setRegion(userRegionPicks.get(i));
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(getString(R.string.firebase_users_picks))
+                    .child(userRegionPicks.get(i))
+                    .child(userRegionPicks.get(i)+year);
+
+            readData(reference, new OnGetDataListener() {
+                @Override
+                public void onSuccess(DataSnapshot dataSnapshot) {
+
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                        String match_ID = snapshot.getKey();
+                        String userMatchPick = snapshot.getValue(String.class);
+
+                        databaseHelper.updatePrediction(currentRegion.getRegion(), match_ID, userMatchPick);
+                        getWinnerOfThisMatch(currentRegion.getRegion(), match_ID);
+                    }
+                }
+
+                @Override
+                public void onStart() {
+                    //Log.d(TAG, "onStart: ");
+                }
+
+                @Override
+                public void onFailure() {
+                    //Log.d(TAG, "onFailure: ");
+                }
+            });
+
+
+        }
+
+
+
+
+    }
+
+    private void getWinnerOfThisMatch(String region, String match_id) {
+        //if datetime elapsed, get winner of this match
+        if (matchAlreadyElapsedQuestionMark(match_id)){
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
+                    .child(region)
+                    .child(region+year)
+                    .child(match_id);
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+
+                    MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
+                    databaseHelper.updateWinner(region, match_id, matchDetails.getWinner());
+
+                }
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+
+
+
+    }
+
+    public boolean matchAlreadyElapsedQuestionMark(String datetime) {
+
+        //Log.d(TAG, "matchAlreadyElapsedQuestionMark: (matchDays.getDatetime(): "+(matchDays.getDatetime()));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date strDate = null;
+        try {
+            strDate = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        // Log.d(TAG, "selectMatchDay: System.currentTimeMillis(): "+System.currentTimeMillis());;
+
+        long matchTimeMillis = strDate.getTime();
+
+        // Log.d(TAG, "selectMatchDay: matchTimeMillis:"+matchTimeMillis);
+        if (System.currentTimeMillis() < matchTimeMillis) {
+            return false;
+        }else {
+            return true;}
+
+
+    }
+
 
     private void downloadUserRegions() {
 
@@ -311,7 +446,7 @@ public class LoginActivity extends AppCompatActivity {
                 .child(getString(R.string.firebase_users_generealities))
                 .child(getString(R.string.firebase_user_choosen_regions));
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 //prendi tutte le regioni di interesse dello user
@@ -391,5 +526,22 @@ public class LoginActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.background_dark));
             getWindow().setStatusBarColor(getResources().getColor(R.color.background_dark));
         }
+    }
+
+    public void readData(DatabaseReference ref, final OnGetDataListener listener) {
+        listener.onStart();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+
+                listener.onSuccess(snapshot);
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+                listener.onFailure();
+            }
+        });
+
     }
 }
