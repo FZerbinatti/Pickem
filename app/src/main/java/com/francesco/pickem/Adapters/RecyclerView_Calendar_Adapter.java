@@ -45,6 +45,7 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
         this.context = context;
         this.displayMatchDetailsList = displayMatchDetailsList;
 
+
     }
 
     @NonNull

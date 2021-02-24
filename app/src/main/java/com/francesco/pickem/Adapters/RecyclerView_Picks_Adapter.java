@@ -3,6 +3,7 @@ package com.francesco.pickem.Adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Interfaces.RecyclerViewClickListener;
 import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,8 +31,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerView_Picks_Adapter.ViewHolder> {
 
@@ -41,6 +45,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     DisplayMatch thisMatch;
     String match_prediction;
     String imageTeamPath;
+    DatabaseHelper databaseHelper;
 
     public RecyclerView_Picks_Adapter() {
     }
@@ -149,6 +154,12 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }
 
+        if (match_winner.equals(" ") && System.currentTimeMillis()>datetimeToMillis(dateTime)){
+            viewHolder.match_live.setVisibility(View.VISIBLE);
+        }else {
+            viewHolder.match_live.setVisibility(View.INVISIBLE);
+        }
+
 
         viewHolder.textview_match_timer.setText(match_time);
         viewHolder.textview_team1_score.setText(team1_score.toString());
@@ -174,6 +185,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         private TextView textview_team1_score;
         private TextView textview_team2_score;
         private TextView match_live;
+
+
+
 
         private ImageView icon_prediction_correct_team1, icon_prediction_wrong_team1;
         private ImageView icon_prediction_correct_team2, icon_prediction_wrong_team2;
@@ -232,9 +246,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     public void updateUserPick (DisplayMatch displayMatch){
 
-        //Log.d(TAG, "updateUserPick: "+thisMatch.getId());
+        databaseHelper= new DatabaseHelper(context);
 
-        //Log.d(TAG, "updateUserPick: "+displayMatch.getId());
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("UserPicks")
@@ -242,6 +255,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child(displayMatch.getYear())
                 .child(displayMatch.getDatetime())
                 .setValue(displayMatch.getPrediction());
+
+        databaseHelper.updatePrediction(displayMatch.getRegion(), displayMatch.getDatetime(), displayMatch.getPrediction());
 
     }
 
@@ -349,6 +364,26 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 return true;}
 
 
+    }
+
+    public Long datetimeToMillis(String datetime) {
+        //in base agli ID dell'array list, trova la data sucessiva o coincidente a quella attuale
+        Integer itemPosition=0;
+            // Log.d(TAG, "loadMatchDays: "+matchDays.get(i));
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date strDate = null;
+
+            try {
+                strDate = sdf.parse(datetime);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            long matchTimeMillis = strDate.getTime();
+        Log.d(TAG, "datetimeToMillis: "+matchTimeMillis);
+        return matchTimeMillis;
     }
 
 

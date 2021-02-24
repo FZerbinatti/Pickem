@@ -233,8 +233,10 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(EloTrackerActivity.this, NewTrackEloDay.class);
-                Log.d(TAG, "onClick: elotracker_list.get(elotracker_list.size()-1).getElo(): "+elotracker_list.get(elotracker_list.size()-1).getElo());
-                intent.putExtra("EX_ELO", elotracker_list.get(elotracker_list.size()-1).getElo());
+                if (elotracker_list.size()>0){
+                    Log.d(TAG, "onClick: elotracker_list.get(elotracker_list.size()-1).getElo(): "+elotracker_list.get(elotracker_list.size()-1).getElo());
+                    intent.putExtra("EX_ELO", elotracker_list.get(elotracker_list.size()-1).getElo());
+                }
                 startActivity(intent);
             }
         });

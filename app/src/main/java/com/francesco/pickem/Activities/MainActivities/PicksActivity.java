@@ -345,10 +345,15 @@ public class PicksActivity extends AppCompatActivity  {
                         if (!databaseHelper.teamsInsertedForRegionDay(selected_region_name, getLocalDateFromDateTime(matchDetails.getDatetime()))){
                             databaseHelper.insertMatchDetails(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                         }
+                        if(!matchDetails.getWinner().equals(" ")){
+                            databaseHelper.updateWinner(selected_region_name, matchDetails.getId(), matchDetails.getWinner());
+
+                        }
                         matchListSplit.add(matchDetails);
                         //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime() + " team1: "+ matchDetails.getTeam1()+ " - team2: " +matchDetails.getTeam2()) ;
                         //Log.d(TAG, "onSuccess: matchListSplit.size(): "+matchListSplit.size());
                         if (matchListSplit.size()== matchesForThisDate.size()){
+
                             fromMatchDaysToDisplayMatch(matchListSplit);
                         }
                     }
@@ -555,6 +560,7 @@ public class PicksActivity extends AppCompatActivity  {
         adapterRecycler.notifyDataSetChanged();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //recyclerView.setItemAnimator(new DefaultItemAnimator());
+
 /*        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);

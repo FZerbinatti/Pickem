@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.francesco.pickem.Models.RegionStats;
 import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
@@ -22,9 +23,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String TAG = "DatabaseHelper: ";
 
-
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 7;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -39,6 +39,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DAY = "DAY";
     private static final String TEAM1 = "TEAM1";
     private static final String TEAM2 = "TEAM2";
+    private static final String PREDICTION = "PREDICTION";
+    private static final String WINNER = "WINNER";
+
 
     static final String TABLE_MATCHES = "TABLE_MATCHES";
     private static final String MATCH_ID = "MATCH_ID";
@@ -47,8 +50,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null,DB_VERSION);
     }
-
-
 
     private void createTables(SQLiteDatabase db){
         //creating tables
@@ -75,7 +76,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + DAY + " TEXT ,  "
                 + MATCH_ID + " TEXT ,  "
                 + TEAM1 + " TEXT ,  "
-                + TEAM2 + " TEXT  );";
+                + TEAM2 + " TEXT ,  "
+                + PREDICTION+ " TEXT ,  "
+                + WINNER + " TEXT  );";
 
         db.execSQL(CREATE_TABLE_IMAGE_REGIONS);
         db.execSQL(CREATE_TABLE_IMAGE_TEAMS);
@@ -125,6 +128,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(MATCH_ID, match.getMatch_datetime()  );
         cv.put(TEAM1, "");
         cv.put(TEAM2, "");
+        cv.put(PREDICTION, "");
+        cv.put(WINNER, "");
 
         db.insert(TABLE_MATCHES, null, cv);
         Log.d(TAG, "insertMatch: inserito: Year:  "+match.getYear()+ " Region: "+match.getRegion() +" Date: " +match.getDay_id()+" Datetime: " +match.getMatch_datetime());
@@ -337,6 +342,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return match_ids;
     }
 
+    public RegionStats getCorrectPicksPercentageForRegion(String year, String regionSelected ){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        //la data deve essere anteriore alla data attuale, aggiungi un IF statement
+
+        //ArrayList<String> match_ids = new ArrayList<>();
+        int counter_total=0;
+        int counter_right=0;
+        //                                 0                1
+        String selectQuery = "SELECT "+ PREDICTION +","+ WINNER +" FROM "+ TABLE_MATCHES +" WHERE "+ YEAR +" = ? AND " +REGION +"= ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{year, regionSelected});
+        if (cursor.moveToFirst()) {
+            do {
+                String prediction = cursor.getString(0);
+                String winner = cursor.getString(1);
+
+                if (!prediction.equals("") || !winner.equals("")){
+                    counter_total+=1;
+
+                    if (prediction.equals(winner)){
+                        counter_right+=1;
+                    }
+                }
+
+
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
+        return new RegionStats(regionSelected ,counter_right, counter_total);
+    }
 
     public void insertImageRegion(ImageValidator imageValidator){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -362,8 +399,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-
-
     public void updateImageRegion(ImageValidator imageValidator){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -387,7 +422,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void updatePrediction(String region, String match_ID, String prediction){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
 
+        cv.put(PREDICTION, prediction);
+
+        db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_ID});
+        Log.d(TAG, "updatePrediction: done.");
+        db.close();
+    }
+
+    public void updateWinner(String region, String match_ID, String winner){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(WINNER, winner);
+
+        db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_ID});
+        Log.d(TAG, "updateWinner: done.");
+        db.close();
+    }
 
     public long getMillisCreationRegionImage ( String team_name){
         SQLiteDatabase db = this.getReadableDatabase();
@@ -420,7 +475,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return image_creation_date;
     }
-
 
     public void removeFromDatabase(String regionToRemove) {
 
@@ -497,7 +551,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return "0";
 
     }
-
 
     public ArrayList<String> matchesForRegion_Date(String region, String date){
         Log.d(TAG, "matchesForRegion_Date: region: "+region + " date: "+date);

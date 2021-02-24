@@ -172,7 +172,7 @@
         android:rotation="90"
         android:text="LIVE"
         android:visibility="invisible"
-        android:textColor="@color/blue_light"
+        android:textColor="@color/y1"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/item_logo_team2"
         app:layout_constraintEnd_toEndOf="parent"
