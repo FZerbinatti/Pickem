@@ -73,6 +73,7 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
     Calendar calendar;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

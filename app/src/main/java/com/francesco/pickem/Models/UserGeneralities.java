@@ -7,6 +7,7 @@ public class UserGeneralities {
     String email;
     String summoner_name;
     String summoner_server;
+    Integer summoner_elotracker;
     ArrayList <String> choosen_regions;
     String id;
 
@@ -16,10 +17,11 @@ public class UserGeneralities {
     }
 
 
-    public UserGeneralities(String email, String summoner_name, String summoner_server, ArrayList<String> choosen_regions, String id) {
+    public UserGeneralities(String email, String summoner_name, String summoner_server, Integer summoner_elotracker, ArrayList<String> choosen_regions, String id) {
         this.email = email;
         this.summoner_name = summoner_name;
         this.summoner_server = summoner_server;
+        this.summoner_elotracker = summoner_elotracker;
         this.choosen_regions = choosen_regions;
         this.id = id;
     }
@@ -64,5 +66,11 @@ public class UserGeneralities {
         this.id = id;
     }
 
+    public Integer getSummoner_elotracker() {
+        return summoner_elotracker;
+    }
 
+    public void setSummoner_elotracker(Integer summoner_elotracker) {
+        this.summoner_elotracker = summoner_elotracker;
+    }
 }

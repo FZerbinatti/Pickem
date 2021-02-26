@@ -15,40 +15,51 @@
     <string name="pmbe">Passwords must be equal</string>
 
     <string name="reminder_if_nothing_has_been_chosen_on_match_day_1h_before_match_start">Reminder if nothing has been chosen on match day 1h before match start</string>
+    <string name="elotracker_info"> Insert your Region and Summoner Name and check this switch if you want the EloTracker system to automatically gather your progress every day at midnight and load them into the Elotracker graph, left the switch unckecked if you want to manually update your progress
+</string>
 
     // Elos for elo tracker
     <string name="Challenger">Challenger</string>
     <string name="Grandmaster">Grandmaster</string>
     <string name="Master">Master</string>
-    <string name="Diamond_1">Diamond 1</string>
-    <string name="Diamond_2">Diamond 2</string>
-    <string name="Diamond_3">Diamond 3</string>
-    <string name="Diamond_4">Diamond 4</string>
-    <string name="Platinum_1">Platinum 1</string>
-    <string name="Platinum_2">Platinum 2</string>
-    <string name="Platinum_3">Platinum 3</string>
-    <string name="Platinum_4">Platinum 4</string>
-    <string name="Gold_1">Gold 1</string>
-    <string name="Gold_2">Gold 2</string>
-    <string name="Gold_3">Gold 3</string>
-    <string name="Gold_4">Gold 4</string>
-    <string name="Silver_1">Silver 1</string>
-    <string name="Silver_2">Silver 2</string>
-    <string name="Silver_3">Silver 3</string>
-    <string name="Silver_4">Silver 4</string>
-    <string name="Bronze_1">Bronze 1</string>
-    <string name="Bronze_2">Bronze 2</string>
-    <string name="Bronze_3">Bronze 3</string>
-    <string name="Bronze_4">Bronze 4</string>
-    <string name="Iron_1">Iron 1</string>
-    <string name="Iron_2">Iron 2</string>
-    <string name="Iron_3">Iron 3</string>
-    <string name="Iron_4">Iron 4</string>
+    <string name="Diamond_1">Diamond I</string>
+    <string name="Diamond_2">Diamond II</string>
+    <string name="Diamond_3">Diamond III</string>
+    <string name="Diamond_4">Diamond IV</string>
+    <string name="Platinum_1">Platinum I</string>
+    <string name="Platinum_2">Platinum II</string>
+    <string name="Platinum_3">Platinum III</string>
+    <string name="Platinum_4">Platinum IV</string>
+    <string name="Gold_1">Gold I</string>
+    <string name="Gold_2">Gold II</string>
+    <string name="Gold_3">Gold III</string>
+    <string name="Gold_4">Gold IV</string>
+    <string name="Silver_1">Silver I</string>
+    <string name="Silver_2">Silver II</string>
+    <string name="Silver_3">Silver III</string>
+    <string name="Silver_4">Silver IV</string>
+    <string name="Bronze_1">Bronze I</string>
+    <string name="Bronze_2">Bronze II</string>
+    <string name="Bronze_3">Bronze III</string>
+    <string name="Bronze_4">Bronze IV</string>
+    <string name="Iron_1">Iron I</string>
+    <string name="Iron_2">Iron II</string>
+    <string name="Iron_3">Iron III</string>
+    <string name="Iron_4">Iron IV</string>
 
     <!--  - - - - - - - - - - - - - - - - - - STATIC STRINGS DONT CHANGE VALUES AFTER THIS - - - - - - - - - - - - - - - - -->
 
     <string name="summoner_server">summoner_server</string>
     <string name="summoner_name">summoner_name</string>
+    <string name="summoner_elotracker">summoner_elotracker</string>
+
+    <string name="RIOT_API_KEY">RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0</string>
+
+    <string name="HTTP">https://</string>
+    <string name="riot_api_address">.api.riotgames.com</string>
+    <string name="key_request">"?api_key="</string>
+
+
 
     // firebase children
     <string name="firebase_users">Users</string>

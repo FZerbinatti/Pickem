@@ -11,23 +11,22 @@
         android:id="@+id/constraintLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/button_manual_elo_tracking"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/buttons_background_blue_stroke"
+            android:background="@drawable/square_blue_box"
             android:backgroundTint="@color/blue_light_opaque"
             android:backgroundTintMode="add"
             android:fontFamily="@font/classicroman"
             android:paddingHorizontal="25dp"
-            android:paddingVertical="20dp"
-            android:text="LoL Elo tracking"
-            android:textSize="16sp"
+            android:paddingVertical="10dp"
+            android:text="Elo Tracking for League Of Legends"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -70,12 +69,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:padding="15dp"
         android:id="@+id/stats_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="15dp"
         android:paddingBottom="25dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

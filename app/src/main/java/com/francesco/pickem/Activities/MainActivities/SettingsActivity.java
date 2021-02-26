@@ -35,15 +35,23 @@ import com.francesco.pickem.Activities.SettingsActivities.InfoActivity;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
 import com.francesco.pickem.Activities.SettingsActivities.NotificationRegionActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
+import com.francesco.pickem.Adapters.SpinnerAdapter;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.Models.CurrentRegion;
+import com.francesco.pickem.Models.EloTracker;
+import com.francesco.pickem.Models.RegionServers;
 import com.francesco.pickem.Models.SimpleRegion;
 import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
+import com.francesco.pickem.Models.YearMonthDay;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
+import com.francesco.pickem.Services.JsonPlaceHolderAPI_Elo;
+import com.francesco.pickem.Services.JsonPlaceHolderAPI_Summoner;
+import com.francesco.pickem.Services.Post_Elo;
+import com.francesco.pickem.Services.Post_Summoner;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -55,12 +63,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -80,7 +98,7 @@ public class SettingsActivity extends AppCompatActivity {
     EditText edittext_summoner_name;
     Spinner spinner_choose_server;
     Button button_save_elotracker_info;
-    SwitchCompat switch_elotracker;
+    SwitchCompat switch_elotracker, switch_automatic_elotracker;
     ConstraintLayout show_elotracker_box;
     ArrayList <String> finalRegionChoosen;
     public static String REGION_SELECTED = "REGION_SELECTED";
@@ -90,7 +108,7 @@ public class SettingsActivity extends AppCompatActivity {
     ProgressBar settings_progressbar;
     EditText edittext_emailaddress;
     ArrayList <String> userChoosenRegionsfromDB;
-    ArrayList<String> servers ;
+    ArrayList<RegionServers> servers ;
     ArrayList<SimpleRegion> user_choosen_regions;
     ArrayList<SimpleRegion> full_list_withUserChoiche;
     ArrayList<String> finalRegions;
@@ -101,8 +119,10 @@ public class SettingsActivity extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     Calendar myCalendar;
     String year;
+    private SpinnerAdapter spinnerAdapter;
 
-    ImageView info;
+
+    ImageView info, info_button_elotracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +141,10 @@ public class SettingsActivity extends AppCompatActivity {
         settings_recycler_regioni = findViewById(R.id.settings_recyclerview_regioni);
         parentScrollListener = findViewById(R.id.parentScrollListener);
         info = findViewById(R.id.info_button);
+        info_button_elotracker = findViewById(R.id.info_button_elotracker);
+        switch_automatic_elotracker = findViewById(R.id.switch_automatic_elotracker);
+
+
 
 
         userChoosenRegionsfromDB = new ArrayList<>();
@@ -164,6 +188,38 @@ public class SettingsActivity extends AppCompatActivity {
                 // Disallow the touch request for parent scroll on touch of child view
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return false;
+            }
+        });
+
+        info_button_elotracker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // setup the alert builder
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setTitle("Automatic Elotracker");
+                builder.setMessage(R.string.elotracker_info);
+
+                // add a button
+                builder.setPositiveButton("Ok bro", null);
+
+                // create and show the alert dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+
+            }
+        });
+
+        switch_automatic_elotracker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked){
+                    if (edittext_summoner_name.getText().toString().isEmpty() || edittext_summoner_name.getText().toString().equals("null")){
+                        Toast.makeText(context, "Please Insert your Summoner Name", Toast.LENGTH_SHORT).show();
+                        switch_automatic_elotracker.setChecked(false);
+                    }
+                }
             }
         });
 
@@ -388,29 +444,12 @@ public class SettingsActivity extends AppCompatActivity {
                 ArrayList <String> removed_regions = new ArrayList<>();
                 removed_regions.addAll(old_choosen_regions);
 
-
-/*                Log.d(TAG, "onClick: 1+++++++++++++++++++++++++++++++"+finalRegions.size());
-                for (int i=0; i< finalRegions.size(); i++){
-                    Log.d(TAG, " TUTTE LE REGIONI SELEZIONATE ::::::::::: "+finalRegions.get(i));
-                }
-
-                for (int i=0; i< old_choosen_regions.size(); i++){
-                    Log.d(TAG, "VECCHIE REGIONI SELEZIONATE ????????????????  "+old_choosen_regions.get(i));
-                }*/
-
-
-
-
-
-
-
-
                 if (finalRegions.isEmpty()) {
                     Toast.makeText(SettingsActivity.this, "You must chose at least one Region to follow", Toast.LENGTH_SHORT).show();
                     settings_progressbar.setVisibility(View.INVISIBLE);
                 }else {
 
-                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", finalRegions, "");
+                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", -1,finalRegions, "");
                     updateUserGeneralities(userGeneralities);
                     databaseHelper = new DatabaseHelper(context);
 
@@ -686,10 +725,9 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    RegionServers regionServer = snapshot.getValue(RegionServers.class);
 
-                    String serverName = snapshot.getKey().toString();
-                    Log.d(TAG, "onDataChange: regionName: "+serverName);
-                    servers.add(serverName);
+                    servers.add(regionServer);
                 }
                 settings_progressbar.setVisibility(View.GONE);
                 Log.d(TAG, "onDataChange: "+servers.size());
@@ -706,11 +744,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void loadSpinner(ArrayList<String> allServers) {
+    private void loadSpinner(ArrayList<RegionServers> allServers) {
         Log.d(TAG, "loadSpinner: "+allServers.size());
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, R.layout.spinner_item, allServers);
-        spinner_choose_server.setAdapter(adapter);
+        spinnerAdapter = new SpinnerAdapter(SettingsActivity.this,
+                android.R.layout.simple_spinner_item,
+                allServers);
+
+        spinner_choose_server.setAdapter(spinnerAdapter);
         spinner_choose_server.setSelection(2);
 
     }
@@ -723,13 +763,13 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: ");
 
         String summonerName = edittext_summoner_name.getText().toString();
-        String summoner_server = spinner_choose_server.getSelectedItem().toString();
+        RegionServers summoner_server = (RegionServers) spinner_choose_server.getSelectedItem();
 
                 Log.d(TAG, "onClick: summonerName: "+summonerName);
-                Log.d(TAG, "onClick: summoner_server"+summoner_server);
+                Log.d(TAG, "onClick: summoner_server"+summoner_server.getCode());
 
         if (summonerName.isEmpty()){edittext_summoner_name.setError("Please Insert your Summoner Name");}else
-            if (summoner_server.isEmpty()){
+            if (summoner_server.getCode().isEmpty()){
                 Toast.makeText(context, "Select Your Region Server!", Toast.LENGTH_SHORT).show();
                 }else {
 
@@ -738,7 +778,13 @@ public class SettingsActivity extends AppCompatActivity {
                             .child(getString(R.string.firebase_users_generealities));
 
                             reference.child(getString(R.string.summoner_name)).setValue(summonerName);
-                            reference.child(getString(R.string.summoner_server)).setValue(summoner_server);
+                            reference.child(getString(R.string.summoner_server)).setValue(summoner_server.getCode());
+                            if (switch_automatic_elotracker.isChecked()){
+                                reference.child(getString(R.string.summoner_elotracker)).setValue(1);
+                                saveFirstElotracker(summonerName, summoner_server);
+                            }else {
+                                reference.child(getString(R.string.summoner_elotracker)).setValue(0);
+                            }
 
                 Log.d(TAG, "onClick: DONE ");
 
@@ -749,6 +795,120 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void saveFirstElotracker(String summonerName, RegionServers summoner_server) {
+
+
+        // get summoner ID from summoner name + server
+        // https://     euw1    .api.riotgames.com      /lol/summoner/v4/summoners/by-name/         DEMACIA%20REICH         ?api_key=       RGAPI-632893d3-8938-4031-a32e-4aa92062d229
+
+        String address = getString(R.string.HTTP) + summoner_server.getId().toLowerCase() +getString(R.string.riot_api_address);
+        /// https://euw1.api.riotgames.com
+
+        //summoner name + api_key_path + API key
+        String end_path = summonerName + getString(R.string.key_request)+getString(R.string.RIOT_API_KEY);
+
+
+        Log.d(TAG, "saveFirstElotracker: address: " +address + "/lol/summoner/v4/summoners/by-name/" +end_path);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(address)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        //https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+        //https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+
+        JsonPlaceHolderAPI_Summoner jsonPlaceHolderAPI_summoner = retrofit.create(JsonPlaceHolderAPI_Summoner.class);
+        Log.d(TAG, "saveFirstElotracker: passando a getPost: "+end_path);
+        // devi passare a GetPost:    DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+        Log.d(TAG, "saveFirstElotracker: deve essere = "+"DEMACIA REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0");
+        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, getString(R.string.RIOT_API_KEY)) ;
+
+        callSummoner.enqueue(new Callback<Post_Summoner>() {
+            @Override
+            public void onResponse(Call<Post_Summoner> call, Response<Post_Summoner> response) {
+                if (!response.isSuccessful()){
+                    Log.d(TAG, "onResponse: "+response.code());
+                    Toast.makeText(context, "Something went wrong, check Summoner Name and Region selected!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(context, "Success! Current Elo registered, will update every 24 hours!", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onResponse: "+ response.body().getId() +" summonerLevel:" + response.body().getSummonerLevel() + " summoner Name: "+ response.body().getName());
+                //ora che hai lo il summonerID puoi fare l'altra call all'API
+
+                JsonPlaceHolderAPI_Elo jsonPlaceHolderAPIElo = retrofit.create(JsonPlaceHolderAPI_Elo.class);
+
+                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), getString(R.string.RIOT_API_KEY) );
+                callElo.enqueue(new Callback<List<Post_Elo>>() {
+                    @Override
+                    public void onResponse(Call<List<Post_Elo>> call, Response<List<Post_Elo>> response) {
+                        if (!response.isSuccessful()){
+                            Log.d(TAG, "onResponse: "+response.code());
+                            return;
+                        }
+
+                        List<Post_Elo> postElos = response.body();
+
+                        for (Post_Elo postElo : postElos){
+                            if (postElo.getQueueType().equals("RANKED_SOLO_5x5")){
+                                Log.d(TAG, "onResponse: "+ postElo.getSummonerName() +" elo: " + postElo.getTier() + " " + postElo.getRank() +" " + postElo.getLeaguePoints()+ "LP");
+
+                                String elo = postElo.getTier().substring(0, 1).toUpperCase() + postElo.getTier().substring(1).toLowerCase();
+
+                                EloTracker eloTracker = new EloTracker(
+                                        getYesterdayDate(),
+                                        getYesterdayDate(),
+                                        Integer.parseInt("0"),
+                                        Integer.parseInt("0"),
+                                        elo+" "+(postElo.getRank()),
+                                        postElo.getLeaguePoints());
+
+                                Calendar calendar = Calendar.getInstance();
+                                int year = calendar.get(Calendar.YEAR);
+                                Log.d(TAG, "onClick: year:"+year);
+
+
+                                FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(getString(R.string.firebase_users_elotracker))
+                                        .child(String.valueOf(year))
+                                        .child(getYesterdayDate() )
+                                        .setValue(eloTracker).addOnCompleteListener(task2 -> {
+
+                                    if (task2.isSuccessful()){
+                                        Log.d(TAG, "Success elo added");
+
+                                    }else{
+                                        Log.d(TAG, "ERROR");
+                                    }
+                                });
+
+
+
+
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Post_Elo>> call, Throwable t) {
+                        Log.d(TAG, "onFailure: ERROR COMINCATING WITH API: "+t.getMessage());
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<Post_Summoner> call, Throwable t) {
+                Log.d(TAG, "onFailure: ERROR COMINCATING WITH API: "+t.getMessage());
+                Toast.makeText(context, "Something went wrong server-side, contact helpdesk", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     private void loadFirebaseEloTrackingData() {
@@ -768,12 +928,17 @@ public class SettingsActivity extends AppCompatActivity {
 
                     String summoner_name = userProfile.getSummoner_name();
                     edittext_summoner_name.setText(summoner_name);
+                    if (userProfile.getSummoner_elotracker()>0){
+                        switch_automatic_elotracker.setChecked(true);
+                    }else {
+                        switch_automatic_elotracker.setChecked(false);
+                    }
 
                     String server_name = userProfile.getSummoner_server();
 
                     for (int i=0; i<servers.size(); i++){
-                        Log.d(TAG, "onDataChange: server_name:"+server_name);
-                        Log.d(TAG, "onDataChange: servers.get(i)"+servers.get(i));
+                       // Log.d(TAG, "onDataChange: server_name:"+server_name);
+                       // Log.d(TAG, "onDataChange: servers.get(i)"+servers.get(i).getCode());
                         if (servers.get(i).equals(server_name)){
                             spinner_choose_server.setSelection(i, true);
                             break;
@@ -852,6 +1017,33 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    public String getYesterdayDate(){
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, -1);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String selectedDate = sdf.format(c.getTime());
+        return selectedDate;
+    }
+
+    public Integer romanNumberToArabian(String romabValue){
+
+        switch(romabValue) {
+            case "I":
+                return  1;
+            case "II":
+                return  2;
+            case "III":
+                return  3;
+            case "IV":
+                return  4;
+            default:
+                return 0;
+        }
 
     }
 

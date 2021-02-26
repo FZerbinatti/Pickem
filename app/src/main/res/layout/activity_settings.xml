@@ -94,6 +94,7 @@
                         android:id="@+id/switch_notificationx"
                         android:layout_width="60dp"
                         android:layout_height="20dp"
+                        android:layout_marginEnd="10dp"
                         android:theme="@style/SwitchCompatTheme"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -415,6 +416,8 @@
                         android:id="@+id/switch_notification"
                         android:layout_width="60dp"
                         android:layout_height="20dp"
+                        android:layout_marginEnd="10dp"
+
                         android:theme="@style/SwitchCompatTheme"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -757,6 +760,7 @@
                         android:id="@+id/switch_elotracker"
                         android:layout_width="60dp"
                         android:layout_height="20dp"
+                        android:layout_marginEnd="10dp"
                         android:theme="@style/SwitchCompatTheme"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -856,7 +860,7 @@
                         <Spinner
                             android:id="@+id/spinner_choose_server"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginHorizontal="50dp"
                             android:layout_marginVertical="5dp"
                             android:background="@drawable/square_round_corners"
@@ -866,7 +870,7 @@
                             android:popupBackground="@color/background"
                             android:textColor="@color/white"
                             android:textColorHint="@color/white"
-                            android:textSize="25sp"
+                            android:textSize="20sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/tv_shownotification10xx"
@@ -882,6 +886,39 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cc10xx">
+
+                        <TextView
+                            android:id="@+id/tv_automatic_elotracker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:text="Automatic Elo tracker"
+                            android:textColor="@color/blue_light"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <ImageView
+                            android:id="@+id/info_button_elotracker"
+                            android:layout_width="40dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_info"
+                            android:layout_marginStart="10dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/tv_automatic_elotracker"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch_automatic_elotracker"
+                            android:layout_width="60dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="10dp"
+                            android:theme="@style/SwitchCompatTheme"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
 
                     </androidx.constraintlayout.widget.ConstraintLayout>

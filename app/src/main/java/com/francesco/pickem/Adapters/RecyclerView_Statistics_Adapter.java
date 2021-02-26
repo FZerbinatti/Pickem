@@ -23,6 +23,7 @@ import com.francesco.pickem.Models.RegionStats;
 import com.francesco.pickem.R;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -64,15 +65,18 @@ public class RecyclerView_Statistics_Adapter extends RecyclerView.Adapter <Recyc
         Integer correctPicks = regionsCorrectsTotalsPicksList.get(i).getCorrectPicks();
         Integer totalPicks = regionsCorrectsTotalsPicksList.get(i).getTotalPicks();
         float percentage =0f;
+        BigDecimal bd = BigDecimal.valueOf(0);
         if (correctPicks>0){
-            DecimalFormat df = new DecimalFormat("#.##");
-            percentage = Math.round( ( (float) correctPicks/totalPicks)*100f);
+
+            percentage =  ( (float) correctPicks/totalPicks)*100f;
+            bd = new BigDecimal(Float.toString(percentage));
+            bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
 
         }
 
 
 
-        Log.d(TAG, "onBindViewHolder: regionName: "+regionName +" picks: "+correctPicks+"/"+totalPicks +" -> " +percentage+"%");
+        Log.d(TAG, "onBindViewHolder: regionName: "+regionName +" picks: "+correctPicks+"/"+totalPicks +" -> " +percentage+"%" + " "+bd);
 
         thisRegionStats.setCorrectPicks(correctPicks);
         thisRegionStats.setTotalPicks(totalPicks);
@@ -99,7 +103,7 @@ public class RecyclerView_Statistics_Adapter extends RecyclerView.Adapter <Recyc
         viewHolder.progressbar_statistics_item.setProgressTintList(colorStateList);
 
         viewHolder.textview_correctPicks.setText(correctPicks.toString()+"/");
-        viewHolder.textview_percentage.setText(String.valueOf(percentage)+"%");
+        viewHolder.textview_percentage.setText(String.valueOf(bd)+"%");
         viewHolder.statistic_item_totals.setText(totalPicks.toString());
         viewHolder.textview_region_name.setText(regionName);
 

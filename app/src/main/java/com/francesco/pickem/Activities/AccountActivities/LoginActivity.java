@@ -338,7 +338,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void downloadMatchDetailsForUserPicks(ArrayList<String> userRegionPicks) {
+    public void downloadMatchDetailsForUserPicks(ArrayList<String> userRegionPicks) {
 
         CurrentNumber sum_all_matches_all_regions = new CurrentNumber();
         CurrentNumber global_counter = new CurrentNumber();
