@@ -141,9 +141,9 @@ public class EloActivity extends AppCompatActivity {
 
     public Integer getEloPoints (String eloName, Context context){
 
-        Log.d("TAG", "getEloPoints: eloName:"+eloName);
+        //Log.d("TAG", "getEloPoints: eloName:"+eloName);
         Integer points=0;
-        Log.d("TAG", "getEloPoints: context.getResources().getString(R.string.Challenger)"+context.getResources().getString(R.string.Challenger));
+        //Log.d("TAG", "getEloPoints: context.getResources().getString(R.string.Challenger)"+context.getResources().getString(R.string.Challenger));
         if (eloName.equals(context.getResources().getString(R.string.Challenger))){    points=  getInt_Challenger ();}else
         if (eloName.equals(context.getResources().getString(R.string.Grandmaster))){   points=  getInt_Grandmaster();}else
         if (eloName.equals(context.getResources().getString(R.string.Master))){        points=  getInt_Master     ();}else
@@ -172,7 +172,7 @@ public class EloActivity extends AppCompatActivity {
         if (eloName.equals(context.getResources().getString(R.string.Iron_3))){        points=  getInt_Iron_3     ();}else
         if (eloName.equals(context.getResources().getString(R.string.Iron_4))){        points=  getInt_Iron_4     ();}
 
-        Log.d("TAG", "getEloPoints: points:"+points);
+        //Log.d("TAG", "getEloPoints: points:"+points);
             return points;
 
 

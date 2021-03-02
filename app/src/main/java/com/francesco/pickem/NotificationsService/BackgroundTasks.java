@@ -83,6 +83,7 @@ public class BackgroundTasks extends JobService {
     private final Integer FIREBASE_STORAGE_RESPONSE_TIME = 5000;
     private final Integer REALTIME_DATABASE_RESPONSE_TIME = 3000;
     ArrayList <String> todayMatches;
+    ArrayList <String> localmatchIDs;
 
 
     public BackgroundTasks(Context context){
@@ -139,14 +140,14 @@ public class BackgroundTasks extends JobService {
         task7AM.add(Calendar.DAY_OF_MONTH,1);
 
         task7AM.setTimeZone(TimeZone.getDefault());
-        Log.d(TAG, "startAlarmManager7AM: task7AM.getTimeInMillis()"+task7AM.getTimeInMillis());
+        Log.d(TAG, "startAlarmManager7AM: task7AM.getTimeInMillis() "+task7AM.getTimeInMillis());
 
-        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        /*alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
-                AlarmManager.INTERVAL_DAY, pendingIntent0);
+                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
 
-        alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
-        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
+        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+        alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
 
     }
 
@@ -229,7 +230,7 @@ public class BackgroundTasks extends JobService {
                     if (counter==matches_available){
                         Log.d(TAG, "onDataChange: "+counter +" == " +matches_available);
                         // get local matches for region/year
-                        ArrayList <String> localmatchIDs = new ArrayList<>();
+                        localmatchIDs = new ArrayList<>();
                         localmatchIDs = databaseHelper.getAllMatchIds(year, currentRegion.getRegion());
                         Log.d(TAG, "onDataChange: "+year +" "+ currentRegion.getRegion());
                         Log.d(TAG, "onDataChange: local matches number: " + localmatchIDs.size());

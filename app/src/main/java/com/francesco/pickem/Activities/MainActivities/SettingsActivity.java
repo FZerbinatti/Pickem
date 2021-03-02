@@ -7,6 +7,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,12 +33,15 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Activities.SettingsActivities.InfoActivity;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
 import com.francesco.pickem.Activities.SettingsActivities.NotificationRegionActivity;
+import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Adapters.SpinnerAdapter;
 import com.francesco.pickem.Annotation.NonNull;
@@ -45,7 +53,7 @@ import com.francesco.pickem.Models.Sqlite_Match;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
-import com.francesco.pickem.Models.YearMonthDay;
+import com.francesco.pickem.NotificationsService.AlarmReceiver;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
 import com.francesco.pickem.Services.JsonPlaceHolderAPI_Elo;
@@ -85,6 +93,7 @@ public class SettingsActivity extends AppCompatActivity {
     SwitchCompat switch_notification, switch_user_settings;
     ConstraintLayout show_notifications_box, show_user_box;
     private String TAG ="SettingsActivity: ";
+    private static final String NOTIFICATION_ID = "1";
     Context context;
     ImageButton button_logout;
     private FirebaseUser user;
@@ -120,7 +129,8 @@ public class SettingsActivity extends AppCompatActivity {
     Calendar myCalendar;
     String year;
     private SpinnerAdapter spinnerAdapter;
-
+    TextView hour_elo_update, elotracker_timer_text;
+    Integer hour, minute;
 
     ImageView info, info_button_elotracker;
 
@@ -143,6 +153,8 @@ public class SettingsActivity extends AppCompatActivity {
         info = findViewById(R.id.info_button);
         info_button_elotracker = findViewById(R.id.info_button_elotracker);
         switch_automatic_elotracker = findViewById(R.id.switch_automatic_elotracker);
+        hour_elo_update = findViewById(R.id.hour_elo_update);
+        elotracker_timer_text = findViewById(R.id.elotracker_timer_text);
 
 
 
@@ -211,14 +223,42 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        hour_elo_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: ");
+                Calendar mcurrentTime = Calendar.getInstance();
+                hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(SettingsActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay,
+                                                  int minute) {
+
+                                hour_elo_update.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
+                            }
+                        }, hour, minute, true);
+                timePickerDialog.show();
+            }
+        });
+
         switch_automatic_elotracker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
+                    elotracker_timer_text.setVisibility(View.VISIBLE);
+                    hour_elo_update.setVisibility(View.VISIBLE);
+
                     if (edittext_summoner_name.getText().toString().isEmpty() || edittext_summoner_name.getText().toString().equals("null")){
                         Toast.makeText(context, "Please Insert your Summoner Name", Toast.LENGTH_SHORT).show();
                         switch_automatic_elotracker.setChecked(false);
                     }
+
+                }else {
+                    elotracker_timer_text.setVisibility(View.GONE);
+                    hour_elo_update.setVisibility(View.GONE);
                 }
             }
         });
@@ -449,7 +489,7 @@ public class SettingsActivity extends AppCompatActivity {
                     settings_progressbar.setVisibility(View.INVISIBLE);
                 }else {
 
-                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", -1,finalRegions, "");
+                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", -1,finalRegions, "", "");
                     updateUserGeneralities(userGeneralities);
                     databaseHelper = new DatabaseHelper(context);
 
@@ -660,7 +700,7 @@ public class SettingsActivity extends AppCompatActivity {
                         break;
 
                     case R.id.button_statistics:
-                        Intent intentStats= new Intent(context, StatsActivity.class);
+                        Intent intentStats= new Intent(context, AllStatsActivity.class);
                         startActivity(intentStats);
                         Animatoo.animateFade(context);
                         break;
@@ -778,13 +818,14 @@ public class SettingsActivity extends AppCompatActivity {
                             .child(getString(R.string.firebase_users_generealities));
 
                             reference.child(getString(R.string.summoner_name)).setValue(summonerName);
-                            reference.child(getString(R.string.summoner_server)).setValue(summoner_server.getCode());
+                            reference.child(getString(R.string.summoner_server)).setValue(summoner_server.getId().toLowerCase());
                             if (switch_automatic_elotracker.isChecked()){
                                 reference.child(getString(R.string.summoner_elotracker)).setValue(1);
                                 saveFirstElotracker(summonerName, summoner_server);
                             }else {
                                 reference.child(getString(R.string.summoner_elotracker)).setValue(0);
                             }
+                            reference.child("time_elotracker").setValue(hour_elo_update.getText().toString());
 
                 Log.d(TAG, "onClick: DONE ");
 
@@ -860,10 +901,9 @@ public class SettingsActivity extends AppCompatActivity {
                                 EloTracker eloTracker = new EloTracker(
                                         getYesterdayDate(),
                                         getYesterdayDate(),
-                                        Integer.parseInt("0"),
-                                        Integer.parseInt("0"),
                                         elo+" "+(postElo.getRank()),
-                                        postElo.getLeaguePoints());
+                                        postElo.getLeaguePoints()
+                                        );
 
                                 Calendar calendar = Calendar.getInstance();
                                 int year = calendar.get(Calendar.YEAR);
@@ -879,6 +919,42 @@ public class SettingsActivity extends AppCompatActivity {
 
                                     if (task2.isSuccessful()){
                                         Log.d(TAG, "Success elo added");
+                                        // aggiungi JobScheduler che checka ogni 24h se Elotracher è 1
+                                        // prendi l'ora a cui il player vuola che la rank sia aggiornata
+
+                                       String[] datetime = hour_elo_update.getText().toString().split(":");
+
+                                       String ora ="";
+                                       String minuto = "";
+
+                                       if (datetime.length ==2){
+                                           ora = datetime[0];
+                                           minuto = datetime[1];
+                                       }
+
+
+                                        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                                        Intent intent0 = new Intent(SettingsActivity.this, AlarmReceiver.class);
+                                        intent0.putExtra("TYPE", "CHECK_ELO");
+                                        intent0.putExtra("HOUR", ora);
+                                        intent0.putExtra("MINUTE", minuto);
+                                        PendingIntent pendingIntent0 = PendingIntent.getBroadcast(SettingsActivity.this, 1, intent0, 0);
+                                        Calendar task7AM = Calendar.getInstance();
+
+
+                                        task7AM.set(Calendar.HOUR_OF_DAY, Integer.parseInt(ora));
+                                        task7AM.set(Calendar.MINUTE, Integer.parseInt(minuto));
+
+                                        //COMMENTED FOR TESTING PURPOSE
+                                        task7AM.add(Calendar.DAY_OF_MONTH,0);
+
+                                        task7AM.setTimeZone(TimeZone.getDefault());
+                                        Log.d(TAG, "SettingsActivity: controllo dell'Elo a quest'ora: "+task7AM.getTimeInMillis());
+
+                                        alarmManager.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+
+
+
 
                                     }else{
                                         Log.d(TAG, "ERROR");
@@ -928,6 +1004,13 @@ public class SettingsActivity extends AppCompatActivity {
 
                     String summoner_name = userProfile.getSummoner_name();
                     edittext_summoner_name.setText(summoner_name);
+                    String timer_elotracker = userProfile.getTime_elotracker();
+                    if (!timer_elotracker.isEmpty()){
+                        hour_elo_update.setText(timer_elotracker);
+                    }else {
+                        hour_elo_update.setText("22:00");
+                    }
+
                     if (userProfile.getSummoner_elotracker()>0){
                         switch_automatic_elotracker.setChecked(true);
                     }else {
@@ -958,7 +1041,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     }
-
 
     private String getLocalDateFromDateTime(String datetime) {
         Log.d(TAG, "getLocalDateFromDateTime: datetime: "+datetime);
@@ -1046,6 +1128,23 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
     }
+
+    private void createNotificationChannel(Context context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = context.getString(R.string.channel_pickem);
+            String description = context.getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 
 
 }

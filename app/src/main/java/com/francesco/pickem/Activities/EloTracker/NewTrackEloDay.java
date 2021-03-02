@@ -2,15 +2,12 @@ package com.francesco.pickem.Activities.EloTracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -38,8 +35,7 @@ public class NewTrackEloDay extends AppCompatActivity {
 
     String elotracker_id;
     String elotracker_date;
-    String elotracker_wins;
-    String elotracker_losses;
+    String elotracker_LP_gains;
     String elotracker_elo;
     String elotracker_lps;
     private String TAG ="NewTrackEloActivity: ";
@@ -49,7 +45,7 @@ public class NewTrackEloDay extends AppCompatActivity {
     Calendar calendar;
     String year;
     TextView add_eloday_date;
-    EditText add_eloday_wins, add_eloday_losses, add_eloday_lps;
+    EditText add_eloday_losses, add_eloday_lps;
     Spinner add_eloday_spinner;
     Button button_save_today_elotracking;
     Boolean newDay;
@@ -61,8 +57,6 @@ public class NewTrackEloDay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_track_elo_day);
         add_eloday_date = findViewById(R.id.add_eloday_date);
-        add_eloday_wins = findViewById(R.id.add_eloday_wins);
-        add_eloday_losses = findViewById(R.id.add_eloday_losses);
         add_eloday_lps = findViewById(R.id.add_eloday_lps);
         button_save_today_elotracking = findViewById(R.id.button_save_today_elotracking);
         add_eloday_spinner = findViewById(R.id.add_eloday_spinner);
@@ -87,24 +81,18 @@ public class NewTrackEloDay extends AppCompatActivity {
         if (intent.hasExtra( getResources().getString(R.string.elotracker_id) )){
             button_save_today_elotracking.setText("Update Data");
             newDay = false;
-
             elotracker_id = intent.getStringExtra       (getResources().getString(R.string.elotracker_id) );
             elotracker_date = intent.getStringExtra     (getResources().getString(R.string.elotracker_date) );
-            elotracker_wins = intent.getStringExtra     (getResources().getString(R.string.elotracker_wins) );
-            elotracker_losses = intent.getStringExtra   (getResources().getString(R.string.elotracker_losses) );
             elotracker_elo = intent.getStringExtra      (getResources().getString(R.string.elotracker_elo) );
             elotracker_lps = intent.getStringExtra      (getResources().getString(R.string.elotracker_lps) );
 
-            Log.d(TAG, "onCreate: elotracker_wins:"+elotracker_wins);
-            Log.d(TAG, "onCreate: elotracker_losses:"+elotracker_losses);
+            Log.d(TAG, "onCreate: elotracker_wins:"+ elotracker_LP_gains);
+
 
 
 
             add_eloday_date.setText(elotracker_date);
-            add_eloday_wins.setText(elotracker_wins.toString());
-            add_eloday_losses.setText(elotracker_losses.toString());
             add_eloday_lps.setText(elotracker_lps.toString());
-
             ArrayList<String> allElos = new ArrayList<>();
             allElos = eloService.getAllElos(context);
 
@@ -143,8 +131,6 @@ public class NewTrackEloDay extends AppCompatActivity {
 
                 String date = add_eloday_date.getText().toString();
                 elotracker_id = date;
-                String wins = add_eloday_wins.getText().toString();
-                String losses = add_eloday_losses.getText().toString();
                 String lps = add_eloday_lps.getText().toString();
                 String elo = add_eloday_spinner.getSelectedItem().toString();
 
@@ -171,8 +157,6 @@ public class NewTrackEloDay extends AppCompatActivity {
                                 Toast.makeText(context, "This Date is already set!", Toast.LENGTH_SHORT).show();
                             }else {
                                 // ---------------------------
-                                if (wins.isEmpty()){add_eloday_wins.setError("Please add wins");} else
-                                if (losses.isEmpty()){add_eloday_losses.setError("Please add wins");}else
                                 if (lps.isEmpty()){add_eloday_lps.setError("Please add wins");}else{
 
 
@@ -180,8 +164,6 @@ public class NewTrackEloDay extends AppCompatActivity {
                                     EloTracker eloTracker = new EloTracker(
                                             elotracker_id,
                                             date,
-                                            Integer.parseInt(wins),
-                                            Integer.parseInt(losses),
                                             elo,
                                             Integer.parseInt(lps));
 
@@ -224,8 +206,6 @@ public class NewTrackEloDay extends AppCompatActivity {
                     EloTracker eloTracker = new EloTracker(
                             elotracker_id,
                             date,
-                            Integer.parseInt(wins),
-                            Integer.parseInt(losses),
                             elo,
                             Integer.parseInt(lps));
 
@@ -279,7 +259,6 @@ public class NewTrackEloDay extends AppCompatActivity {
                 mYear = c.get(Calendar.YEAR);
                 mMonth = c.get(Calendar.MONTH);
                 mDay = c.get(Calendar.DAY_OF_MONTH);
-
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context,
                         new DatePickerDialog.OnDateSetListener() {

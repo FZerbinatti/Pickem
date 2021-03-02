@@ -4,21 +4,19 @@ public class EloTracker {
 
     String  ID;
     String  date;
-    Integer wins;
-    Integer losses;
     String  elo;
     Integer lps;
+
 
     public EloTracker() {
     }
 
-    public EloTracker(String ID, String date, Integer wins, Integer losses, String elo, Integer lps) {
+    public EloTracker(String ID, String date, String elo, Integer lps) {
         this.ID = ID;
         this.date = date;
-        this.wins = wins;
-        this.losses = losses;
         this.elo = elo;
         this.lps = lps;
+
     }
 
     public String getID() {
@@ -37,22 +35,6 @@ public class EloTracker {
         this.date = date;
     }
 
-    public Integer getWins() {
-        return wins;
-    }
-
-    public void setWins(Integer wins) {
-        this.wins = wins;
-    }
-
-    public Integer getLosses() {
-        return losses;
-    }
-
-    public void setLosses(Integer losses) {
-        this.losses = losses;
-    }
-
     public String getElo() {
         return elo;
     }
@@ -68,4 +50,6 @@ public class EloTracker {
     public void setLps(Integer lps) {
         this.lps = lps;
     }
+
+
 }

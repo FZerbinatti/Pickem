@@ -283,7 +283,7 @@ public class RegisterActivity extends AppCompatActivity {
                         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
 
                             if (task.isSuccessful()) {
-                                UserGeneralities user = new UserGeneralities(email, "null", "null",-1, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                UserGeneralities user = new UserGeneralities(email, "null", "null",-1, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid(), "22:00");
                                 FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .child(getString(R.string.firebase_users_generealities))

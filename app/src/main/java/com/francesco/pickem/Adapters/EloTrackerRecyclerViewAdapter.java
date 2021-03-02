@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.francesco.pickem.Activities.EloTracker.EloActivity;
 import com.francesco.pickem.Activities.EloTracker.NewTrackEloDay;
 import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.R;
@@ -25,6 +26,7 @@ public class EloTrackerRecyclerViewAdapter extends RecyclerView.Adapter<EloTrack
      LayoutInflater mInflater;
      ItemClickListener mClickListener;
      Context context;
+     EloActivity eloActivity;
      static  String TAG = "EloTrackerRecyclerViewAdapter: ";
 
     // data is passed into the constructor
@@ -47,29 +49,44 @@ public class EloTrackerRecyclerViewAdapter extends RecyclerView.Adapter<EloTrack
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Integer elo_wins = eloTrackerDays.get(position).getWins();
-        Integer elo_losses = eloTrackerDays.get(position).getLosses();
+        // LP gains è la differenza di LP tra questa partita e la precendente
+        //converti questa partita Elo in LP points
+        eloActivity = new EloActivity();
+        String lp_gains="0";
+        Integer diff =0;
+        if (position>0){
+            Integer currentMatchTotalLPs =  eloActivity.getEloPoints(eloTrackerDays.get(position).getElo(), context) + eloTrackerDays.get(position).getLps();
+            Integer previousMatchTotalLPs =  eloActivity.getEloPoints(eloTrackerDays.get(position-1).getElo(), context) + eloTrackerDays.get(position-1).getLps();
+             diff = currentMatchTotalLPs-previousMatchTotalLPs;
+            if (diff>0){
+                lp_gains = "+"+diff;
+            }else {
+                lp_gains = ""+diff;
+            }
+
+        }
+
+        //Integer elo_LP_gains = eloTrackerDays.get(position).getLp_gains();
+
 
         EloTracker eloData =  new EloTracker(
                 eloTrackerDays.get(position).getID(),
                 eloTrackerDays.get(position).getDate(),
-                elo_wins,
-                elo_losses,
                 eloTrackerDays.get(position).getElo(),
                 eloTrackerDays.get(position).getLps()
                 );
 
         holder.item_elotracker_date.setText(eloData.getDate().toString());
-        holder.item_elotracker_wins.setText(eloData.getWins().toString());
-        holder.item_elotracker_losses.setText(eloData.getLosses().toString());
+        holder.item_elotracker_LP_gains.setText(lp_gains.toString());
+
         holder.item_elotracker_elo.setText(eloData.getElo().toString());
         holder.item_elotracker_lps.setText(eloData.getLps().toString());
 
 
-        if(elo_wins > elo_losses){
+        if(diff > 4){
             ColorStateList colorStateListGreen = ContextCompat.getColorStateList(holder.background_item_elotracker.getContext(), R.color.material_green);
             holder.background_item_elotracker.setBackgroundTintList(colorStateListGreen);
-        } else if (elo_losses > elo_wins){
+        } else if (diff <-4){
             ColorStateList colorStateListRed = ContextCompat.getColorStateList(holder.background_item_elotracker.getContext(), R.color.material_red);
             holder.background_item_elotracker.setBackgroundTintList(colorStateListRed);
         }else {
@@ -88,15 +105,14 @@ public class EloTrackerRecyclerViewAdapter extends RecyclerView.Adapter<EloTrack
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder  {
-        TextView item_elotracker_date, item_elotracker_wins, item_elotracker_losses,  item_elotracker_elo , item_elotracker_lps ;
+        TextView item_elotracker_date, item_elotracker_LP_gains,  item_elotracker_elo , item_elotracker_lps ;
         ConstraintLayout background_item_elotracker;
 
 
         ViewHolder(View itemView) {
             super(itemView);
             item_elotracker_date = itemView.findViewById(R.id.item_elotracker_date);
-            item_elotracker_wins = itemView.findViewById(R.id.item_elotracker_wins);
-            item_elotracker_losses = itemView.findViewById(R.id.item_elotracker_losses);
+            item_elotracker_LP_gains = itemView.findViewById(R.id.item_elotracker_lp_gains);
             item_elotracker_elo = itemView.findViewById(R.id.item_elotracker_elo);
             item_elotracker_lps = itemView.findViewById(R.id.item_elotracker_lps);
             background_item_elotracker = itemView.findViewById(R.id.background_item_elotracker);
@@ -112,8 +128,7 @@ public class EloTrackerRecyclerViewAdapter extends RecyclerView.Adapter<EloTrack
                         Intent intent = new Intent(context, NewTrackEloDay.class);
                         intent.putExtra(context.getResources().getString(R.string.elotracker_id), eloTrackerDays.get(pos).getID());
                         intent.putExtra(context.getResources().getString(R.string.elotracker_date), eloTrackerDays.get(pos).getDate());
-                        intent.putExtra(context.getResources().getString(R.string.elotracker_wins), eloTrackerDays.get(pos).getWins());
-                        intent.putExtra(context.getResources().getString(R.string.elotracker_losses), eloTrackerDays.get(pos).getLosses());
+
                         intent.putExtra(context.getResources().getString(R.string.elotracker_elo), eloTrackerDays.get(pos).getElo());
                         intent.putExtra(context.getResources().getString(R.string.elotracker_lps), eloTrackerDays.get(pos).getLps());
 

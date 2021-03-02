@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -18,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.MainActivities.MatchView"></activity>
+        <activity android:name=".Activities.MainActivities.AllStatsActivity"></activity>
+        <activity android:name=".Activities.IndipendentActivities.MatchView" />
         <activity android:name=".Activities.SettingsActivities.InfoActivity" />
         <activity android:name=".Activities.EloTracker.EloActivity" />
         <activity android:name=".Activities.EloTracker.NewTrackEloDay" />
@@ -26,7 +26,7 @@
         <activity android:name=".Activities.SettingsActivities.NotificationTeamActivity" />
         <activity android:name=".Activities.SettingsActivities.NotificationRegionActivity" />
         <activity android:name=".Activities.AccountActivities.ResetPasswordActivity" />
-        <activity android:name=".Activities.MainActivities.StatsActivity" />
+        <activity android:name=".Activities.Statistics.StatsPicksActivity" />
         <activity android:name=".Activities.MainActivities.SettingsActivity" />
         <activity android:name=".Activities.AccountActivities.RegisterActivity" />
         <activity android:name=".Activities.AccountActivities.LoginActivity" />
@@ -43,6 +43,7 @@
         <service
             android:name=".NotificationsService.BackgroundTasks"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <receiver android:name=".NotificationsService.AlarmReceiver" />
     </application>
 

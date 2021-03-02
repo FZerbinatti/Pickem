@@ -38,8 +38,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -47,13 +49,20 @@ import androidx.core.app.NotificationManagerCompat;
 
 
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
+import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
 import com.francesco.pickem.Interfaces.OnGetDataListener;
 import com.francesco.pickem.Models.CurrentRegion;
+import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.Models.TeamNotification;
+import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
+import com.francesco.pickem.Services.JsonPlaceHolderAPI_Elo;
+import com.francesco.pickem.Services.JsonPlaceHolderAPI_Summoner;
+import com.francesco.pickem.Services.Post_Elo;
+import com.francesco.pickem.Services.Post_Summoner;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,9 +76,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.TimeZone;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AlarmReceiver extends BroadcastReceiver{
     private String TAG = "AlarmReceiver";
@@ -114,6 +130,8 @@ public class AlarmReceiver extends BroadcastReceiver{
             Log.d(TAG, " AlarmReciever ha ricevuto:  "+notification_type);
 
                 if (notification_type.equals("7AMTASK")){
+                    String hour = intent.getStringExtra("HOUR");
+
                      //se non hai network, torna a chiamrare la stessa cosa tra mezzora
 
 
@@ -129,13 +147,6 @@ public class AlarmReceiver extends BroadcastReceiver{
                          userFullRegionsNotifications = new ArrayList<>();
                          regionsOfTeamsNotifications = new ArrayList<>();
 
-                         // Teams notifications:
-//                    7:00: prendi le regioni delle squadre che vuoi seguire in una AL2 e le regioni che vuoi seguire in una AL1
-//                    AL1 = REGIONI CHE VUOI SEGUIRE
-//                    AL2 REGIONI DELLE SQUADRE CHE SEGUI
-//                          prendi le regioni che giocano oggi SELECT REGION WHERE DAY == TODAY IN MATCHDAYS <TODAY PLAYING REGION>
-//                          ALR = INTERSEZIONE TRA <TPL> E AL1 == REGIONI CHE SEGUI CHE GIOCANO OGGI
-//                          ALT = INTERSEZIONE TRA <TPL> E AL2 == REGIONI DEI TEAM CHE SEGUI CHE GIOCANO OGGI
 
                          // che regioni giocano oggi?
                          ArrayList<String> playingRegions = databaseHelper.getPlayingRegions(year, backgroundTasks.getTodayDate());
@@ -495,7 +506,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                 else if( notification_type.equals("AS_TEAM_PLAY")){
                      String team = intent.getStringExtra("TEAM");
                      String time = intent.getStringExtra("TIME");
-
+                
                      NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                              .setSmallIcon(R.drawable.ic_p)
                              .setColor(context.getResources().getColor(R.color.blue_light))
@@ -505,6 +516,137 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                      notificationManagerCompat.notify(notificationID, notificationBuilder.build());
                  }
+                else if (notification_type.equals("CHECK_ELO")){
+                    Log.d(TAG, "onReceive: CHECK_ELO");
+                    String ora = intent.getStringExtra("HOUR");
+                    String minuto = intent.getStringExtra("MINUTE");
+                    // check elo del player + risetta allarme per domani
+
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_users))
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(context.getString(R.string.firebase_users_generealities));
+
+                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                            UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
+                            if (userProfile !=null){
+
+                                String summonerName = userProfile.getSummoner_name();
+                                String summoner_server = userProfile.getSummoner_server();
+
+
+                                // get summoner ID from summoner name + server
+                                // https://     euw1    .api.riotgames.com      /lol/summoner/v4/summoners/by-name/         DEMACIA%20REICH         ?api_key=       RGAPI-632893d3-8938-4031-a32e-4aa92062d229
+
+                                String address = context.getString(R.string.HTTP) + summoner_server + context.getString(R.string.riot_api_address);
+                                /// https://euw1.api.riotgames.com
+
+                                //summoner name + api_key_path + API key
+                                String end_path = summonerName + context.getString(R.string.key_request)+ context.getString(R.string.RIOT_API_KEY);
+
+
+                                Log.d(TAG, "saveFirstElotracker: address: " +address + "/lol/summoner/v4/summoners/by-name/" +end_path);
+
+                                Retrofit retrofit = new Retrofit.Builder()
+                                        .baseUrl(address)
+                                        .addConverterFactory(GsonConverterFactory.create())
+                                        .build();
+
+                                //https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+                                //https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+
+                                JsonPlaceHolderAPI_Summoner jsonPlaceHolderAPI_summoner = retrofit.create(JsonPlaceHolderAPI_Summoner.class);
+                                Log.d(TAG, "saveFirstElotracker: passando a getPost: "+end_path);
+                                // devi passare a GetPost:    DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+                                Log.d(TAG, "saveFirstElotracker: deve essere = "+"DEMACIA REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0");
+                                Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, context.getString(R.string.RIOT_API_KEY)) ;
+
+                                callSummoner.enqueue(new Callback<Post_Summoner>() {
+                                    @Override
+                                    public void onResponse(Call<Post_Summoner> call, Response<Post_Summoner> response) {
+                                        if (!response.isSuccessful()){
+                                            Log.d(TAG, "onResponse: "+response.code());
+                                            Toast.makeText(context, "Something went wrong, check Summoner Name and Region selected!", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                        Toast.makeText(context, "Success! Current Elo registered, will update every 24 hours!", Toast.LENGTH_SHORT).show();
+                                        Log.d(TAG, "onResponse: "+ response.body().getId() +" summonerLevel:" + response.body().getSummonerLevel() + " summoner Name: "+ response.body().getName());
+                                        //ora che hai lo il summonerID puoi fare l'altra call all'API
+
+                                        JsonPlaceHolderAPI_Elo jsonPlaceHolderAPIElo = retrofit.create(JsonPlaceHolderAPI_Elo.class);
+
+                                        Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), context.getString(R.string.RIOT_API_KEY) );
+                                        callElo.enqueue(new Callback<List<Post_Elo>>() {
+                                            @Override
+                                            public void onResponse(Call<List<Post_Elo>> call, Response<List<Post_Elo>> response) {
+                                                if (!response.isSuccessful()){
+                                                    Log.d(TAG, "onResponse: "+response.code());
+                                                    return;
+                                                }
+
+                                                List<Post_Elo> postElos = response.body();
+
+                                                for (Post_Elo postElo : postElos){
+                                                    if (postElo.getQueueType().equals("RANKED_SOLO_5x5")){
+                                                        Log.d(TAG, "onResponse: "+ postElo.getSummonerName() +" elo: " + postElo.getTier() + " " + postElo.getRank() +" " + postElo.getLeaguePoints()+ "LP");
+
+                                                        String elo = postElo.getTier().substring(0, 1).toUpperCase() + postElo.getTier().substring(1).toLowerCase();
+
+                                                        EloTracker eloTracker = new EloTracker(
+                                                                backgroundTasks.getTodayDate(),
+                                                                backgroundTasks.getTodayDate(),
+                                                                elo+" "+(postElo.getRank()),
+                                                                postElo.getLeaguePoints());
+
+                                                        Calendar calendar = Calendar.getInstance();
+                                                        int year = calendar.get(Calendar.YEAR);
+                                                        Log.d(TAG, "onClick: year:"+year);
+
+
+                                                        FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_users))
+                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                .child(context.getString(R.string.firebase_users_elotracker))
+                                                                .child(String.valueOf(year))
+                                                                .child(backgroundTasks.getTodayDate() )
+                                                                .setValue(eloTracker);
+
+
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<List<Post_Elo>> call, Throwable t) {
+                                                Log.d(TAG, "onFailure: ERROR COMINCATING WITH API: "+t.getMessage());
+                                            }
+                                        });
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Post_Summoner> call, Throwable t) {
+                                        Log.d(TAG, "onFailure: ERROR COMINCATING WITH API: "+t.getMessage());
+                                        Toast.makeText(context, "Something went wrong server-side, contact helpdesk", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+
+
+                }
 
 
 
@@ -898,6 +1040,16 @@ public class AlarmReceiver extends BroadcastReceiver{
         //Log.d(TAG, "convertDatetimeZtoLocale: shitting this: "+formattedDate.toString());
 
         return formattedDate.toString();
+    }
+
+    public String getYesterdayDate(){
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, -1);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String selectedDate = sdf.format(c.getTime());
+        return selectedDate;
     }
 
 

@@ -31,7 +31,7 @@
 
             <TextView
                 android:id="@+id/editText"
-                android:layout_width="0dp"
+                android:layout_width="150dp"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
                 android:hint="Date"
@@ -39,7 +39,6 @@
                 android:textSize="20sp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
-                app:layout_constraintEnd_toStartOf="@+id/editText1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,28 +47,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
-                android:hint="Wins"
-                android:gravity="center"
                 android:fontFamily="@font/classicroman"
-                android:textSize="20sp"
+                android:gravity="center"
+                android:hint="LP diff"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
-                app:layout_constraintEnd_toStartOf="@+id/editText2"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/editText3"
+                app:layout_constraintStart_toEndOf="@+id/editText"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/editText2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:hint="Loss"
-                android:gravity="center"
-                android:fontFamily="@font/classicroman"
-                android:textSize="20sp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
-                app:layout_constraintEnd_toStartOf="@+id/editText3"
-                app:layout_constraintTop_toTopOf="parent" />
+
 
             <TextView
                 android:id="@+id/editText3"

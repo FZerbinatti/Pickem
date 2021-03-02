@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.RecyclerView_Calendar_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter_calendar;
 import com.francesco.pickem.Annotation.NonNull;
@@ -35,7 +36,6 @@ import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.YearMonthDay;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
-import com.github.mikephil.charting.components.YAxis;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -647,7 +647,7 @@ public class CalendarActivity extends AppCompatActivity{
                         break;
 
                     case R.id.button_statistics:
-                        Intent intentStats= new Intent(context, StatsActivity.class);
+                        Intent intentStats= new Intent(context, AllStatsActivity.class);
                         startActivity(intentStats);
                         Animatoo.animateFade(context);
                         break;

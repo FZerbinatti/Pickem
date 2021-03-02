@@ -895,7 +895,6 @@
                             android:text="Automatic Elo tracker"
                             android:textColor="@color/blue_light"
                             android:textSize="18sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -904,11 +903,11 @@
                             android:id="@+id/info_button_elotracker"
                             android:layout_width="40dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_info"
                             android:layout_marginStart="10dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:src="@drawable/ic_info"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_automatic_elotracker"
                             app:layout_constraintStart_toEndOf="@+id/tv_automatic_elotracker"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toTopOf="@+id/tv_automatic_elotracker" />
 
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/switch_automatic_elotracker"
@@ -916,9 +915,42 @@
                             android:layout_height="20dp"
                             android:layout_marginEnd="10dp"
                             android:theme="@style/SwitchCompatTheme"
+                            app:layout_constraintBottom_toBottomOf="@+id/info_button_elotracker"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/info_button_elotracker" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:id="@+id/elotracker_timer_text"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="15dp"
+                            android:paddingHorizontal="15dp"
+                            android:paddingVertical="5dp"
+                            android:text="Time at I will update your Elo every day: "
+                            android:textColor="@color/blue_light"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/hour_elo_update"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/switch_automatic_elotracker" />
+
+                        <TextView
+                            android:id="@+id/hour_elo_update"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="15dp"
+                            android:background="@drawable/square_blue_box"
+                            android:paddingHorizontal="15dp"
+                            android:paddingVertical="5dp"
+                            android:text="22:00"
+                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/blue_light"
+                            android:textSize="22sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toBottomOf="@+id/switch_automatic_elotracker" />
+
+
 
 
                     </androidx.constraintlayout.widget.ConstraintLayout>

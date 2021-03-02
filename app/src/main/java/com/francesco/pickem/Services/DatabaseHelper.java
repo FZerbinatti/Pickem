@@ -339,6 +339,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 match_ids .add( cursor.getString(0)) ;
             } while (cursor.moveToNext());
         }
+        //Log.d(TAG, "getAllMatchIds: size? "+match_ids.size());
         cursor.close();
         db.close();
         return match_ids;

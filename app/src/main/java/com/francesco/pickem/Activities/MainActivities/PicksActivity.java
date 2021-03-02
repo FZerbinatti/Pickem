@@ -16,6 +16,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
+import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.Day_selection_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
@@ -161,7 +163,6 @@ public class PicksActivity extends AppCompatActivity  {
         loadMatchDays(selected_region_name);
 
     }
-
 
     private void downloadUserRegions() {
 
@@ -603,7 +604,7 @@ public class PicksActivity extends AppCompatActivity  {
                         break;
 
                     case R.id.button_statistics:
-                        Intent intentStats= new Intent(context, StatsActivity.class);
+                        Intent intentStats= new Intent(context, AllStatsActivity.class);
                         startActivity(intentStats);
                         Animatoo.animateFade(context);
                         break;
@@ -651,19 +652,6 @@ public class PicksActivity extends AppCompatActivity  {
         Log.d(TAG, "startBackgorundTasks: ");
 
         ComponentName componentName = new ComponentName(this, BackgroundTasks.class);
-        JobInfo info1 = new JobInfo.Builder(1, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .setPeriodic( 60 * 60 * 1000) //una volta all'ora controlla se ci sono notifiche da settare
-                .build();
-        JobScheduler scheduler1 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        int resultCode1 =  scheduler1.schedule(info1);
-        if (resultCode1 == JobScheduler.RESULT_SUCCESS){
-            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER");
-        }else {
-            Log.d(TAG, "onCreate: DIO PORCO");
-        }
-
 
         JobInfo info2 = new JobInfo.Builder(2, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -678,10 +666,12 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "onCreate: DIO PORCO2");
         }
 
+
+
         JobInfo info3 = new JobInfo.Builder(3, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setPeriodic(24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
+                .setPeriodic(24* 60* 60* 1000) // controllo che i match siano aggiornati
                 .build();
         JobScheduler scheduler3 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode3 = scheduler3.schedule(info3);
@@ -691,18 +681,27 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "onCreate: DIO PORCO3");
         }
 
-        JobInfo info4 = new JobInfo.Builder(4, componentName)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .setPeriodic(24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
-                .build();
-        JobScheduler scheduler4 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        int resultCode4 = scheduler4.schedule(info4);
-        if (resultCode4 == JobScheduler.RESULT_SUCCESS){
-            Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER4");
-        }else {
-            Log.d(TAG, "onCreate: DIO PORCO4");
-        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                // Actions to do after 10 seconds
+
+                JobInfo info4 = new JobInfo.Builder(4, componentName)
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .setPersisted(true)
+                        .setPeriodic(24* 60* 60* 1000) // 7AM task
+                        .build();
+                JobScheduler scheduler4 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
+                int resultCode4 = scheduler4.schedule(info4);
+                if (resultCode4 == JobScheduler.RESULT_SUCCESS){
+                    Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER4");
+                }else {
+                    Log.d(TAG, "onCreate: DIO PORCO4");
+                }
+            }
+        }, 10000);
+
+
 
 
     }

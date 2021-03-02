@@ -23,53 +23,13 @@
 
         android:fontFamily="@font/classicroman"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/add_eloday_wins"
+        app:layout_constraintBottom_toTopOf="@+id/add_eloday_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/add_eloday_wins"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Wins"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/square_round_corners"
-        android:inputType="numberDecimal"
-        android:paddingVertical="10dp"
-        android:selectAllOnFocus="true"
-        android:textAlignment="center"
 
-        android:fontFamily="@font/classicroman"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/add_eloday_losses"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_eloday_date" />
-
-    <EditText
-        android:id="@+id/add_eloday_losses"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/square_round_corners"
-        android:fontFamily="@font/classicroman"
-        android:textSize="20sp"
-        android:inputType="numberDecimal"
-        android:paddingVertical="10dp"
-        android:selectAllOnFocus="true"
-        android:textAlignment="center"
-
-        android:hint="Losses"
-        app:layout_constraintBottom_toTopOf="@+id/add_eloday_spinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_eloday_wins" />
 
     <Spinner
         android:id="@+id/add_eloday_spinner"
@@ -87,7 +47,7 @@
         app:layout_constraintBottom_toTopOf="@+id/add_eloday_lps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_eloday_losses" />
+        app:layout_constraintTop_toBottomOf="@+id/add_eloday_date" />
 
     <EditText
         android:id="@+id/add_eloday_lps"

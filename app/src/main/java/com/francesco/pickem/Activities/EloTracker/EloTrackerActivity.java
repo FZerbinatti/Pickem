@@ -22,7 +22,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.francesco.pickem.Activities.MainActivities.CalendarActivity;
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
-import com.francesco.pickem.Activities.MainActivities.StatsActivity;
+import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.EloTrackerRecyclerViewAdapter;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.Models.EloTracker;
@@ -31,6 +31,7 @@ import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -175,8 +176,6 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
 
                         intent.putExtra((getResources().getString(R.string.elotracker_id)), eloTrackerArrayList.get(position).getID());
                         intent.putExtra((getResources().getString(R.string.elotracker_date)),eloTrackerArrayList.get(position).getDate() );
-                        intent.putExtra((getResources().getString(R.string.elotracker_wins)),eloTrackerArrayList.get(position).getWins().toString() );
-                        intent.putExtra((getResources().getString(R.string.elotracker_losses)),eloTrackerArrayList.get(position).getLosses().toString() );
                         intent.putExtra((getResources().getString(R.string.elotracker_elo)),eloTrackerArrayList.get(position).getElo() );
                         intent.putExtra((getResources().getString(R.string.elotracker_lps)),eloTrackerArrayList.get(position).getLps().toString() );
 
@@ -266,7 +265,7 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
                         break;
 
                     case R.id.button_statistics:
-                        Intent intentStats= new Intent(context, StatsActivity.class);
+                        Intent intentStats= new Intent(context, StatsPicksActivity.class);
                         startActivity(intentStats);
                         Animatoo.animateFade(context);
                         break;
@@ -362,10 +361,10 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
 
         LineData data = new LineData(dataSets);
 
-/*        XAxis xAxis = mChart.getXAxis();
-        xAxis.setValueFormatter(new MyXAxisValueFormatter(arrayOfDates));
+        XAxis xAxis = mChart.getXAxis();
+        //xAxis.setValueFormatter(new MyXAxisValueFormatter(arrayOfDates));
         xAxis.setGranularity(1);
-        xAxis.setTextColor(Color.WHITE);*/
+        xAxis.setTextColor(Color.WHITE);
 
         mChart.setData(data);
         mChart.invalidate();
@@ -390,9 +389,9 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
     }*/
 
     public Integer fromEloLpsToInteger( Integer lps, String elo){
-        Log.d(TAG, "fromEloLpsToInteger:elo:"+elo);
+        //Log.d(TAG, "fromEloLpsToInteger:elo:"+elo);
         Integer eloPoints = lps + eloActivity.getEloPoints(elo, context);
-        Log.d(TAG, "fromEloLpsToInteger: eloPoints: "+eloPoints);
+       // Log.d(TAG, "fromEloLpsToInteger: eloPoints: "+eloPoints);
         
         return eloPoints;
     }

@@ -14,48 +14,34 @@
 
     <TextView
         android:id="@+id/item_elotracker_date"
-        android:layout_width="0dp"
+        android:layout_width="150dp"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="5dp"
+        android:fontFamily="@font/classicroman"
+        android:foregroundGravity="center"
         android:hint="Date"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:fontFamily="@font/classicroman"
         android:textSize="14sp"
-        android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/item_elotracker_wins"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/item_elotracker_wins"
-        android:layout_width="wrap_content"
+        android:id="@+id/item_elotracker_lp_gains"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="5dp"
-        android:hint="Wins"
-        android:textColor="@color/white"
-        android:textColorHint="@color/white"
         android:fontFamily="@font/classicroman"
-        android:textSize="14sp"
         android:foregroundGravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/item_elotracker_losses"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/item_elotracker_losses"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="5dp"
-        android:hint="Loss"
+        android:gravity="center"
+        android:hint="+3"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
-        android:fontFamily="@font/classicroman"
         android:textSize="14sp"
-        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/item_elotracker_elo"
+        app:layout_constraintStart_toEndOf="@+id/item_elotracker_date"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
