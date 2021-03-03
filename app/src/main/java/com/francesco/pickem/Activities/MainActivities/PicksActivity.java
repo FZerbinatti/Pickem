@@ -139,7 +139,7 @@ public class PicksActivity extends AppCompatActivity  {
 
 
         if(isUserAlreadyLogged()){
-            startBackgorundTasks();
+           // startBackgorundTasks();
 
             downloadUserRegions();
         }

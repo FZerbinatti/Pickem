@@ -63,6 +63,7 @@
     // firebase children
     <string name="firebase_users">Users</string>
     <string name="firebase_regions">Regions</string>
+    <string name="firebase_statistics">Statistics</string>
     <string name="firebase_servers">Servers</string>
     <string name="firebase_teams">Teams</string>
     <string name="firebase_users_generealities">UserGeneralities</string>
@@ -130,6 +131,7 @@
     //local folder location
     <string name="folder_regions_images">/images/regions/</string>
     <string name="folder_teams_images">/images/teams/</string>
+    <string name="current_standing_for">Current standing for:</string>
 
 
     <!--  - - - - - - - - - - - - - - - - - - STATIC STRINGS DONT CHANGE VALUES BEFORE THIS - - - - - - - - - - - - - - - - -->

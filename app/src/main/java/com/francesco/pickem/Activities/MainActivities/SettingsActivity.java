@@ -1074,7 +1074,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .child(selected_region)
                 .child(selected_region + year);
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 String current_date = "";

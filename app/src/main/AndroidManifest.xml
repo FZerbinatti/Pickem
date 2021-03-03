@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.MainActivities.AllStatsActivity"></activity>
+        <activity android:name=".Activities.IndipendentActivities.StatsStandings"></activity>
+        <activity android:name=".Activities.MainActivities.AllStatsActivity" />
         <activity android:name=".Activities.IndipendentActivities.MatchView" />
         <activity android:name=".Activities.SettingsActivities.InfoActivity" />
         <activity android:name=".Activities.EloTracker.EloActivity" />
