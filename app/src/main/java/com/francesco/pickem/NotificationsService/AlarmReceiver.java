@@ -535,7 +535,6 @@ public class AlarmReceiver extends BroadcastReceiver{
                                 String summonerName = userProfile.getSummoner_name();
                                 String summoner_server = userProfile.getSummoner_server();
 
-
                                 // get summoner ID from summoner name + server
                                 // https://     euw1    .api.riotgames.com      /lol/summoner/v4/summoners/by-name/         DEMACIA%20REICH         ?api_key=       RGAPI-632893d3-8938-4031-a32e-4aa92062d229
 

@@ -1,5 +1,6 @@
 package com.francesco.pickem.Activities.IndipendentActivities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -16,6 +17,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.GlobalMatchStats;
+import com.francesco.pickem.Models.MatchPlayersStats;
+import com.francesco.pickem.Models.MatchSingleTeamStats;
 import com.francesco.pickem.Models.Player;
 import com.francesco.pickem.R;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 
 public class MatchView extends AppCompatActivity {
 
@@ -88,14 +92,16 @@ public class MatchView extends AppCompatActivity {
                 .skipMemoryCache(true)
                 .error(R.drawable.ic_load);
 
+        Log.d(TAG, "onCreate: path: "+ imageTeamsPath+team1);
+
         Glide.with(context)
-                .load(new File(imageTeamsPath +team1)) // Uri of the picture
+                .load(new File(imageTeamsPath +team1+".png")) // Uri of the picture
                 .apply(options)
                 .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(team_1_logo);
 
         Glide.with(context)
-                .load(new File(imageTeamsPath +team2)) // Uri of the picture
+                .load(new File(imageTeamsPath +team2+".png")) // Uri of the picture
                 .apply(options)
                 .transition(DrawableTransitionOptions.withCrossFade(500))
                 .into(team_2_logo);
@@ -123,306 +129,373 @@ public class MatchView extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_statistics))
                 .child(region)
                 .child(region+year)
-                .child(getString(R.string.firebase_matches_stats));
-                //.child(match_ID);
+                .child(getString(R.string.firebase_matches_stats))
+                .child(match_ID);
+
+
+
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                String [] playersTeam1Names = new String[5];
+
+                String [] playersTeam2Names = new String[5];
+
 
                 GlobalMatchStats globalMatchStats = dataSnapshot.getValue(GlobalMatchStats.class);
-
+                Log.d(TAG, "onDataChange: "+globalMatchStats.getTeam1().getTeamCode()+ " "+ globalMatchStats.getTeam2().getTeamCode());
                 tv_matchtime.setText(globalMatchStats.getEnded().toString());
 
-                //      T E A M    1
-                ArrayList <String> playersTeam1 = new ArrayList<>();
-                //players names
-                String top1 = globalMatchStats.getTeam1().getPlayers().get(0).getSummonerName();
-                team_1_top_name.setText(top1);  playersTeam1.add(top1);
-                String jng1 = globalMatchStats.getTeam1().getPlayers().get(1).getSummonerName();
-                team_1_jungler_name.setText(jng1); playersTeam1.add(jng1);
-                String mid1 = globalMatchStats.getTeam1().getPlayers().get(2).getSummonerName();
-                team_1_midlaner_name.setText(mid1); playersTeam1.add(mid1);
-                String adc1 = globalMatchStats.getTeam1().getPlayers().get(3).getSummonerName();
-                team_1_adc_name.setText(adc1); playersTeam1.add(adc1);
-                String supp1 = globalMatchStats.getTeam1().getPlayers().get(4).getSummonerName();
-                team_1_supp_name.setText(supp1); playersTeam1.add(supp1);
-                //players scores
-                team_1_top_score.setText(globalMatchStats.getTeam1().getPlayers().get(0).getKills()+"/"+ globalMatchStats.getTeam1().getPlayers().get(0).getDeaths()+"/"+ globalMatchStats.getTeam1().getPlayers().get(0).getAssists());
-                team_1_jungler_score.setText(globalMatchStats.getTeam1().getPlayers().get(1).getKills()+"/"+ globalMatchStats.getTeam1().getPlayers().get(1).getDeaths()+"/"+ globalMatchStats.getTeam1().getPlayers().get(1).getAssists());
-                team_1_midlaner_score.setText(globalMatchStats.getTeam1().getPlayers().get(2).getKills()+"/"+ globalMatchStats.getTeam1().getPlayers().get(2).getDeaths()+"/"+ globalMatchStats.getTeam1().getPlayers().get(2).getAssists());
-                team_1_adc_score.setText(globalMatchStats.getTeam1().getPlayers().get(3).getKills()+"/"+ globalMatchStats.getTeam1().getPlayers().get(3).getDeaths()+"/"+ globalMatchStats.getTeam1().getPlayers().get(3).getAssists());
-                team_1_supp_score.setText(globalMatchStats.getTeam1().getPlayers().get(4).getKills()+"/"+ globalMatchStats.getTeam1().getPlayers().get(4).getDeaths()+"/"+ globalMatchStats.getTeam1().getPlayers().get(4).getAssists());
-                //champions names
-                team_1_top_champion.setText(globalMatchStats.getTeam1().getPlayers().get(0).getChampionName());
-                team_1_jungler_champion.setText(globalMatchStats.getTeam1().getPlayers().get(1).getChampionName());
-                team_1_midlaner_champion.setText(globalMatchStats.getTeam1().getPlayers().get(2).getChampionName());
-                team_1_adc_champion.setText(globalMatchStats.getTeam1().getPlayers().get(3).getChampionName());
-                team_1_supp_champion.setText(globalMatchStats.getTeam1().getPlayers().get(4).getChampionName());
-                //bottom stats
-                team_1_total_gold.setText(globalMatchStats.getTeam1().getTotalGold());
-                team_1_barons.setText(globalMatchStats.getTeam1().getBarons());
-                team_1_inibitors.setText(globalMatchStats.getTeam1().getInhibitors());
-                team_1_score.setText(globalMatchStats.getTeam1().getTotalKills());
+                // G L O B A L    S T A T S
+                team_1_total_gold.setText(globalMatchStats.getTeam1().getTotalGold().toString());
+                team_1_barons.setText(globalMatchStats.getTeam1().getBarons().toString());
+                team_1_inibitors.setText(globalMatchStats.getTeam1().getInhibitors().toString());
+                team_1_score.setText(globalMatchStats.getTeam1().getTotalKills().toString());
+                team_2_total_gold.setText(globalMatchStats.getTeam2().getTotalGold().toString());
+                team_2_barons.setText(globalMatchStats.getTeam2().getBarons().toString());
+                team_2_inibitors.setText(globalMatchStats.getTeam2().getInhibitors().toString());
+                team_2_score.setText(globalMatchStats.getTeam2().getTotalKills().toString());
 
-                for(int i=0; i<globalMatchStats.getTeam1().getDragons().size(); i++){
-                    String drakeType = globalMatchStats.getTeam1().getDragons().get(i);
-                    if (i==0){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_1);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_1);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_1);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_1);
-                        }
-                    }else if (i==1){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_2);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_2);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_2);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_2);
-                        }
-                    }else if (i==2){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_3);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_3);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_3);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_3);
-                        }
-                    }else if (i==3){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_4);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_4);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_4);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team1_drake_4);
-                        }
+                //  T E A M    1
+                for(Map.Entry<String, MatchPlayersStats> entry: globalMatchStats.getTeam1().getParticipant().entrySet()) {
+
+                    if (entry.getValue().getRole().equals("top")){
+
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_1_top_name.setText(playerName);
+                        team_1_top_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_1_top_champion.setText(entry.getValue().getChampionName());
+                        playersTeam1Names[0] = entry.getValue().getSummonerName();
+
+                    }else if (entry.getValue().getRole().equals("jungle")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_1_jungler_name.setText(playerName);
+                        team_1_jungler_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_1_jungler_champion.setText(entry.getValue().getChampionName());
+                        playersTeam1Names[1] = entry.getValue().getSummonerName();
+
+                    }else if (entry.getValue().getRole().equals("mid")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_1_midlaner_name.setText(playerName);
+                        team_1_midlaner_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_1_midlaner_champion.setText(entry.getValue().getChampionName());
+                        playersTeam1Names[2] = entry.getValue().getSummonerName();
+
+                    }else if (entry.getValue().getRole().equals("bottom")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_1_adc_name.setText(playerName);
+                        team_1_adc_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_1_adc_champion.setText(entry.getValue().getChampionName());
+                        playersTeam1Names[3] = entry.getValue().getSummonerName();
+
+                    }else if (entry.getValue().getRole().equals("support")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_1_supp_name.setText(playerName);
+                        team_1_supp_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_1_supp_champion.setText(entry.getValue().getChampionName());
+                        playersTeam1Names[4] = entry.getValue().getSummonerName();
+
                     }
-
 
                 }
 
-                loadPlayersImageTeam1(playersTeam1, region, team1);
+                loadPlayersImageTeam1(playersTeam1Names, region, team1);
 
+                for(Map.Entry<String, MatchPlayersStats> entry: globalMatchStats.getTeam2().getParticipant().entrySet()) {
 
-                //      T E A M    2
-                ArrayList <String> playersTeam2 = new ArrayList<>();
-                //players names
-                String top2 = globalMatchStats.getTeam2().getPlayers().get(0).getSummonerName();
-                team_2_top_name.setText(top2);  playersTeam2.add(top2);
-                String jng2 = globalMatchStats.getTeam2().getPlayers().get(1).getSummonerName();
-                team_2_jungler_name.setText(jng2); playersTeam2.add(jng2);
-                String mid2 = globalMatchStats.getTeam2().getPlayers().get(2).getSummonerName();
-                team_2_midlaner_name.setText(mid2); playersTeam2.add(mid2);
-                String adc2 = globalMatchStats.getTeam2().getPlayers().get(3).getSummonerName();
-                team_2_adc_name.setText(adc2); playersTeam2.add(adc2);
-                String supp2 = globalMatchStats.getTeam2().getPlayers().get(4).getSummonerName();
-                team_2_supp_name.setText(supp2); playersTeam2.add(supp2);
-                //players scores
-                team_2_top_score.setText(globalMatchStats.getTeam2().getPlayers().get(0).getKills()+"/"+ globalMatchStats.getTeam2().getPlayers().get(0).getDeaths()+"/"+ globalMatchStats.getTeam2().getPlayers().get(0).getAssists());
-                team_2_jungler_score.setText(globalMatchStats.getTeam2().getPlayers().get(1).getKills()+"/"+ globalMatchStats.getTeam2().getPlayers().get(1).getDeaths()+"/"+ globalMatchStats.getTeam2().getPlayers().get(1).getAssists());
-                team_2_midlaner_score.setText(globalMatchStats.getTeam2().getPlayers().get(2).getKills()+"/"+ globalMatchStats.getTeam2().getPlayers().get(2).getDeaths()+"/"+ globalMatchStats.getTeam2().getPlayers().get(2).getAssists());
-                team_2_adc_score.setText(globalMatchStats.getTeam2().getPlayers().get(3).getKills()+"/"+ globalMatchStats.getTeam2().getPlayers().get(3).getDeaths()+"/"+ globalMatchStats.getTeam2().getPlayers().get(3).getAssists());
-                team_2_supp_score.setText(globalMatchStats.getTeam2().getPlayers().get(4).getKills()+"/"+ globalMatchStats.getTeam2().getPlayers().get(4).getDeaths()+"/"+ globalMatchStats.getTeam2().getPlayers().get(4).getAssists());
-                //champions names
-                team_2_top_champion.setText(globalMatchStats.getTeam2().getPlayers().get(0).getChampionName());
-                team_2_jungler_champion.setText(globalMatchStats.getTeam2().getPlayers().get(1).getChampionName());
-                team_2_midlaner_champion.setText(globalMatchStats.getTeam2().getPlayers().get(2).getChampionName());
-                team_2_adc_champion.setText(globalMatchStats.getTeam2().getPlayers().get(3).getChampionName());
-                team_2_supp_champion.setText(globalMatchStats.getTeam2().getPlayers().get(4).getChampionName());
-                //bottom stats
-                team_2_total_gold.setText(globalMatchStats.getTeam2().getTotalGold());
-                team_2_barons.setText(globalMatchStats.getTeam2().getBarons());
-                team_2_inibitors.setText(globalMatchStats.getTeam2().getInhibitors());
-                team_2_score.setText(globalMatchStats.getTeam2().getTotalKills());
-
-
-                for(int i=0; i<globalMatchStats.getTeam2().getDragons().size(); i++){
-                    String drakeType = globalMatchStats.getTeam2().getDragons().get(i);
-                    if (i==0){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_1);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_1);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_1);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_1);
-                        }
-                    }else if (i==1){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_2);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_2);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_2);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_2);
-                        }
-                    }else if (i==2){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_3);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_3);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_3);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_3);
-                        }
-                    }else if (i==3){
-                        if (drakeType.equals("cloud")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_cloud) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_4);
-                        }else if (drakeType.equals("mountain")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_4);
-                        }else if (drakeType.equals("ocean")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_ocean) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_4);
-                        }else if (drakeType.equals("infernal")){
-                            Glide.with(context)
-                                    .load(R.drawable.drake_montain) // Uri of the picture
-                                    .apply(options)
-                                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                                    .into(team2_drake_4);
-                        }
+                    if (entry.getValue().getRole().equals("top")){String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_2_top_name.setText(playerName);
+                        team_2_top_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_2_top_champion.setText(entry.getValue().getChampionName());
+                        playersTeam2Names[0] = entry.getValue().getSummonerName();
+                    }else if (entry.getValue().getRole().equals("jungle")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_2_jungler_name.setText(playerName);
+                        team_2_jungler_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_2_jungler_champion.setText(entry.getValue().getChampionName());
+                        playersTeam2Names[1] = entry.getValue().getSummonerName();
+                    }else if (entry.getValue().getRole().equals("mid")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_2_midlaner_name.setText(playerName);
+                        team_2_midlaner_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_2_midlaner_champion.setText(entry.getValue().getChampionName());
+                        playersTeam2Names[2] = entry.getValue().getSummonerName();
+                    }else if (entry.getValue().getRole().equals("bottom")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_2_adc_name.setText(playerName);
+                        team_2_adc_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_2_adc_champion.setText(entry.getValue().getChampionName());
+                        playersTeam2Names[3] = entry.getValue().getSummonerName();
+                    }else if (entry.getValue().getRole().equals("support")){
+                        String[] array = entry.getValue().getSummonerName().split(" ");
+                        String playerName = array[1];
+                        team_2_supp_name.setText(playerName);
+                        team_2_supp_score.setText(entry.getValue().getKills()+"/"+ entry.getValue().getDeaths()+"/"+entry.getValue().getAssists());
+                        team_2_supp_champion.setText(entry.getValue().getChampionName());
+                        playersTeam2Names[4] = entry.getValue().getSummonerName();
                     }
+                }
+                loadPlayersImageTeam2(playersTeam2Names, region, team2);
 
+                if (globalMatchStats.getTeam1().getDragons()!=null){
+                    Log.d(TAG, "onDataChange: dragon size: "+globalMatchStats.getTeam1().getDragons().size());
+
+                    for(int i=0; i<globalMatchStats.getTeam1().getDragons().size(); i++){
+                        String drakeType = globalMatchStats.getTeam1().getDragons().get(i);
+                        Log.d(TAG, "onDataChange: dragon type: "+ drakeType);
+                        if (i==0){
+
+                            if (drakeType.equals("cloud")){
+
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_1);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_1);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_1);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_1);
+                            }
+                            cv11.setVisibility(View.VISIBLE);
+                        }else if (i==1){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_2);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_2);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_2);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_2);
+                            }
+                            cv12.setVisibility(View.VISIBLE);
+                        }else if (i==2){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_3);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_3);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_3);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_3);
+                            }
+                            cv13.setVisibility(View.VISIBLE);
+                        }else if (i==3){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_4);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_4);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_4);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team1_drake_4);
+                            }
+                            cv14.setVisibility(View.VISIBLE);
+                        }
+
+
+                    }
 
                 }
 
-                loadPlayersImageTeam2(playersTeam2, region, team2);
+
+
+
+
+
+
+                if (globalMatchStats.getTeam2().getDragons()!=null){
+
+                    for(int i=0; i<globalMatchStats.getTeam2().getDragons().size(); i++){
+                        String drakeType = globalMatchStats.getTeam2().getDragons().get(i);
+                        if (i==0){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_1);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_1);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_1);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_1);
+                            }
+                            cv21.setVisibility(View.VISIBLE);
+                        }else if (i==1){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_2);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_2);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_2);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_2);
+                            }
+                            cv22.setVisibility(View.VISIBLE);
+                        }else if (i==2){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_3);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_3);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_3);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_3);
+                            }
+                            cv23.setVisibility(View.VISIBLE);
+                        }else if (i==3){
+                            if (drakeType.equals("cloud")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_cloud) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_4);
+                            }else if (drakeType.equals("mountain")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_4);
+                            }else if (drakeType.equals("ocean")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_ocean) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_4);
+                            }else if (drakeType.equals("infernal")){
+                                Glide.with(context)
+                                        .load(R.drawable.drake_montain) // Uri of the picture
+                                        .apply(options)
+                                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                                        .into(team2_drake_4);
+                            }
+                            cv24.setVisibility(View.VISIBLE);
+                        }
+
+
+                    }
+                }
+
+
+
 
 
 
@@ -441,7 +514,7 @@ public class MatchView extends AppCompatActivity {
         });
     }
 
-    private void loadPlayersImageTeam1(ArrayList<String> players, String region, String team) {
+    private void loadPlayersImageTeam1(String[] players, String region, String team) {
 
         RequestOptions options = new RequestOptions()
                 .fitCenter()
@@ -464,12 +537,14 @@ public class MatchView extends AppCompatActivity {
                 int count = (int) (dataSnapshot.getChildrenCount());
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Player player = snapshot.getValue(Player.class);
+                    Log.d(TAG, "onDataChange: player: "+player.getSummonerName());
                     team1_players.add(player);
                 }
                 if (team1_players.size()==count){
+                    Log.d(TAG, "onDataChange: counter end.");
 
-                    for(int i=0; i<players.size(); i++){
-                        String[] array = players.get(i).toString().split(" ");
+                    for(int i=0; i<players.length; i++){
+                        String[] array = players[i].split(" ");
                         String playerName = array[1];
 
                         for(int j=0; j<team1_players.size(); j++){
@@ -526,7 +601,7 @@ public class MatchView extends AppCompatActivity {
 
     }
 
-    private void loadPlayersImageTeam2(ArrayList<String> players, String region, String team) {
+    private void loadPlayersImageTeam2(String[] players, String region, String team) {
 
         RequestOptions options = new RequestOptions()
                 .fitCenter()
@@ -553,8 +628,8 @@ public class MatchView extends AppCompatActivity {
                 }
                 if (team2_players.size()==count){
 
-                    for(int i=0; i<players.size(); i++){
-                        String[] array = players.get(i).toString().split(" ");
+                    for(int i=0; i< players.length; i++){
+                        String[] array = players[i].split(" ");
                         String playerName = array[1];
 
                         for(int j=0; j<team2_players.size(); j++){

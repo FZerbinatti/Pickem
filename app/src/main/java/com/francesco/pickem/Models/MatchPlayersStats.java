@@ -8,6 +8,7 @@ public class MatchPlayersStats {
     Integer deaths;
     Integer kills;
     Integer level;
+    String role;
     String summonerName;
     Integer totalGold;
 
@@ -15,15 +16,24 @@ public class MatchPlayersStats {
 
     }
 
-    public MatchPlayersStats(Integer assists, String championName, Integer creepScore, Integer deaths, Integer kills, Integer level, String summonerName, Integer totalGold) {
+    public MatchPlayersStats(Integer assists, String championName, Integer creepScore, Integer deaths, Integer kills, Integer level, String role, String summonerName, Integer totalGold) {
         this.assists = assists;
         this.championName = championName;
         this.creepScore = creepScore;
         this.deaths = deaths;
         this.kills = kills;
         this.level = level;
+        this.role = role;
         this.summonerName = summonerName;
         this.totalGold = totalGold;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Integer getAssists() {

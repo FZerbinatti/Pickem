@@ -1,13 +1,16 @@
 package com.francesco.pickem.Models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MatchSingleTeamStats {
 
     Integer barons;
     ArrayList<String> dragons;
     Integer inhibitors;
-    ArrayList<MatchPlayersStats> players;
+    HashMap<String, MatchPlayersStats> participant;
+    String teamCode;
     Integer totalGold;
     Integer totalKills;
     Integer towers;
@@ -16,14 +19,36 @@ public class MatchSingleTeamStats {
 
     }
 
-    public MatchSingleTeamStats(Integer barons, ArrayList<String> dragons, Integer inhibitors, ArrayList<MatchPlayersStats> players, Integer totalGold, Integer totalKills, Integer towers) {
+    public MatchSingleTeamStats(Integer barons, ArrayList<String> dragons, Integer inhibitors, HashMap<String, MatchPlayersStats> participant, String teamCode, Integer totalGold, Integer totalKills, Integer towers) {
         this.barons = barons;
         this.dragons = dragons;
         this.inhibitors = inhibitors;
-        this.players = players;
+        this.participant = participant;
+        this.teamCode = teamCode;
         this.totalGold = totalGold;
         this.totalKills = totalKills;
         this.towers = towers;
+    }
+
+    public HashMap<String, MatchPlayersStats> getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(HashMap<String, MatchPlayersStats> participant) {
+        this.participant = participant;
+    }
+
+
+
+
+
+
+    public ArrayList<String> getDragons() {
+        return dragons;
+    }
+
+    public void setDragons(ArrayList<String> dragons) {
+        this.dragons = dragons;
     }
 
     public Integer getBarons() {
@@ -34,13 +59,7 @@ public class MatchSingleTeamStats {
         this.barons = barons;
     }
 
-    public ArrayList<String> getDragons() {
-        return dragons;
-    }
 
-    public void setDragons(ArrayList<String> dragons) {
-        this.dragons = dragons;
-    }
 
     public Integer getInhibitors() {
         return inhibitors;
@@ -50,12 +69,13 @@ public class MatchSingleTeamStats {
         this.inhibitors = inhibitors;
     }
 
-    public ArrayList<MatchPlayersStats> getPlayers() {
-        return players;
+
+    public String getTeamCode() {
+        return teamCode;
     }
 
-    public void setPlayers(ArrayList<MatchPlayersStats> players) {
-        this.players = players;
+    public void setTeamCode(String teamCode) {
+        this.teamCode = teamCode;
     }
 
     public Integer getTotalGold() {
