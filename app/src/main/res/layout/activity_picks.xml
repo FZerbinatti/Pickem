@@ -70,7 +70,7 @@
         </androidx.viewpager.widget.ViewPager>
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/team_1_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_up"

@@ -125,8 +125,7 @@ public class StatsStandings extends AppCompatActivity {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_statistics))
                 .child(regionSelected)
                 .child(regionSelected+year)
-                .child(current_chart)
-                .child("chart");
+                .child(current_chart);
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

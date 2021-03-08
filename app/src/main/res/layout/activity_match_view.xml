@@ -5,341 +5,1478 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/background_sfumato"
+
     tools:context=".Activities.IndipendentActivities.MatchView">
 
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:background="@drawable/square_blue_box"
-        android:src="@drawable/logo_lec"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/imageView4"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:background="@drawable/square_blue_box"
-        android:src="@drawable/logo_lec"
-        app:layout_constraintEnd_toStartOf="@+id/imageView3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/classicroman"
-        android:text="win"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/material_green"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/text3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:fontFamily="@font/classicroman"
-        android:text="loss"
-        android:textColor="@color/material_red"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/toplaner_cc"
+        android:id="@+id/page_top_cc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/square_black_box"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cc_t1"
+        <ImageView
+            android:id="@+id/team_2_logo"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toStartOf="@+id/cc_2"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_1"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="10dp"
-                android:elevation="12dp"
-                android:innerRadius="0dp"
-                android:shape="ring"
-                android:thicknessRatio="2.0"
-                app:cardCornerRadius="40dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/imageview_team_1_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/rekklessss">
-
-                </ImageView>
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/team_1_top_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/classicroman"
-                android:text="Rekkless"
-                android:textColor="@color/blue_light"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/team_1_top_score"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cv_1"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/team_1_top_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/classicroman"
-                android:text="2/0/11"
-                android:textColor="@color/blue_light"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cv_1"
-                app:layout_constraintTop_toBottomOf="@+id/team_1_top_name" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cc_2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
+            android:background="@drawable/square_black_box"
+            android:src="@drawable/logo_lec"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/cc_t1"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toEndOf="@+id/team_1_logo"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_2"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="10dp"
-                android:elevation="12dp"
-                android:innerRadius="0dp"
-                android:shape="ring"
-                android:thicknessRatio="2.0"
-                app:cardCornerRadius="40dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/team_1_logo"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:src="@drawable/logo_lec"
+            android:background="@drawable/square_black_box"
 
-                <ImageView
-                    android:id="@+id/image_team_2_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/rekklessss">
+            app:layout_constraintEnd_toStartOf="@+id/team_2_logo"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                </ImageView>
+        <TextView
+            android:id="@+id/team_1_win"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible"
+            android:fontFamily="@font/classicroman"
+            android:text="win"
+            android:textColor="@color/material_green"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/team_2_win"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:visibility="invisible"
+            android:fontFamily="@font/classicroman"
+            android:text="win"
+            android:textColor="@color/material_green"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/team_2_top_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/classicroman"
-                android:text="Rekkless"
-                android:textColor="@color/blue_light"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/team_2_top_score"
-                app:layout_constraintEnd_toStartOf="@+id/cv_2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/team_1_loss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/classicroman"
+            android:text="loss"
+            android:visibility="invisible"
+            android:textColor="@color/material_red"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/team_2_logo"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/team_2_top_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/classicroman"
-                android:text="2/0/11"
-                android:textColor="@color/blue_light"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cv_2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/team_2_top_name" />
+        <TextView
+            android:id="@+id/team_2_loss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/classicroman"
+            android:text="loss"
+            android:visibility="invisible"
+            android:textColor="@color/material_red"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/team_2_logo"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/team_1_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:fontFamily="@font/classicroman"
+            android:text="24/8/41"
+            android:textColor="@color/material_green"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/team_2_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/team_1_logo" />
+
+        <TextView
+            android:id="@+id/team_2_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:fontFamily="@font/classicroman"
+            android:text="24/8/41"
+            android:textColor="@color/material_red"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/team_2_logo"
+            app:layout_constraintTop_toBottomOf="@+id/team_1_logo" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/jungler_cc"
+
+
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toplaner_cc">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/page_top_cc">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cc_t11"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toStartOf="@+id/cc_22"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_11"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="10dp"
-                android:elevation="12dp"
-                android:innerRadius="0dp"
-                android:shape="ring"
-                android:thicknessRatio="2.0"
-                app:cardCornerRadius="40dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cc_players"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/imageview_team_1_top1"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/toplaner_cc"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/rekklessss">
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_black_box"
 
-                </ImageView>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            </androidx.cardview.widget.CardView>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_t1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cc_2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/team_1_top_name1"
-                android:layout_width="wrap_content"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_1_top"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_1_top_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_top_champion"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_1_top_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_top_score"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_top_name" />
+
+
+                        <TextView
+                            android:id="@+id/team_1_top_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_top_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/cc_t1"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_2_top"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_2_top_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_top_champion"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_2_top_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_top_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_2_top_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_2_top_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_top_name" />
+
+                        <TextView
+                            android:id="@+id/team_2_top_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_top_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/jungler_cc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_black_box"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/toplaner_cc">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_j1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cc_j2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_j1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_1_jungler"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_1_jungler_name1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_jungler_champion"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_j1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_1_jungler_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_jungler_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_1_jungler_name1"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_1_jungler_name1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_jungler_name1" />
+
+                        <TextView
+                            android:id="@+id/team_1_jungler_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_j1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_jungler_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_j2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/cc_j1"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_j2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_2_jungler"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_2_jungler_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_jungler_champion"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_j2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_2_jungler_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_jungler_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_2_jungler_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_2_jungler_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_jungler_name" />
+
+                        <TextView
+                            android:id="@+id/team_2_jungler_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_j2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_jungler_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/midlaner_cc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_black_box"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/jungler_cc">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_m1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cc_m2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_m1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_1_midlaner"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_1_midlaner_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_midlaner_champion"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_m1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_1_midlaner_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_midlaner_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_1_midlaner_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_1_midlaner_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_midlaner_name" />
+
+                        <TextView
+                            android:id="@+id/team_1_midlaner_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_m1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_midlaner_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_m2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/cc_m1"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_m2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_2_midlaner"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_2_midlaner_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_midlaner_champion"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_m2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_2_midlaner_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_midlaner_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_2_midlaner_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_2_midlaner_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_midlaner_name" />
+
+                        <TextView
+                            android:id="@+id/team_2_midlaner_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_m2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_midlaner_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/adc_cc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_black_box"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/midlaner_cc">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_adc1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cc_adc2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_adc1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_1_adc"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_1_adc_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_adc_champion"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_adc1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_1_adc_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_adc_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_1_adc_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_1_adc_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_adc_name" />
+
+                        <TextView
+                            android:id="@+id/team_1_adc_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_adc1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_adc_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_adc2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/cc_adc1"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_adc2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_2_adc"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_2_adc_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_adc_champion"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_adc2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_2_adc_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_adc_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_2_adc_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_2_adc_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_adc_name" />
+
+                        <TextView
+                            android:id="@+id/team_2_adc_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_adc2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_adc_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/supp_cc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_black_box"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/adc_cc">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_supp1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cc_supp2"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_supp1"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_1_supp"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_1_supp_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_supp_champion"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_supp1"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_1_supp_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_1_supp_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_1_supp_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_1_supp_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_supp_name" />
+
+                        <TextView
+                            android:id="@+id/team_1_supp_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/cv_supp1"
+                            app:layout_constraintTop_toBottomOf="@+id/team_1_supp_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cc_supp2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/cc_supp1"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cv_supp2"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_margin="10dp"
+                            android:elevation="12dp"
+                            android:innerRadius="0dp"
+                            android:shape="ring"
+                            android:thicknessRatio="2.0"
+                            app:cardCornerRadius="40dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:id="@+id/imageview_team_2_supp"
+                                android:layout_width="match_parent"
+                                android:layout_height="80dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/rekklessss">
+
+                            </ImageView>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/team_2_supp_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Rekkless"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_supp_champion"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_supp2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/team_2_supp_champion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="Champion"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toTopOf="@+id/team_2_supp_score"
+                            app:layout_constraintEnd_toEndOf="@+id/team_2_supp_name"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="@+id/team_2_supp_name"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_supp_name" />
+
+                        <TextView
+                            android:id="@+id/team_2_supp_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/classicroman"
+                            android:text="2/0/11"
+                            android:textColor="@color/blue_light"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/cv_supp2"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/team_2_supp_champion" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/classicroman"
-                android:text="Rekkless"
-                android:textColor="@color/blue_light"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/team_1_top_score1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cv_11"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/cc_players"
+                android:background="@drawable/square_black_box"
+                app:layout_constraintBottom_toBottomOf="parent">
 
-            <TextView
-                android:id="@+id/team_1_top_score1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/classicroman"
-                android:text="2/0/11"
-                android:textColor="@color/blue_light"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/cv_11"
-                app:layout_constraintTop_toBottomOf="@+id/team_1_top_name1" />
+                <TextView
+                    android:id="@+id/tv_matchtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/classicroman"
+                    android:text="Match time"
+                    android:textSize="30sp"
+                    android:layout_marginTop="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_matchtime1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/classicroman"
+                    android:text="Total Gold"
+                    android:layout_marginTop="5dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_matchtime" />
+
+                <TextView
+                    android:id="@+id/team_1_total_gold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/classicroman"
+                    android:layout_marginEnd="20sp"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_matchtime1"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_matchtime1"
+                    app:layout_constraintTop_toTopOf="@+id/tv_matchtime1" />
+
+                <TextView
+                    android:id="@+id/team_2_total_gold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20sp"
+                    android:fontFamily="@font/classicroman"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_matchtime1"
+                    app:layout_constraintStart_toEndOf="@+id/tv_matchtime1"
+                    app:layout_constraintTop_toTopOf="@+id/tv_matchtime1" />
+
+                <TextView
+                    android:id="@+id/tv_matchtime11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/classicroman"
+                    android:text="Inibitors"
+                    android:layout_marginTop="5dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_matchtime1" />
+
+                <TextView
+                    android:id="@+id/team_1_inibitors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/classicroman"
+                    android:layout_marginEnd="20sp"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_matchtime11"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_matchtime11"
+                    app:layout_constraintTop_toTopOf="@+id/tv_matchtime11" />
+
+                <TextView
+                    android:id="@+id/team_2_inibitors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20sp"
+                    android:fontFamily="@font/classicroman"
+                    android:text="0"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_matchtime11"
+                    app:layout_constraintStart_toEndOf="@+id/tv_matchtime11"
+                    app:layout_constraintTop_toTopOf="@+id/tv_matchtime11" />
+
+
+
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_matchtime11">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv14"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:visibility="invisible"
+
+                        android:thicknessRatio="2.0"
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team1_drake_4"
+                            android:layout_width="match_parent"
+                            android:layout_height="27dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/drake_cloud">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv13"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:thicknessRatio="2.0"
+                        android:visibility="invisible"
+
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintStart_toEndOf="@+id/cv14"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team1_drake_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv12"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:thicknessRatio="2.0"
+                        app:cardCornerRadius="40dp"
+                        android:visibility="invisible"
+
+                        app:layout_constraintStart_toEndOf="@+id/cv13"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team1_drake_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv11"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:thicknessRatio="2.0"
+                        android:visibility="invisible"
+
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintStart_toEndOf="@+id/cv12"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team1_drake_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Drakes"
+                        android:fontFamily="@font/classicroman"
+
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/cv11"
+                        app:layout_constraintEnd_toStartOf="@+id/cv21"
+                        app:layout_constraintStart_toEndOf="@+id/cv11"
+                        app:layout_constraintTop_toTopOf="@+id/cv11" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv21"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:visibility="invisible"
+
+                        android:thicknessRatio="2.0"
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintEnd_toStartOf="@+id/cv22"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team2_drake_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv22"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:visibility="invisible"
+
+                        android:thicknessRatio="2.0"
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintEnd_toStartOf="@+id/cv23"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team2_drake_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv23"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:visibility="invisible"
+
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:thicknessRatio="2.0"
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintEnd_toStartOf="@+id/cv24"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team2_drake_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv24"
+                        android:visibility="invisible"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:elevation="12dp"
+                        android:innerRadius="0dp"
+                        android:shape="ring"
+                        android:thicknessRatio="2.0"
+                        app:cardCornerRadius="40dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/team2_drake_4"
+                            android:layout_width="match_parent"
+                            android:layout_height="27dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/rekklessss">
+
+                        </ImageView>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Barons"
+                        android:fontFamily="@font/classicroman"
+                        android:textSize="20sp"
+                        app:layout_constraintEnd_toStartOf="@+id/cv21"
+                        app:layout_constraintStart_toEndOf="@+id/cv11"
+                        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+                    <TextView
+                        android:id="@+id/team_1_barons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/classicroman"
+                        android:layout_marginEnd="20sp"
+                        android:text="0"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                        app:layout_constraintEnd_toStartOf="@+id/textView8"
+                        app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+                    <TextView
+                        android:id="@+id/team_2_barons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/classicroman"
+                        android:text="0"
+                        android:layout_marginStart="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                        app:layout_constraintStart_toEndOf="@+id/textView8"
+                        app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+
+<!--                    <TextView
+                        android:id="@+id/textView81"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Elders"
+                        android:fontFamily="@font/classicroman"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/cv011"
+                        app:layout_constraintStart_toEndOf="@+id/cv04"
+                        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+                    <TextView
+                        android:id="@+id/team_1_elders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/classicroman"
+                        android:layout_marginEnd="20sp"
+                        android:text="0"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView81"
+                        app:layout_constraintEnd_toStartOf="@+id/textView8"
+                        app:layout_constraintTop_toTopOf="@+id/textView81" />
+
+                    <TextView
+                        android:id="@+id/team_2_elders"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/classicroman"
+                        android:text="0"
+                        android:layout_marginStart="20sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView81"
+                        app:layout_constraintStart_toEndOf="@+id/textView8"
+                        app:layout_constraintTop_toTopOf="@+id/textView81" />-->
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cc_22"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/cc_t11"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_22"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="10dp"
-                android:elevation="12dp"
-                android:innerRadius="0dp"
-                android:shape="ring"
-                android:thicknessRatio="2.0"
-                app:cardCornerRadius="40dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/image_team_2_top2"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/rekklessss">
-
-                </ImageView>
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/team_2_top_name2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/classicroman"
-                android:text="Rekkless"
-                android:textColor="@color/blue_light"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/team_2_top_score2"
-                app:layout_constraintEnd_toStartOf="@+id/cv_22"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/team_2_top_score2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/classicroman"
-                android:text="2/0/11"
-                android:textColor="@color/blue_light"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/cv_22"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/team_2_top_name2" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
+
+
+
+
+
+
+
+
 
 
 

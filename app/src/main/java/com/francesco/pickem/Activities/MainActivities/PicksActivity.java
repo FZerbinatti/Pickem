@@ -1,5 +1,6 @@
  package com.francesco.pickem.Activities.MainActivities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -38,6 +40,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
+import com.francesco.pickem.Activities.EloTracker.EloTrackerActivity;
+import com.francesco.pickem.Activities.EloTracker.NewTrackEloDay;
+import com.francesco.pickem.Activities.IndipendentActivities.MatchView;
 import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.Day_selection_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
@@ -53,6 +58,7 @@ import com.francesco.pickem.R;
 import com.francesco.pickem.Services.AndroidDatabaseManager;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.DatabaseHelper;
+import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -139,7 +145,7 @@ public class PicksActivity extends AppCompatActivity  {
 
 
         if(isUserAlreadyLogged()){
-           // startBackgorundTasks();
+            startBackgorundTasks();
 
             downloadUserRegions();
         }
@@ -355,7 +361,7 @@ public class PicksActivity extends AppCompatActivity  {
                     if (matchDetails!=null){
                         //vedi se hai gia inserito i dettagli per questo match in locale
 
-                        if (!databaseHelper.teamsInsertedForRegionDay(selected_region_name, getLocalDateFromDateTime(matchDetails.getDatetime()))){
+                        if (!databaseHelper.teamsInsertedForRegionDateTime(selected_region_name, matchDetails.getDatetime())){
                             databaseHelper.insertMatchDetails(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                         }
                         if(!matchDetails.getWinner().equals(" ")){
@@ -449,36 +455,6 @@ public class PicksActivity extends AppCompatActivity  {
         }else {return true;}
     }
 
-/*    private void createUserPicksForThisRegionIfNotExist(ArrayList<FullDate> allFullDates, String selected_region) {
-
-        for (int i=0; i<allFullDates.size();i++){
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(getResources().getString(R.string.firebase_users_picks))
-                .child(selected_region)
-                .child(selected_region+year)
-                .child(allFullDates.get(i).getId());
-
-
-
-            reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
-                    String user_pick = snapshot.getValue(String.class);
-                    if (user_pick == null){
-                        reference.setValue("unpicked");
-                    }
-                }
-
-                @Override
-                public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
-
-                }
-            });
-        }
-    }*/
-
     private FullDate getFullDateFromUnivDate(String dateString) {
         FullDate fullDate = new FullDate();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -533,15 +509,15 @@ public class PicksActivity extends AppCompatActivity  {
 
     }
 
-    private void fromMatchDaysToDisplayMatch(ArrayList<MatchDetails> matchListForThisDay){
+    private void fromMatchDaysToDisplayMatch(ArrayList<MatchDetails> matchListForThisDay) {
         //Log.d(TAG, "loadRecyclerView: %%%%%%%%%%%%%%%%%%%%%%"+matchListForThisDay.size());
 /*        for(int i=0; i<matchListForThisDay.size(); i++){
             Log.d(TAG, "fromMatchDaysToDisplayMatch:" +matchListForThisDay.get(i).getDatetime());
         }*/
 
-        displayMatchListSplit= new ArrayList<>();
+        displayMatchListSplit = new ArrayList<>();
 
-        for (int i =0; i < matchListForThisDay.size(); i++){
+        for (int i = 0; i < matchListForThisDay.size(); i++) {
 
             //Log.d(TAG, "fromMatchDaysToDisplayMatch: ID: "+ matchListForThisDay.get(i).getId() +" - datetime: "+ matchListForThisDay.get(i).getDatetime() +" match: "+ matchListForThisDay.get(i).getTeam1()  +" vs "+ matchListForThisDay.get(i).getTeam2() );
             DisplayMatch displayMatch = new DisplayMatch();
@@ -555,15 +531,15 @@ public class PicksActivity extends AppCompatActivity  {
             displayMatch.setWinner(matchListForThisDay.get(i).getWinner());
             displayMatch.setPrediction("null");
             displayMatch.setRegion(selected_region_name);
-            displayMatch.setYear(selected_region_name+year);
+            displayMatch.setYear(selected_region_name + year);
             displayMatch.setTeam1_score(matchListForThisDay.get(i).getTeam1_score());
             displayMatch.setTeam2_score(matchListForThisDay.get(i).getTeam2_score());
             //Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
 
-            if (displayMatch.getTeam1()== null){}else {
+            if (displayMatch.getTeam1() == null) {
+            } else {
                 displayMatchListSplit.add(displayMatch);
             }
-
 
 
         }
@@ -579,7 +555,35 @@ public class PicksActivity extends AppCompatActivity  {
         }*/
         recyclerView.setAdapter(adapterRecycler);
 
+
         pick_progressbar_matches.setVisibility(View.GONE);
+
+/*        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(context, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+
+
+
+                        Intent intent = new Intent(PicksActivity.this, MatchView.class);
+
+                        intent.putExtra( "MATCH_ID", matchListForThisDay.get(position).getDatetime() );
+                        intent.putExtra( "REGION", selected_region_name );
+                        intent.putExtra( "WINNER", matchListForThisDay.get(position).getWinner() );
+                        intent.putExtra( "TEAM1", matchListForThisDay.get(position).getTeam1() );
+                        intent.putExtra( "TEAM2", matchListForThisDay.get(position).getTeam2() );
+
+                        startActivity(intent);
+
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+
+                    }
+                })
+        );*/
 
     }
 
@@ -717,7 +721,5 @@ public class PicksActivity extends AppCompatActivity  {
         }
         return isAvailable;
     }
-
-
 
 }

@@ -16,6 +16,7 @@
 
     <color name="white">#FFFFFF</color>
     <color name="opaque_white">#BFFFFFFF</color>
+    <color name="opaque_white25">#41FFFFFF</color>
     <color name="black">#000000</color>
 
     <color name="menu_background">#BFD1FF</color>
@@ -81,6 +82,9 @@
     <color name="teal_200">#80CBC4</color>
     <color name="teal_700">#00796B</color>
 
+
+    <color name="bk_red">#850000</color>
+    <color name="bk_blue">#004780</color>
 
 
 

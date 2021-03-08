@@ -43,36 +43,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
 
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
+        android:layout_marginStart="9dp"
         android:id="@+id/icon_prediction_correct_team1"
         android:visibility="invisible"
-        android:src="@drawable/ic_prediction_right"
-        app:layout_constraintStart_toStartOf="@+id/item_logo_team1"
+        android:fontFamily="@font/classicroman"
+        android:text="win"
+        android:textColor="@color/material_green"
+        android:textSize="24sp"        app:layout_constraintStart_toStartOf="@+id/item_logo_team1"
         app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
+        android:layout_marginStart="9dp"
         android:id="@+id/icon_prediction_wrong_team1"
         android:visibility="invisible"
-        android:src="@drawable/ic_prediction_wrong"
+        android:fontFamily="@font/classicroman"
+        android:text="loss"
+        android:textColor="@color/material_red"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="@+id/item_logo_team1"
         app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:id="@+id/icon_waiting_for_save_team1"
-        android:visibility="invisible"
-        android:src="@drawable/ic_waiting_for_save"
-        app:layout_constraintStart_toStartOf="@+id/item_logo_team1"
-        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
-
 
 
 
@@ -82,9 +76,21 @@
         android:layout_height="@dimen/vs_icons_dimens"
         android:paddingEnd="7dp"
         android:src="@drawable/vsv2"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
         app:layout_constraintEnd_toStartOf="@+id/item_logo_team2"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/item_logo_team1"
+        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
+
+    <ImageView
+        android:id="@+id/item_info"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_info"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
+        app:layout_constraintEnd_toStartOf="@+id/item_logo_team2"
         app:layout_constraintStart_toEndOf="@+id/item_logo_team1"
         app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
@@ -122,35 +128,33 @@
         app:layout_constraintStart_toEndOf="@+id/item_vs"
         app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
 
-    <ImageView
+    <TextView
         android:id="@+id/icon_prediction_correct_team2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:src="@drawable/ic_prediction_right"
+        android:layout_marginEnd="7dp"
+        android:fontFamily="@font/classicroman"
+        android:text="win"
+        android:textColor="@color/material_green"
+        android:textSize="24sp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="@+id/item_logo_team2"
         app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
-    <ImageView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
+        android:layout_marginEnd="7dp"
         android:id="@+id/icon_prediction_wrong_team2"
         android:visibility="invisible"
-        android:src="@drawable/ic_prediction_wrong"
+        android:fontFamily="@font/classicroman"
+        android:text="loss"
+        android:textColor="@color/material_red"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/item_logo_team2"
         app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="3dp"
-        android:id="@+id/icon_waiting_for_save_team2"
-        android:visibility="invisible"
-        android:src="@drawable/ic_waiting_for_save"
-        app:layout_constraintEnd_toEndOf="@+id/item_logo_team2"
-        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
+
 
     <TextView
         android:id="@+id/textview_match_timer"

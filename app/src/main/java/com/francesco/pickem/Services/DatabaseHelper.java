@@ -210,6 +210,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return matchIds;
     }*/
 
+    public Boolean teamsInsertedForRegionDateTime(String region, String datetime){
+        Log.d(TAG, "teamsInsertedForRegionDay: "+ region + " datetime: "+ datetime);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String team1 = "";
+
+        //                                 0            1
+        String selectQuery = "SELECT "+ TEAM1 +" , " +TEAM2 +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + MATCH_ID + " = ? LIMIT 1" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, datetime});
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                team1 = cursor.getString(0);
+                if (team1.equals("")){
+                    Log.d(TAG, "teamsInsertedForRegionDay: - FALSE - THERE ARE NOT TEAMS INSERTED FOR THIS DATE");
+                    return false;
+                }else {
+                    Log.d(TAG, "teamsInsertedForRegionDay: - TRUE -  THERE ARE TEAMS INSERTED FOR THIS DATE");
+                    return true;
+                }
+
+            } while (cursor.moveToNext());
+        }
+
+
+        cursor.close();
+        db.close();
+        Log.d(TAG, "teamsInsertedForRegionDay: ERROR teamsInsertedForRegionDay");
+        return false;
+
+    }
+
     public Boolean teamsInsertedForRegionDay(String region, String date){
         Log.d(TAG, "teamsInsertedForRegionDay: "+ region + " date: "+ date);
 

@@ -1,6 +1,7 @@
 package com.francesco.pickem.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.Log;
@@ -17,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Activities.IndipendentActivities.MatchView;
+import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Interfaces.RecyclerViewClickListener;
 import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.R;
@@ -42,6 +45,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     private List<DisplayMatch> displayMatchDetailsList;
     private String TAG ="Adapter RecyclerVIew";
     RecyclerViewClickListener clickListener;
+    ItemClickListener mClickListener;
     DisplayMatch thisMatch;
     String match_prediction;
     String imageTeamPath;
@@ -160,11 +164,21 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             databaseHelper.updateWinner(region, dateTime, match_winner);
         }*/
 
-        if (match_winner.trim().isEmpty() && System.currentTimeMillis()>datetimeToMillis(dateTime)){
+        if (match_winner.trim().isEmpty() && System.currentTimeMillis()>datetimeToMillis(dateTime) && System.currentTimeMillis()< (datetimeToMillis(dateTime))+1000*60*60){
             viewHolder.match_live.setVisibility(View.VISIBLE);
         }else {
             viewHolder.match_live.setVisibility(View.INVISIBLE);
 
+        }
+
+        if (!match_winner.trim().isEmpty() ){
+            viewHolder.item_vs.setVisibility(View.INVISIBLE);
+            viewHolder.item_info.setVisibility(View.VISIBLE);
+            viewHolder.item_info.setEnabled(true);
+
+
+        }else {
+            viewHolder.item_info.setEnabled(false);
         }
 
 
@@ -193,11 +207,11 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         private TextView textview_team2_score;
         private TextView match_live;
 
+        private ImageView item_vs;
+        private ImageView item_info;
 
-
-
-        private ImageView icon_prediction_correct_team1, icon_prediction_wrong_team1;
-        private ImageView icon_prediction_correct_team2, icon_prediction_wrong_team2;
+        private TextView icon_prediction_correct_team1, icon_prediction_wrong_team1;
+        private TextView icon_prediction_correct_team2, icon_prediction_wrong_team2;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -212,10 +226,13 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             textview_team2_score = (TextView) itemView.findViewById(R.id.item_score_team2);
             match_live = (TextView) itemView.findViewById(R.id.match_live);
 
-            icon_prediction_correct_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team1);
-            icon_prediction_wrong_team1 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team1);
-            icon_prediction_correct_team2 = (ImageView) itemView.findViewById(R.id.icon_prediction_correct_team2);
-            icon_prediction_wrong_team2 = (ImageView) itemView.findViewById(R.id.icon_prediction_wrong_team2);
+            item_vs = (ImageView) itemView.findViewById(R.id.item_vs);
+            item_info = (ImageView) itemView.findViewById(R.id.item_info);
+
+            icon_prediction_correct_team1 = (TextView) itemView.findViewById(R.id.icon_prediction_correct_team1);
+            icon_prediction_wrong_team1 = (TextView) itemView.findViewById(R.id.icon_prediction_wrong_team1);
+            icon_prediction_correct_team2 = (TextView) itemView.findViewById(R.id.icon_prediction_correct_team2);
+            icon_prediction_wrong_team2 = (TextView) itemView.findViewById(R.id.icon_prediction_wrong_team2);
 
 
             image_team_1.setOnClickListener(new View.OnClickListener() {
@@ -243,6 +260,21 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                     opacity_team_1.setVisibility(View.VISIBLE);
                     opacity_team_2.setVisibility(View.INVISIBLE);
 
+                }
+            });
+
+            item_info.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, MatchView.class);
+
+                    intent.putExtra( "MATCH_ID", displayMatchDetailsList.get(getAdapterPosition()).getDatetime() );
+                    intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
+                    intent.putExtra( "WINNER", displayMatchDetailsList.get(getAdapterPosition()).getWinner() );
+                    intent.putExtra( "TEAM1", displayMatchDetailsList.get(getAdapterPosition()).getTeam1() );
+                    intent.putExtra( "TEAM2", displayMatchDetailsList.get(getAdapterPosition()).getTeam2() );
+
+                    context.startActivity(intent);
                 }
             });
 
@@ -395,6 +427,16 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             long matchTimeMillis = strDate.getTime();
         Log.d(TAG, "datetimeToMillis: "+matchTimeMillis);
         return matchTimeMillis;
+    }
+
+    // allows clicks events to be caught
+    void setClickListener(RecyclerView_Picks_Adapter.ItemClickListener itemClickListener) {
+        this.mClickListener = itemClickListener;
+    }
+
+    // parent activity will implement this method to respond to click events
+    public interface ItemClickListener {
+        void onItemClick(View view, int position);
     }
 
 

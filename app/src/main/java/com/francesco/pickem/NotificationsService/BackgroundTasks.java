@@ -80,8 +80,7 @@ public class BackgroundTasks extends JobService {
     RegionNotifications regionNotifications;
     DatabaseHelper databaseHelper;
     BackgroundTasks backgroundTasks;
-    private final Integer FIREBASE_STORAGE_RESPONSE_TIME = 5000;
-    private final Integer REALTIME_DATABASE_RESPONSE_TIME = 3000;
+    private final Integer FIREBASE_STORAGE_RESPONSE_TIME = 10000;
     ArrayList <String> todayMatches;
     ArrayList <String> localmatchIDs;
 
@@ -142,12 +141,12 @@ public class BackgroundTasks extends JobService {
         task7AM.setTimeZone(TimeZone.getDefault());
         Log.d(TAG, "startAlarmManager7AM: task7AM.getTimeInMillis() "+task7AM.getTimeInMillis());
 
-        /*alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
-                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
+                AlarmManager.INTERVAL_DAY, pendingIntent0);
 
         //alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
-        alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
+        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
 
     }
 
@@ -289,9 +288,9 @@ public class BackgroundTasks extends JobService {
     private void checkIfLocalImageFolderIsUpdated(JobParameters parameters) {
         //Log.d(TAG, "checkIfLocalImageFolderIsUpdated: */**********************************************************" );
 
-    // 1- prendi la lista delle immagini presenti in locale,
+        // 1- prendi la lista delle immagini presenti in locale,
         // se 0 scarica tutto
-    // 2- prendi la lista delle immagini nelle cartelle cloud
+        // 2- prendi la lista delle immagini nelle cartelle cloud
         // se differiscono riscarica le differenze
         FirebaseStorage storage = FirebaseStorage.getInstance();
         databaseHelper = new DatabaseHelper(getApplicationContext());
@@ -299,7 +298,12 @@ public class BackgroundTasks extends JobService {
         //immagini regions sul cloud
         StorageReference regionReference = storage.getReference("region_img");
         ArrayList<ImageValidator> cloud_regions_images = new ArrayList<>();
-        Task<ListResult> regions_images = regionReference.listAll();
+        Task<ListResult> regions_images = regionReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @Override
+            public void onSuccess(ListResult listResult) {
+                //listResult.getItems().size();
+            }
+        });
 
 
         //IMMAGINI TEAMS SUL CLOUD
@@ -539,332 +543,6 @@ public class BackgroundTasks extends JobService {
 
     // -------------------------------------------------------------------------------------------------------- NOTIFICATION -------------------------------------------------------------------------------------------------------- //
 
-    private void loadSettingsForThisRegion(JobParameters parameters ) {
-        if (jobCancelled){return;}
-        createNotificationChannel();
-        userRegionsNotifications= new ArrayList<>();
-
-        DatabaseReference notificationRegionReference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(getString(R.string.firebase_user_notification))
-                .child(getString(R.string.firebase_user_notification_region));
-
-        notificationRegionReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    RegionNotifications regionNotifications = snapshot.getValue(RegionNotifications.class);
-                    if (regionNotifications !=null){
-                        userRegionsNotifications.add(regionNotifications);
-                        //Log.d(TAG, "onDataChange: "+regionNotifications.getRegion_name());
-                    }
-
-                }
-                thisUserNotificationPreference(userRegionsNotifications);
-
-            }
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-            }
-        });
-
-        jobFinished(parameters, false);
-    }
-
-    private void thisUserNotificationPreference(ArrayList<RegionNotifications> regionNotifications)  {
-        //Log.d(TAG, "thisUserNotificationPreference: ?????????????????????????????"+regionNotifications.size());
-        tomorrowUserunpickedMatches = new ArrayList<>();
-        tomorrowMatches = new ArrayList<>();
-        allTomorrowMatches = new ArrayList<>();
-
-
-        /*for (int i=0; i< regionNotifications.size(); i++){
-            Log.d(TAG, "thisUserNotificationPreference: region: "+regionNotifications.get(i).getRegion_name() );
-            Log.d(TAG, "thisUserNotificationPreference: getNotification_first_match_otd: "+regionNotifications.get(i).getNotification_first_match_otd());
-            Log.d(TAG, "thisUserNotificationPreference: getNotification_morning_reminder: "+regionNotifications.get(i).getNotification_morning_reminder());
-            Log.d(TAG, "thisUserNotificationPreference: getNo_choice_made: "+regionNotifications.get(i).getNo_choice_made());
-        }*/
-
-
-        for (int i=0; i< regionNotifications.size(); i++){
-            CurrentRegion currentRegion = new CurrentRegion();
-
-            currentRegion.setRegion(regionNotifications.get(i).getRegion_name());
-
-
-                /*if (regionNotifications.get(i).getNo_choice_made()>0) {
-
-                    //voglio essere notificato se non ho pickato i picks la mattina del giorno
-
-                    Log.d(TAG, "thisUserNotificationPreference: NO Choice MAde Notification for: "+currentRegion.getRegion());
-
-                    // prendo tutti i match per questa giornata
-
-                    todayMatches = new ArrayList<>();
-
-                    todayMatches = databaseHelper.MatchesForRegion_Date(currentRegion.getRegion(), today);
-
-                    // se è 0 vuol dire che non ci sono match in programma per oggi
-                    Log.d(TAG, "thisUserNotificationPreference: firstTodayMatch: "+todayMatches.size());
-
-                    if (todayMatches.size()>0){
-
-
-                        ArrayList <String> userPicks = new ArrayList<>();
-
-                        // se esistono match per questa giornata, controllo se l'utente ha fatto i pick per tutti i match sotto Userpicks
-
-                        reference = FirebaseDatabase.getInstance().getReference("Users")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child(getResources().getString(R.string.firebase_users_picks))
-                                .child(regionNotifications.get(i).getRegion_name())
-                                .child(regionNotifications.get(i).getRegion_name()+year);
-
-                        for(int j=0; j<todayMatches.size(); j++){
-
-                            reference.child(todayMatches.get(j)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    String match = snapshot.getValue(String.class);
-                                    if (match!=null){
-                                        userPicks.add(match);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-
-                        }
-
-                        //wait for gather all info
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            public void run() {
-
-                                //se il numero di picks dello user è minore del numero di match della giornata, setto la notifica
-                                if (userPicks.size()<todayMatches.size()){
-                                    setAlarmsBecauseThisMatchesHasNotBeenPicked(currentRegion.getRegion());
-                                }
-
-                            }
-                        }, REALTIME_DATABASE_RESPONSE_TIME);
-
-
-
-                    }
-
-
-                }*/
-
-                /*if (regionNotifications.get(i).getNotification_first_match_otd()>0){
-                    tomorrowMatches = new ArrayList<>();
-                    //prendi il primo match di domani e piazza un alarm manager all'ora di inizio
-                    reference = FirebaseDatabase.getInstance().getReference
-                            (getResources().getString(R.string.firebase_Matches))
-                            .child(regionNotifications.get(i).getRegion_name())
-                            .child(regionNotifications.get(i).getRegion_name()+year);
-
-                    readData(reference, new OnGetDataListener() {
-                        @Override
-                        public void onSuccess(DataSnapshot dataSnapshot) {
-
-                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                String match_ID = snapshot.getKey().toString();
-                                MatchDetails match = snapshot.getValue(MatchDetails.class);
-
-                                String[] datetime = match_ID.split("T");
-                                String data =datetime[0];
-                                // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
-                                if (data.equals(tomorrow)){
-                                    match.setWinner(currentRegion.getRegion());
-                                    match.setDatetime(convertDatetimeZtoLocale(match.getDatetime()));
-                                    tomorrowMatches.add(match);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onStart() {
-                            //Log.d(TAG, "onStart: ");
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            //Log.d(TAG, "onFailure: ");
-                        }
-                    });
-                }
-
-                if (regionNotifications.get(i).getNotification_morning_reminder()>0){
-                    // prendi tutti i match di domani (se ce ne sono) e crea una notifica da displayare domani mattina
-                    allTomorrowMatches = new ArrayList<>();
-                    reference = FirebaseDatabase.getInstance().getReference
-                            (getResources().getString(R.string.firebase_Matches))
-                            .child(regionNotifications.get(i).getRegion_name())
-                            .child(regionNotifications.get(i).getRegion_name()+year);
-
-                    readData(reference, new OnGetDataListener() {
-                        @Override
-                        public void onSuccess(DataSnapshot dataSnapshot) {
-
-                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                String match_ID = snapshot.getKey().toString();
-                                MatchDetails match = snapshot.getValue(MatchDetails.class);
-
-                                String[] datetime = match_ID.split("T");
-                                String data =datetime[0];
-                                // for test purpose lascio today, da cambiare con tomorrow per lo scopo della funzione
-                                if (data.equals(tomorrow)){
-                                    match.setWinner(currentRegion.getRegion());
-                                    match.setDatetime(convertDatetimeZtoLocale(match.getDatetime()));
-                                    allTomorrowMatches.add(match);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onStart() {
-                            //Log.d(TAG, "onStart: ");
-                        }
-
-                        @Override
-                        public void onFailure() {
-                            //Log.d(TAG, "onFailure: ");
-                        }
-                    });
-                }*/
-
-/*            //getTheEarliestNotPickedMatchDate(notPickedMatchIDs);
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    // Actions to do after 10 seconds
-                    *//*if(tomorrowUserunpickedMatches.size()>0){
-                        Log.d(TAG, "run: trigger: unpicked");
-                        setAlarmsBecauseThisMatchesHasNotBeenPicked(tomorrowUserunpickedMatches);
-                    }*//*
-                    if(tomorrowMatches.size()>0){
-                        Log.d(TAG, "run: trigger at first match start");
-                        setToTheFirstOfThisMatches(tomorrowMatches);
-                    }
-
-                    if (allTomorrowMatches.size()>0){
-                        Log.d(TAG, "run: trigger morning reminder");
-                        setNotificationWithTomorrowMatches(allTomorrowMatches);
-                    }
-
-                }
-            }, REALTIME_DATABASE_RESPONSE_TIME);*/
-
-        }
-
-
-
-
-
-    }
-
-    private void setNotificationWithTomorrowMatches(ArrayList<MatchDetails> allTomorrowMatches) {
-        //Log.d(TAG, "setNotificationWithTomorrowMatches: "+allTomorrowMatches.size());
-        ArrayList<String> tomorrowStringArrayMatches = new ArrayList<>();
-
-        Collections.sort(allTomorrowMatches, new MatchDetails.ByDatetime());
-
-        for (int i=0; i<allTomorrowMatches.size(); i++){
-            tomorrowStringArrayMatches.add(allTomorrowMatches.get(i).getWinner()+" " +getTimeMinutesFromDatetime(allTomorrowMatches.get(i).getDatetime()) +" -  [ " + allTomorrowMatches.get(i).getTeam1() + " vs " + allTomorrowMatches.get(i).getTeam2() + " ]");
-        }
-        //Log.d(TAG, "setNotificationWithTomorrowMatches: tomorrowStringArrayMatches.size:"+tomorrowStringArrayMatches.size());
-
-        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-        intent.putExtra("TYPE", "ALL_TMATCHES");
-        intent.putStringArrayListExtra("ALL_T_MATCHES", tomorrowStringArrayMatches);
-        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        //Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: "+tomorrow+" 7:00:00");
-        try {
-            calendar.setTime(formatter.parse(tomorrow+"T07:00:00"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //Log.d(TAG, "********************************************************* setNotificationWithTomorrowMatches: millis:"+calendar.getTimeInMillis());
-        //alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-        // testing purpose
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+3000, alarmIntent);
-
-
-    }
-
-    private void setToTheFirstOfThisMatches(ArrayList<MatchDetails> tomorrowMatches) {
-        Integer ora_minima =24;
-        primo_match_otd = "";
-        CurrentRegion currentRegion =new CurrentRegion();
-
-
-        firstsMatchOfTheDay= new ArrayList<>();
-        //Log.d(TAG, "setToTheFirstOfThisMatches: userRegionsNotifications.size():"+userRegionsNotifications.size());
-        // dell'AL arrivato, dividi nelle regioni diverse e per ognuna trova la data piu recente
-        for (int i=0; i<userRegionsNotifications.size();i++){
-            currentRegion.setRegion(userRegionsNotifications.get(i).getRegion_name());
-            //Log.d(TAG, "setToTheFirstOfThisMatches: userRegionsNotifications.size(): "+userRegionsNotifications.size());
-            for (int j=0; j<tomorrowMatches.size();j++){
-                if(tomorrowMatches.get(j).getWinner().equals(userRegionsNotifications.get(i).getRegion_name())){
-                    //Log.d(TAG, "setToTheFirstOfThisMatches:  tomorrowMatches.get(j).getDatetime():"+ tomorrowMatches.get(j).getDatetime());
-
-                    Integer int_ora =Integer.parseInt(getTimeFromDatetime(tomorrowMatches.get(j).getDatetime()));
-                    if (int_ora < ora_minima){
-                        ora_minima = int_ora;
-                        primo_match_otd = tomorrowMatches.get(j).getDatetime();
-                        //Log.d(TAG, "setToTheFirstOfThisMatches: tomorrowMatches.get(j).getDatetime():" +tomorrowMatches.get(j).getDatetime() +" region: "+ tomorrowMatches.get(j).getWinner());
-                    }
-
-                }
-            }
-
-            if (!primo_match_otd.equals("")){
-                //Log.d(TAG, "setToTheFirstOfThisMatches: primo_match_otd:"+primo_match_otd);
-
-                Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-
-                intent.putExtra(getResources().getString(R.string.TYPE) ,getResources().getString(R.string.FIRST_MATCH));
-                intent.putExtra("REGION", currentRegion.getRegion() );
-
-                alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                try {
-                    calendar.setTime(formatter.parse(primo_match_otd));
-                    calendar.add(Calendar.MINUTE,5);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "******************************* questo è il primo match di domani: millis:"+calendar.getTimeInMillis()+" region: "+currentRegion.getRegion());
-                //alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 3000, alarmIntent);
-            }
-        }
-
-    }
-
-    private void setAlarmsBecauseThisMatchesHasNotBeenPicked(String regionOfMatchesNotPicked) {
-        Log.d(TAG, "setAlarmsBecauseThisMatchesHasNotBeenPicked: unpicked matches for this region: "+regionOfMatchesNotPicked);
-
-        Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-        intent.putExtra("TYPE", "NOT_PICKED");
-        intent.putExtra("REGION", regionOfMatchesNotPicked);
-        alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+2000, alarmIntent);
-
-    }
 
     public String getTodayDate(){
 
@@ -884,22 +562,6 @@ public class BackgroundTasks extends JobService {
         return tomorrowAsString;
     }
 
-    public void readData(DatabaseReference ref, final OnGetDataListener listener) {
-        listener.onStart();
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
-
-                listener.onSuccess(snapshot);
-            }
-
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
-                listener.onFailure();
-            }
-        });
-
-    }
 
     public String convertDatetimeZtoLocale(String datetime){
         //Log.d(TAG, "convertDatetimeZtoLocale: eating this: "+datetime);

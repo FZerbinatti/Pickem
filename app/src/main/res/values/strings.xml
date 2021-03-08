@@ -73,6 +73,9 @@
     <string name="firebase_user_notification_region">Regions</string>
     <string name="firebase_user_notification_teams">Teams</string>
     <string name="firebase_user_choosen_regions">choosen_regions</string>
+    <string name="firebase_matches_stats">matches_stats</string>
+    <string name="firebase_players">players</string>
+
 
     //TestMatch è di prova, Matches di deploy
     <string name="firebase_Matches">Matches</string>
