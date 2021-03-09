@@ -141,11 +141,11 @@ public class BackgroundTasks extends JobService {
         task7AM.setTimeZone(TimeZone.getDefault());
         Log.d(TAG, "startAlarmManager7AM: task7AM.getTimeInMillis() "+task7AM.getTimeInMillis());
 
-        alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        /*alarmMgr0 .setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
-                AlarmManager.INTERVAL_DAY, pendingIntent0);
+                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
 
-        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+        alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
         //alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
 
     }

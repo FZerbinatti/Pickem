@@ -33,6 +33,101 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:id="@+id/constraintLayout9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        tools:layout_editor_absoluteX="10dp">
+
+
+        <ImageView
+            android:id="@+id/statistic_item_region_icon"
+            android:layout_width="@dimen/calendar_icons_dimens"
+            android:layout_height="@dimen/calendar_icons_dimens"
+            android:background="@drawable/background_round_corners_smol"
+            android:padding="3dp"
+            android:src="@drawable/ic_globe"
+            app:layout_constraintEnd_toStartOf="@+id/item_vs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textview_match_timer" />
+
+        <TextView
+            android:id="@+id/statistic_item_region_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:fontFamily="@font/classicroman"
+            android:text="Global"
+            android:textColor="@color/blue_light_opaque"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/statistic_item_region_icon"
+            app:layout_constraintStart_toEndOf="@+id/statistic_item_region_icon"
+            app:layout_constraintTop_toTopOf="@+id/statistic_item_region_icon" />
+
+        <TextView
+            android:id="@+id/global_statistic_item_correct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/classicroman"
+            android:text="117/"
+            android:textColor="@color/blue_light_opaque"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/statistic_item_region_name"
+            app:layout_constraintEnd_toStartOf="@+id/global_statistic_item_totals"
+            app:layout_constraintTop_toTopOf="@+id/statistic_item_region_name" />
+
+
+        <TextView
+            android:id="@+id/global_statistic_item_totals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/classicroman"
+            android:text="125"
+            android:textColor="@color/blue_light_opaque"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/global_statistic_item_correct"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/global_statistic_item_correct"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ProgressBar
+            android:id="@+id/global_progressbar_statistics_item"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/global_statistic_item_percentage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/statistic_item_region_icon" />
+
+        <TextView
+            android:id="@+id/global_statistic_item_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/classicroman"
+            android:text="81%"
+            android:textColor="@color/blue_light_opaque"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <View
+            android:id="@+id/line_separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/global_progressbar_statistics_item" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stats_recyclerview"
         android:layout_width="match_parent"
@@ -42,8 +137,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout9" />
 
-    </androidx.recyclerview.widget.RecyclerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

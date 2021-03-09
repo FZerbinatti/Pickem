@@ -691,17 +691,20 @@ public class SettingsActivity extends AppCompatActivity {
                     case R.id.button_picks:
                         Intent intentPicks= new Intent(context, PicksActivity.class);
                         startActivity(intentPicks);
+                        finish();
                         Animatoo.animateFade(context);
                         break;
                     case R.id.button_calendar:
                         Intent intentCalendar= new Intent(context, CalendarActivity.class);
                         startActivity(intentCalendar);
+                        finish();
                         Animatoo.animateFade(context);
                         break;
 
                     case R.id.button_statistics:
                         Intent intentStats= new Intent(context, AllStatsActivity.class);
                         startActivity(intentStats);
+                        finish();
                         Animatoo.animateFade(context);
                         break;
 

@@ -411,6 +411,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return new RegionStats(regionSelected ,counter_right, counter_total);
     }
 
+    public RegionStats getGlobalStats(String year){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        //la data deve essere anteriore alla data attuale, aggiungi un IF statement
+
+        //ArrayList<String> match_ids = new ArrayList<>();
+        int counter_total=0;
+        int counter_right=0;
+        //                                 0                1
+        String selectQuery = "SELECT "+ PREDICTION +","+ WINNER +" FROM "+ TABLE_MATCHES +" WHERE "+ YEAR +" = ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{year});
+        if (cursor.moveToFirst()) {
+            do {
+                String prediction = cursor.getString(0);
+                String winner = cursor.getString(1);
+
+                if (!prediction.equals("") && !winner.equals("")){
+                    counter_total+=1;
+
+                    if (prediction.equals(winner)){
+                        counter_right+=1;
+                    }
+                }
+
+
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        //Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
+        return new RegionStats("Global" ,counter_right, counter_total);
+    }
+
     public void insertImageRegion(ImageValidator imageValidator){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();

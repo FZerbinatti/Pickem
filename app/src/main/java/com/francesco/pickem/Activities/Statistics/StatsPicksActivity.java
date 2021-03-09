@@ -1,18 +1,26 @@
 package com.francesco.pickem.Activities.Statistics;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.EloTracker.EloTrackerActivity;
 import com.francesco.pickem.Activities.MainActivities.CalendarActivity;
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
@@ -30,6 +38,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -42,6 +52,8 @@ public class StatsPicksActivity extends AppCompatActivity{
     RecyclerView_Statistics_Adapter adapter_recyclerView_statistics;
     Calendar myCalendar;
     String year;
+    TextView global_statistic_item_correct , global_statistic_item_totals, global_statistic_item_percentage;
+    ProgressBar global_progressbar_statistics_item;
 
 
     @Override
@@ -51,9 +63,18 @@ public class StatsPicksActivity extends AppCompatActivity{
 
         stats_progressbar = findViewById(R.id.stats_progressbar_matches);
         stats_recyclerview = findViewById(R.id.stats_recyclerview);
+
+        global_statistic_item_correct = findViewById(R.id.global_statistic_item_correct);
+        global_statistic_item_totals = findViewById(R.id.global_statistic_item_totals);
+        global_statistic_item_percentage = findViewById(R.id.global_statistic_item_percentage);
+        global_progressbar_statistics_item = findViewById(R.id.global_progressbar_statistics_item);
+
         databaseHelper = new DatabaseHelper(this);
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
+
+        globalStats(year);
+
 
         stats_progressbar.setVisibility(View.VISIBLE);
         downloadUserRegions();
@@ -61,6 +82,36 @@ public class StatsPicksActivity extends AppCompatActivity{
 
     }
 
+    private void globalStats(String year) {
+        RegionStats globalStats = databaseHelper.getGlobalStats(year);
+        Integer correctPicks = globalStats.getCorrectPicks();
+        Integer totalPicks = globalStats.getTotalPicks();
+
+
+
+
+
+
+        float percentage =0f;
+        BigDecimal bd = BigDecimal.valueOf(0);
+        if (correctPicks>0){
+
+            percentage =  ( (float) correctPicks/totalPicks)*100f;
+            bd = new BigDecimal(Float.toString(percentage));
+            bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+        }
+
+
+        global_progressbar_statistics_item.setProgress(Math.round(percentage));
+        ColorStateList colorStateList = ContextCompat.getColorStateList(global_progressbar_statistics_item.getContext(), progressBarColor(Math.round(percentage)));
+        global_progressbar_statistics_item.setProgressTintList(colorStateList);
+
+        global_statistic_item_correct.setText(correctPicks.toString()+"/");
+        global_statistic_item_percentage.setText(String.valueOf(bd)+"%");
+        global_statistic_item_totals.setText(totalPicks.toString());
+
+    }
 
 
     //RecyclerView con le regioni selected
@@ -124,6 +175,25 @@ public class StatsPicksActivity extends AppCompatActivity{
 
         stats_progressbar.setVisibility(View.GONE);
 
+    }
+
+    private Integer progressBarColor(Integer potenza_segnale){
+
+        if (potenza_segnale < 20 ){
+            return (R.color.r1);
+        }else if (potenza_segnale >= 20 && potenza_segnale <40){
+            return (R.color.r2);
+        }else if (potenza_segnale >= 40 && potenza_segnale <55){
+            return (R.color.y1);
+        } else if (potenza_segnale >= 55 && potenza_segnale <70){
+            return (R.color.y2);
+        }else if (potenza_segnale >= 70 && potenza_segnale <80){
+            return (R.color.g1);
+        }else if (potenza_segnale >= 80 && potenza_segnale <90){
+            return (R.color.g2);
+        }else if (potenza_segnale >=90){
+            return (R.color.g3);
+        }else return R.color.transparent;
     }
 
 

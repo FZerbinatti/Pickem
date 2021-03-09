@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -78,7 +79,12 @@ public class RegisterActivity extends AppCompatActivity {
         collapsable_box_registration = findViewById(R.id.collapsable_box_registration);
         textView_selectRegion = findViewById(R.id.textView_selectRegion);
         context = this;
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        File rootfolder = new File(getFilesDir()
+                + "/images");
+        if (!rootfolder.exists()) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+
         register_scrollview = findViewById(R.id.register_scrollview);
         register_recyclerview_regioni = findViewById(R.id.register_recyclerview_regioni);
 
