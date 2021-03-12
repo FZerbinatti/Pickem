@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/choose_cc"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="10dp"
+    android:layout_marginBottom="10dp">
+
+
+    <ImageView
+        android:id="@+id/choose_item_logo_team1"
+        android:layout_width="@dimen/teams_icons_dimens2"
+        android:layout_height="@dimen/teams_icons_dimens2"
+        android:background="@drawable/background_round_corners"
+        android:padding="3dp"
+        android:layout_marginStart="5dp"
+        android:src="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_match_timer"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/choose_item_score_team1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:fontFamily="@font/classicroman"
+        android:text="33/33/33"
+        android:textColor="@color/blue_light_opaque"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/choose_item_logo_team1"
+        app:layout_constraintStart_toEndOf="@+id/choose_item_logo_team1"
+        app:layout_constraintTop_toTopOf="@+id/choose_item_logo_team1" />
+
+    <TextView
+        android:id="@+id/choose_item_score_team2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:fontFamily="@font/classicroman"
+        android:text="22/22/22"
+        android:textColor="@color/blue_light_opaque"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/choose_item_logo_team2"
+        app:layout_constraintEnd_toStartOf="@+id/choose_item_logo_team2"
+        app:layout_constraintTop_toTopOf="@+id/choose_item_logo_team2" />
+
+    <ImageView
+        android:id="@+id/choose_item_logo_team2"
+        android:layout_width="@dimen/teams_icons_dimens2"
+        android:layout_height="@dimen/teams_icons_dimens2"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/background_round_corners"
+        android:padding="3dp"
+        android:src="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/choose_item_logo_team1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/choose_item_logo_team1" />
+
+    <TextView
+        android:id="@+id/choose_match_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/classicroman"
+        android:text="17:00"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/choose_item_logo_team2"
+        app:layout_constraintStart_toStartOf="@+id/choose_item_logo_team1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/line_separator2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/blue_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_item_logo_team1" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

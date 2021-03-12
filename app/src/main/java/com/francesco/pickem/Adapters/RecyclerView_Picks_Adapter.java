@@ -18,10 +18,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Activities.IndipendentActivities.ActivityChooseGame;
 import com.francesco.pickem.Activities.IndipendentActivities.MatchView;
 import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Interfaces.RecyclerViewClickListener;
 import com.francesco.pickem.Models.DisplayMatch;
+import com.francesco.pickem.Models.GlobalMatchStats;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -266,15 +269,50 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             item_info.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(context, MatchView.class);
 
-                    intent.putExtra( "MATCH_ID", displayMatchDetailsList.get(getAdapterPosition()).getDatetime() );
-                    intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
-                    intent.putExtra( "WINNER", displayMatchDetailsList.get(getAdapterPosition()).getWinner() );
-                    intent.putExtra( "TEAM1", displayMatchDetailsList.get(getAdapterPosition()).getTeam1() );
-                    intent.putExtra( "TEAM2", displayMatchDetailsList.get(getAdapterPosition()).getTeam2() );
+                    String datetime = displayMatchDetailsList.get(getAdapterPosition()).getDatetime();
 
-                    context.startActivity(intent);
+                    String[] array = datetime.split("-");
+                    String year = array[0];
+
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_statistics))
+                            .child(displayMatchDetailsList.get(getAdapterPosition()).getRegion())
+                            .child(displayMatchDetailsList.get(getAdapterPosition()).getRegion()+year)
+                            .child(context.getString(R.string.firebase_matches_stats))
+                            .child(datetime);
+
+                    reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Integer children = (int) snapshot.getChildrenCount();
+                            Log.d(TAG, "onDataChange: childreN : " +children);
+                            if (children==1){
+                                Intent intent = new Intent(context, MatchView.class);
+                                intent.putExtra( "MATCH_ID", datetime );
+                                intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
+                                intent.putExtra( "WINNER", displayMatchDetailsList.get(getAdapterPosition()).getWinner() );
+                                intent.putExtra( "TEAM1", displayMatchDetailsList.get(getAdapterPosition()).getTeam1() );
+                                intent.putExtra( "TEAM2", displayMatchDetailsList.get(getAdapterPosition()).getTeam2() );
+
+                                context.startActivity(intent);
+                            }else {
+                                Intent intent = new Intent(context, ActivityChooseGame.class);
+                                intent.putExtra( "MATCH_ID", datetime );
+                                intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
+                                intent.putExtra( "YEAR", year );
+                                context.startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+
+
                 }
             });
 

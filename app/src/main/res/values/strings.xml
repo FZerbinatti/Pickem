@@ -53,7 +53,6 @@
     <string name="summoner_name">summoner_name</string>
     <string name="summoner_elotracker">summoner_elotracker</string>
 
-    <string name="RIOT_API_KEY">RGAPI-8ab6d799-27a9-4bb2-bda9-f0431485de39</string>
 
     <string name="HTTP">https://</string>
     <string name="riot_api_address">.api.riotgames.com</string>
@@ -63,9 +62,11 @@
     // firebase children
     <string name="firebase_users">Users</string>
     <string name="firebase_regions">Regions</string>
+    <string name="firebase_analysts">Analysts</string>
     <string name="firebase_statistics">Statistics</string>
     <string name="firebase_servers">Servers</string>
     <string name="firebase_teams">Teams</string>
+    <string name="firebase_users_analists">UserAnalysts</string>
     <string name="firebase_users_generealities">UserGeneralities</string>
     <string name="firebase_users_picks">UserPicks</string>
     <string name="firebase_users_elotracker">UserEloTracker</string>

@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.EloTracker.EloTrackerActivity;
 import com.francesco.pickem.Activities.IndipendentActivities.StatsStandings;
+import com.francesco.pickem.Activities.Statistics.AnalistActivity;
 import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.R;
@@ -64,6 +65,14 @@ public class AllStatsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AllStatsActivity.this, StatsPicksActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        all_stats_image_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AllStatsActivity.this, AnalistActivity.class);
                 startActivity(intent);
             }
         });

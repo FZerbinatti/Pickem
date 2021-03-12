@@ -78,10 +78,6 @@ public class CalendarActivity extends AppCompatActivity{
     Integer currentWeek, currentDay;
 
 
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -293,6 +289,21 @@ public class CalendarActivity extends AppCompatActivity{
                     String userRegion = snapshot.getValue(String.class);
                     Log.d(TAG, "onDataChange: calendar region: "+userRegion);
                     selectedCalendarRegions.add(userRegion);
+                    if (int_user_regions_selected==counter){
+                        if (selectedCalendarRegions.size()>0){
+                            // Actions to do after 10 seconds
+                            viewPagerRegions.setItemViewCacheSize(25);
+                            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                            viewPagerRegions.setLayoutManager(layoutManager);
+                            adapterRegions = new Region_selection_Adapter_calendar(allRegions, imageRegionPath, context, selectedCalendarRegions);
+                            viewPagerRegions.setAdapter(adapterRegions);
+                            adapterRegions.notifyDataSetChanged();
+
+                            calendar_progressbar.setVisibility(View.GONE);
+
+                            loadMatchesForThisLeagues(selectedCalendarRegions,0);
+                        }
+                    }
 
                 }
             }
@@ -302,28 +313,6 @@ public class CalendarActivity extends AppCompatActivity{
             }
         });
 
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-
-                if (selectedCalendarRegions.size()>0){
-                    // Actions to do after 10 seconds
-                    viewPagerRegions.setItemViewCacheSize(25);
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                    viewPagerRegions.setLayoutManager(layoutManager);
-                    adapterRegions = new Region_selection_Adapter_calendar(allRegions, imageRegionPath, context, selectedCalendarRegions);
-                    viewPagerRegions.setAdapter(adapterRegions);
-                    adapterRegions.notifyDataSetChanged();
-
-                    calendar_progressbar.setVisibility(View.GONE);
-
-                    loadMatchesForThisLeagues(selectedCalendarRegions,0);
-                }
-
-
-            }
-        }, 1000);
     }
 
     private void loadMatchesForThisLeagues(ArrayList<String> selectedCalendarRegions, Integer currentDay) {
@@ -396,6 +385,7 @@ public class CalendarActivity extends AppCompatActivity{
                                 }
                                 //Log.d(TAG, "onDataChange: global_counter:"+global_counter.getNumber() + "/" +sum_all_matches_all_regions.getNumber());
                                 String match_ID = snapshot.getKey();
+
                                 // solo se la data corrisponde allora scarichi i dettagli
                                 String localDate = getLocalDateFromDateTime(match_ID);
 

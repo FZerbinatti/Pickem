@@ -1,7 +1,5 @@
 package com.francesco.pickem.Activities.SettingsActivities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,15 +9,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.francesco.pickem.NotificationsService.AlarmReceiver;
 import com.francesco.pickem.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class InfoActivity extends AppCompatActivity {
+public class InfoActivity2 extends AppCompatActivity {
 
     TextView display_text;
     private AlarmManager alarmManager;
@@ -28,7 +26,7 @@ public class InfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_info);
+        setContentView(R.layout.activity_info2);
 
 /*        display_text = findViewById(R.id.display_text);
 

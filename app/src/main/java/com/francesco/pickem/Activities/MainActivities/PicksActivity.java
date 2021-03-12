@@ -242,8 +242,6 @@ public class PicksActivity extends AppCompatActivity  {
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(pick_backgroundimage);
 
-
-
             }
 
             @Override
@@ -510,10 +508,6 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void fromMatchDaysToDisplayMatch(ArrayList<MatchDetails> matchListForThisDay) {
-        //Log.d(TAG, "loadRecyclerView: %%%%%%%%%%%%%%%%%%%%%%"+matchListForThisDay.size());
-/*        for(int i=0; i<matchListForThisDay.size(); i++){
-            Log.d(TAG, "fromMatchDaysToDisplayMatch:" +matchListForThisDay.get(i).getDatetime());
-        }*/
 
         displayMatchListSplit = new ArrayList<>();
 
@@ -547,43 +541,13 @@ public class PicksActivity extends AppCompatActivity  {
         adapterRecycler = new RecyclerView_Picks_Adapter(this, displayMatchListSplit);
         adapterRecycler.notifyDataSetChanged();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-/*        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
-        if (animator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-        }*/
         recyclerView.setAdapter(adapterRecycler);
 
 
         pick_progressbar_matches.setVisibility(View.GONE);
 
-/*        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(context, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
 
-
-
-                        Intent intent = new Intent(PicksActivity.this, MatchView.class);
-
-                        intent.putExtra( "MATCH_ID", matchListForThisDay.get(position).getDatetime() );
-                        intent.putExtra( "REGION", selected_region_name );
-                        intent.putExtra( "WINNER", matchListForThisDay.get(position).getWinner() );
-                        intent.putExtra( "TEAM1", matchListForThisDay.get(position).getTeam1() );
-                        intent.putExtra( "TEAM2", matchListForThisDay.get(position).getTeam2() );
-
-                        startActivity(intent);
-
-                    }
-
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-
-
-                    }
-                })
-        );*/
 
     }
 

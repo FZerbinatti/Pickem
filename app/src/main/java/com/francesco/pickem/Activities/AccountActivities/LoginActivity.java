@@ -150,6 +150,12 @@ public class LoginActivity extends AppCompatActivity {
                                     personalized_dialog_progressbar2.setProgressTintList(colorStateListGreen);
 
 
+                                    login_button.setEnabled(false);
+                                    login_email.setEnabled(false);
+                                    login_password.setEnabled(false);
+                                    go_to_registration.setEnabled(false);
+                                    forgot_password.setEnabled(false);
+
 
                                     Log.d(TAG, "onComplete: root non esiste");
 

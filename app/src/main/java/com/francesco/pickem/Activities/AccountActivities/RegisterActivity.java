@@ -14,6 +14,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,7 +44,7 @@ import java.util.ArrayList;
 public class RegisterActivity extends AppCompatActivity {
     TextView go_to_login;
     private FirebaseAuth mAuth;
-    EditText  register_email, register_password, register_repeat_password;
+    EditText  register_email, register_password, register_repeat_password, register_username;
     private  static String TAG ="RegisterActivity: ";
 
     Button button_register;
@@ -78,6 +79,12 @@ public class RegisterActivity extends AppCompatActivity {
         registration_show_regions = findViewById(R.id.registration_show_regions);
         collapsable_box_registration = findViewById(R.id.collapsable_box_registration);
         textView_selectRegion = findViewById(R.id.textView_selectRegion);
+        register_username = findViewById(R.id.register_username);
+
+
+
+
+
         context = this;
         File rootfolder = new File(getFilesDir()
                 + "/images");
@@ -120,6 +127,8 @@ public class RegisterActivity extends AppCompatActivity {
         goToLogin();
         registration();
         dropdownMenu();
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
@@ -289,7 +298,7 @@ public class RegisterActivity extends AppCompatActivity {
                         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
 
                             if (task.isSuccessful()) {
-                                UserGeneralities user = new UserGeneralities(email, "null", "null",-1, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid(), "22:00");
+                                UserGeneralities user = new UserGeneralities(email, "null",register_username.getText().toString()+"#"+((int)(Math.random()*9000)+1000),  "null",-1, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid(), "22:00");
                                 FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .child(getString(R.string.firebase_users_generealities))

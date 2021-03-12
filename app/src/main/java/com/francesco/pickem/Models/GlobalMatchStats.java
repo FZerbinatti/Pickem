@@ -3,17 +3,27 @@ package com.francesco.pickem.Models;
 public class GlobalMatchStats {
 
     String ended;
+    String winner;
     MatchSingleTeamStats team1;
     MatchSingleTeamStats team2;
 
-    public GlobalMatchStats(String ended, MatchSingleTeamStats team1, MatchSingleTeamStats team2) {
+    public GlobalMatchStats(String ended, String winner, MatchSingleTeamStats team1, MatchSingleTeamStats team2) {
         this.ended = ended;
+        this.winner = winner;
         this.team1 = team1;
         this.team2 = team2;
     }
 
     public GlobalMatchStats() {
 
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
     }
 
     public String getEnded() {

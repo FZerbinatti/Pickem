@@ -38,6 +38,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
+import com.francesco.pickem.Activities.AccountActivities.RegisterActivity;
 import com.francesco.pickem.Activities.SettingsActivities.InfoActivity;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
 import com.francesco.pickem.Activities.SettingsActivities.NotificationRegionActivity;
@@ -45,6 +46,7 @@ import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Adapters.SpinnerAdapter;
 import com.francesco.pickem.Annotation.NonNull;
+import com.francesco.pickem.BuildConfig;
 import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.Models.RegionServers;
@@ -62,6 +64,7 @@ import com.francesco.pickem.Services.Post_Elo;
 import com.francesco.pickem.Services.Post_Summoner;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.RecyclerItemClickListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -79,6 +82,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import retrofit2.Call;
@@ -95,7 +99,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String TAG ="SettingsActivity: ";
     private static final String NOTIFICATION_ID = "1";
     Context context;
-    ImageButton button_logout;
+    ImageButton button_logout, button_delete_account;
     private FirebaseUser user;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference reference;
@@ -104,7 +108,7 @@ public class SettingsActivity extends AppCompatActivity {
     RecyclerView settings_recycler_regioni;
     ListView settings_regions_listview;
     ScrollView parentScrollListener;
-    EditText edittext_summoner_name;
+    EditText edittext_summoner_name, edittext_username;
     Spinner spinner_choose_server;
     Button button_save_elotracker_info;
     SwitchCompat switch_elotracker, switch_automatic_elotracker;
@@ -155,6 +159,11 @@ public class SettingsActivity extends AppCompatActivity {
         switch_automatic_elotracker = findViewById(R.id.switch_automatic_elotracker);
         hour_elo_update = findViewById(R.id.hour_elo_update);
         elotracker_timer_text = findViewById(R.id.elotracker_timer_text);
+        button_delete_account = findViewById(R.id.button_delete_account);
+        edittext_username = findViewById(R.id.edittext_username);
+
+
+
 
 
 
@@ -162,6 +171,7 @@ public class SettingsActivity extends AppCompatActivity {
         userChoosenRegionsfromDB = new ArrayList<>();
 
         edittext_emailaddress.setFocusable(false);
+        edittext_username.setFocusable(false);
         edittext_emailaddress.setTextColor(Color.GRAY);
 
         edittext_summoner_name = findViewById(R.id.edittext_summoner_name);
@@ -171,7 +181,30 @@ public class SettingsActivity extends AppCompatActivity {
         show_elotracker_box = findViewById(R.id.show_elotracker_box);
         ArrayList<String> servers = new ArrayList<>();
 
+        clickListeners();
 
+
+
+
+
+        context = this;
+        infoButton();
+        setupBottomNavView();
+        buttonActions();
+        changeNavBarColor();
+        saveGeneralSettings();
+        saveEloTracker();
+
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+        userID = user.getUid();
+        Log.d(TAG, "onCreate: userID: "+userID);
+
+
+    }
+
+    private void clickListeners() {
 
         parentScrollListener.setOnTouchListener(new View.OnTouchListener() {
 
@@ -263,20 +296,46 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        button_delete_account.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog alertDialog = new AlertDialog.Builder(SettingsActivity.this).create();
+                alertDialog.setTitle("Delete Account");
+                alertDialog.setMessage("Are you sure you want to delete your account? This action is permanent.");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                String currentUSer = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        context = this;
-        infoButton();
-        setupBottomNavView();
-        buttonActions();
-        changeNavBarColor();
-        saveGeneralSettings();
-        saveEloTracker();
 
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
-        userID = user.getUid();
-        Log.d(TAG, "onCreate: userID: "+userID);
+                                Intent intent1 = new Intent(SettingsActivity.this, RegisterActivity.class);
+                                //PreferencesData.setUserLoggedInStatus(getApplicationContext(),false);
+                                Objects.requireNonNull(firebaseAuth.getCurrentUser()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+
+                                        FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                                .child(currentUSer)
+                                                .removeValue();
+
+                                        Toast.makeText(context, "Account Deleted.", Toast.LENGTH_SHORT).show();
+                                        startActivity(intent1);
+                                    }
+                                });
+
+
+                            }
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
 
 
     }
@@ -429,6 +488,7 @@ public class SettingsActivity extends AppCompatActivity {
                             String database_email = userProfile.getEmail();
 
                             edittext_emailaddress.setText(database_email);
+                            edittext_username.setText(userProfile.getUsername());
 
                             userChoosenRegionsfromDB = userProfile.getChoosen_regions();
                             old_choosen_regions.addAll(userChoosenRegionsfromDB);
@@ -489,7 +549,7 @@ public class SettingsActivity extends AppCompatActivity {
                     settings_progressbar.setVisibility(View.INVISIBLE);
                 }else {
 
-                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", "", -1,finalRegions, "", "");
+                    UserGeneralities userGeneralities = new UserGeneralities( edittext_emailaddress.getText().toString(),"", edittext_username.getText().toString(), "", -1,finalRegions, "", "");
                     updateUserGeneralities(userGeneralities);
                     databaseHelper = new DatabaseHelper(context);
 
@@ -851,7 +911,7 @@ public class SettingsActivity extends AppCompatActivity {
         /// https://euw1.api.riotgames.com
 
         //summoner name + api_key_path + API key
-        String end_path = summonerName + getString(R.string.key_request)+getString(R.string.RIOT_API_KEY);
+        String end_path = summonerName + getString(R.string.key_request)+ BuildConfig.RIOT_API_KEY;
 
 
         Log.d(TAG, "saveFirstElotracker: address: " +address + "/lol/summoner/v4/summoners/by-name/" +end_path);
@@ -868,7 +928,7 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(TAG, "saveFirstElotracker: passando a getPost: "+end_path);
         // devi passare a GetPost:    DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
         Log.d(TAG, "saveFirstElotracker: deve essere = "+"DEMACIA REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0");
-        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, getString(R.string.RIOT_API_KEY)) ;
+        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, BuildConfig.RIOT_API_KEY) ;
 
         callSummoner.enqueue(new Callback<Post_Summoner>() {
             @Override
@@ -884,7 +944,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                 JsonPlaceHolderAPI_Elo jsonPlaceHolderAPIElo = retrofit.create(JsonPlaceHolderAPI_Elo.class);
 
-                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), getString(R.string.RIOT_API_KEY) );
+                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), BuildConfig.RIOT_API_KEY );
                 callElo.enqueue(new Callback<List<Post_Elo>>() {
                     @Override
                     public void onResponse(Call<List<Post_Elo>> call, Response<List<Post_Elo>> response) {

@@ -2,7 +2,6 @@ package com.francesco.pickem.Models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MatchSingleTeamStats {
 
@@ -12,21 +11,21 @@ public class MatchSingleTeamStats {
     HashMap<String, MatchPlayersStats> participant;
     String teamCode;
     Integer totalGold;
-    Integer totalKills;
+    String totalKDA;
     Integer towers;
 
     public MatchSingleTeamStats() {
 
     }
 
-    public MatchSingleTeamStats(Integer barons, ArrayList<String> dragons, Integer inhibitors, HashMap<String, MatchPlayersStats> participant, String teamCode, Integer totalGold, Integer totalKills, Integer towers) {
+    public MatchSingleTeamStats(Integer barons, ArrayList<String> dragons, Integer inhibitors, HashMap<String, MatchPlayersStats> participant, String teamCode, Integer totalGold, String totalKDA, Integer towers) {
         this.barons = barons;
         this.dragons = dragons;
         this.inhibitors = inhibitors;
         this.participant = participant;
         this.teamCode = teamCode;
         this.totalGold = totalGold;
-        this.totalKills = totalKills;
+        this.totalKDA = totalKDA;
         this.towers = towers;
     }
 
@@ -39,9 +38,13 @@ public class MatchSingleTeamStats {
     }
 
 
+    public String getTotalKDA() {
+        return totalKDA;
+    }
 
-
-
+    public void setTotalKDA(String totalKDA) {
+        this.totalKDA = totalKDA;
+    }
 
     public ArrayList<String> getDragons() {
         return dragons;
@@ -58,8 +61,6 @@ public class MatchSingleTeamStats {
     public void setBarons(Integer barons) {
         this.barons = barons;
     }
-
-
 
     public Integer getInhibitors() {
         return inhibitors;
@@ -84,14 +85,6 @@ public class MatchSingleTeamStats {
 
     public void setTotalGold(Integer totalGold) {
         this.totalGold = totalGold;
-    }
-
-    public Integer getTotalKills() {
-        return totalKills;
-    }
-
-    public void setTotalKills(Integer totalKills) {
-        this.totalKills = totalKills;
     }
 
     public Integer getTowers() {

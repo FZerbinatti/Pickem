@@ -1,6 +1,5 @@
 package com.francesco.pickem.Activities.IndipendentActivities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -18,7 +17,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Models.GlobalMatchStats;
 import com.francesco.pickem.Models.MatchPlayersStats;
-import com.francesco.pickem.Models.MatchSingleTeamStats;
 import com.francesco.pickem.Models.Player;
 import com.francesco.pickem.R;
 import com.google.firebase.database.DataSnapshot;
@@ -73,14 +71,14 @@ public class MatchView extends AppCompatActivity {
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         context = this;
         imageTeamsPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_teams_images));
-
-
+        String match_winner ="";
 
         Intent intent = getIntent();
-
         String match_ID = intent.getStringExtra       ("MATCH_ID" );
         String match_region = intent.getStringExtra     ("REGION" );
-        String match_winner = intent.getStringExtra     ("WINNER" );
+        if (intent.hasExtra("WINNER")){
+            match_winner = intent.getStringExtra     ("WINNER" );
+        }
         String team1 = intent.getStringExtra     ("TEAM1" );
         String team2 = intent.getStringExtra     ("TEAM2" );
 
@@ -133,8 +131,6 @@ public class MatchView extends AppCompatActivity {
                 .child(match_ID);
 
 
-
-
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
@@ -151,11 +147,11 @@ public class MatchView extends AppCompatActivity {
                 team_1_total_gold.setText(globalMatchStats.getTeam1().getTotalGold().toString());
                 team_1_barons.setText(globalMatchStats.getTeam1().getBarons().toString());
                 team_1_inibitors.setText(globalMatchStats.getTeam1().getInhibitors().toString());
-                team_1_score.setText(globalMatchStats.getTeam1().getTotalKills().toString());
+                team_1_score.setText(globalMatchStats.getTeam1().getTotalKDA().toString());
                 team_2_total_gold.setText(globalMatchStats.getTeam2().getTotalGold().toString());
                 team_2_barons.setText(globalMatchStats.getTeam2().getBarons().toString());
                 team_2_inibitors.setText(globalMatchStats.getTeam2().getInhibitors().toString());
-                team_2_score.setText(globalMatchStats.getTeam2().getTotalKills().toString());
+                team_2_score.setText(globalMatchStats.getTeam2().getTotalKDA().toString());
 
                 //  T E A M    1
                 for(Map.Entry<String, MatchPlayersStats> entry: globalMatchStats.getTeam1().getParticipant().entrySet()) {
@@ -537,18 +533,23 @@ public class MatchView extends AppCompatActivity {
                 int count = (int) (dataSnapshot.getChildrenCount());
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Player player = snapshot.getValue(Player.class);
-                    Log.d(TAG, "onDataChange: player: "+player.getSummonerName());
+                    Log.d(TAG, "onDataChange: player: "+team +" - "+player.getSummonerName());
                     team1_players.add(player);
                 }
                 if (team1_players.size()==count){
-                    Log.d(TAG, "onDataChange: counter end.");
+                    Log.d(TAG, "onDataChange: counter end."+players.length + " / "+team1_players.size());
+
+
 
                     for(int i=0; i<players.length; i++){
                         String[] array = players[i].split(" ");
                         String playerName = array[1];
 
+
+
                         for(int j=0; j<team1_players.size(); j++){
                             if (team1_players.get(j).getSummonerName().equals(playerName)){
+                                Log.d(TAG, "onDataChange: image of the player: "+team1_players.get(j).getImage());
                                 if (i==0){
                                     Glide.with(context)
                                             .load(team1_players.get(j).getImage()) // Uri of the picture

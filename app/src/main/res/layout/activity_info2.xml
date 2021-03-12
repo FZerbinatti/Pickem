@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".Activities.SettingsActivities.InfoActivity">
+
+    <TextView
+        android:id="@+id/display_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:background="@drawable/square_round_corners"
+        android:fontFamily="@font/classicroman"
+        android:text="To appear in the Analysts list, please sent a message via twitter to @OfficialPickEm with the username you find in >Settings>AccountSettings,  Example: Blank#1234"
+
+        android:paddingVertical="10dp"
+        android:selectAllOnFocus="true"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+<!--
+    <Button
+        android:id="@+id/button_save_today_elotracking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/buttons_background_blue_stroke"
+        android:backgroundTint="@color/blue_light_opaque"
+        android:backgroundTintMode="add"
+        android:fontFamily="@font/classicroman"
+        android:paddingHorizontal="25dp"
+        android:paddingVertical="20dp"
+        android:text="Save today's progress"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_eloday_lps" />
+-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
