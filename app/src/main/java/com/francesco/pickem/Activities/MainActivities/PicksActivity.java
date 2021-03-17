@@ -360,6 +360,7 @@ public class PicksActivity extends AppCompatActivity  {
                         //vedi se hai gia inserito i dettagli per questo match in locale
 
                         if (!databaseHelper.teamsInsertedForRegionDateTime(selected_region_name, matchDetails.getDatetime())){
+
                             databaseHelper.insertMatchDetails(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                         }
                         if(!matchDetails.getWinner().equals(" ")){

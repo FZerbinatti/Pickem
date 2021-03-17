@@ -280,32 +280,45 @@ public class CalendarActivity extends AppCompatActivity{
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 int int_user_regions_selected = (int) dataSnapshot.getChildrenCount();
-                int counter = 0;
-                ArrayList <String> userRegions = new ArrayList<>();
-                selectedCalendarRegions = new ArrayList<>();
-                //prendi tutte le regioni di interesse dello user
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    counter++;
-                    String userRegion = snapshot.getValue(String.class);
-                    Log.d(TAG, "onDataChange: calendar region: "+userRegion);
-                    selectedCalendarRegions.add(userRegion);
-                    if (int_user_regions_selected==counter){
-                        if (selectedCalendarRegions.size()>0){
-                            // Actions to do after 10 seconds
-                            viewPagerRegions.setItemViewCacheSize(25);
-                            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-                            viewPagerRegions.setLayoutManager(layoutManager);
-                            adapterRegions = new Region_selection_Adapter_calendar(allRegions, imageRegionPath, context, selectedCalendarRegions);
-                            viewPagerRegions.setAdapter(adapterRegions);
-                            adapterRegions.notifyDataSetChanged();
+                if (int_user_regions_selected==0){
+                    viewPagerRegions.setItemViewCacheSize(25);
+                    selectedCalendarRegions = new ArrayList<>();
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                    viewPagerRegions.setLayoutManager(layoutManager);
+                    adapterRegions = new Region_selection_Adapter_calendar(allRegions, imageRegionPath, context, selectedCalendarRegions);
+                    viewPagerRegions.setAdapter(adapterRegions);
+                    adapterRegions.notifyDataSetChanged();
 
-                            calendar_progressbar.setVisibility(View.GONE);
+                    calendar_progressbar.setVisibility(View.GONE);
+                }else {
+                    int counter = 0;
+                    ArrayList <String> userRegions = new ArrayList<>();
+                    selectedCalendarRegions = new ArrayList<>();
+                    //prendi tutte le regioni di interesse dello user
+                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                        counter++;
+                        String userRegion = snapshot.getValue(String.class);
+                        Log.d(TAG, "onDataChange: calendar region: "+userRegion);
+                        selectedCalendarRegions.add(userRegion);
+                        if (int_user_regions_selected==counter){
+                            if (selectedCalendarRegions.size()>0){
+                                // Actions to do after 10 seconds
+                                viewPagerRegions.setItemViewCacheSize(25);
+                                LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+                                viewPagerRegions.setLayoutManager(layoutManager);
+                                adapterRegions = new Region_selection_Adapter_calendar(allRegions, imageRegionPath, context, selectedCalendarRegions);
+                                viewPagerRegions.setAdapter(adapterRegions);
+                                adapterRegions.notifyDataSetChanged();
 
-                            loadMatchesForThisLeagues(selectedCalendarRegions,0);
+                                calendar_progressbar.setVisibility(View.GONE);
+
+                                loadMatchesForThisLeagues(selectedCalendarRegions,0);
+                            }
                         }
-                    }
 
+                    }
                 }
+
             }
 
             @Override
@@ -415,10 +428,10 @@ public class CalendarActivity extends AppCompatActivity{
                                 }
 
                                 if (global_counter.getNumber().toString().equals(sum_all_matches_all_regions.getNumber().toString())){
-                               // if (global_counter.getNumber()==sum_all_matches_all_regions.getNumber()){
-                                    Handler handler = new Handler();
+
+/*                                    Handler handler = new Handler();
                                     handler.postDelayed(new Runnable() {
-                                        public void run() {
+                                        public void run() {*/
                                             // Actions to do after 10 seconds
 
                                             //Log.d(TAG, "onDataChange: global_counter.getNumber()==sum_all_matches_all_regions.getNumber() ");
@@ -430,8 +443,8 @@ public class CalendarActivity extends AppCompatActivity{
                                                 description_calendar.setText("No matches fond for: "+selectedDate);
                                                 progressbar_calendar.setVisibility(View.GONE);
                                             }
-                                        }
-                                    }, 1000);
+/*                                        }
+                                    }, 1000);*/
                                 }
                             }
                         }
@@ -540,9 +553,9 @@ public class CalendarActivity extends AppCompatActivity{
 
                                 if (global_counter.getNumber().toString().equals(sum_all_matches_all_regions.getNumber().toString())){
 
-                                    Handler handler = new Handler();
+/*                                    Handler handler = new Handler();
                                     handler.postDelayed(new Runnable() {
-                                        public void run() {
+                                        public void run() {*/
                                             // Actions to do after 10 seconds
 
                                             Log.d(TAG, "onDataChange: global_counter.getNumber()==sum_all_matches_all_regions.getNumber() ");
@@ -558,8 +571,8 @@ public class CalendarActivity extends AppCompatActivity{
 
 
 
-                                        }
-                                    }, 1000);
+/*                                        }
+                                    }, 1000);*/
 
 
                                 }

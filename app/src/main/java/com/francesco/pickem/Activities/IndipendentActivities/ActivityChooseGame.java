@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -70,6 +71,7 @@ public class ActivityChooseGame extends AppCompatActivity {
                 ArrayList<GlobalMatchStatsSimplified> allMatches = new ArrayList<>();
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     counter++;
+
                     GlobalMatchStats singleMatch = dataSnapshot.getValue(GlobalMatchStats.class);
 
                     GlobalMatchStatsSimplified globalMatchStatsSimplified = new GlobalMatchStatsSimplified();
@@ -79,6 +81,9 @@ public class ActivityChooseGame extends AppCompatActivity {
                     globalMatchStatsSimplified.setEnded(singleMatch.getEnded());
                     globalMatchStatsSimplified.setRegion(region);
                     globalMatchStatsSimplified.setYear(year);
+
+                    Log.d("TAG", "onDataChange: dioca "+singleMatch.getWinner().getWinner());
+                    globalMatchStatsSimplified.setWinner(singleMatch.getWinner().getWinner());
 
                     allMatches.add(globalMatchStatsSimplified);
                 }

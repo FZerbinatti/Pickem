@@ -23,10 +23,10 @@ import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Interfaces.OnGetDataListener;
 import com.francesco.pickem.Models.CurrentNumber;
 import com.francesco.pickem.Models.CurrentRegion;
-import com.francesco.pickem.Models.DisplayMatch;
 import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.MatchDetails;
-import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.SqliteMatch;
+import com.francesco.pickem.Models.Sqlite_HalfMatch;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
@@ -370,7 +370,7 @@ public class LoginActivity extends AppCompatActivity {
                         String userMatchPick = snapshot.getValue(String.class);
 
                         databaseHelper.updatePrediction(currentRegion.getRegion(), match_ID, userMatchPick);
-                        getWinnerOfThisMatch(currentRegion.getRegion(), match_ID);
+                        //getWinnerOfThisMatch(currentRegion.getRegion(), match_ID);
                     }
                 }
 
@@ -393,7 +393,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void getWinnerOfThisMatch(String region, String match_id) {
+/*    private void getWinnerOfThisMatch(String region, String match_id) {
         //if datetime elapsed, get winner of this match
         if (matchAlreadyElapsedQuestionMark(match_id)){
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_Matches))
@@ -417,7 +417,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-    }
+    }*/
 
     public boolean matchAlreadyElapsedQuestionMark(String datetime) {
 
@@ -486,10 +486,11 @@ public class LoginActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
 
                     // prendi tutti i giorni disponibili per quell'anno per quella regione
-                    String match_id = (snapshot.getKey());
+                    String match_id = snapshot.getKey();
+                    MatchDetails matchDetails = snapshot.getValue(MatchDetails.class);
                     String date =getLocalDateFromDateTime(match_id);
                     // pusha i match nell'SQL locale tabella Matches
-                    databaseHelper.insertMatch( new Sqlite_Match(year, currentRegion.getRegion(), date, match_id));
+                    databaseHelper.insertMatch( new SqliteMatch(year, currentRegion.getRegion(), date, match_id, matchDetails.getTeam1(), matchDetails.getTeam2(), matchDetails.getWinner()) );
                     //filtra tutti i match e ottieni solo i matchdays univoci
 
                     if (!date.equals(current_date)){

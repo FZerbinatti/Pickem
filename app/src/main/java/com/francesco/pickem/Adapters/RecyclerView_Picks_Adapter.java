@@ -288,6 +288,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                             Log.d(TAG, "onDataChange: childreN : " +children);
                             if (children==1){
                                 Intent intent = new Intent(context, MatchView.class);
+                                intent.putExtra( "GAME_NUMBER", "1" );
                                 intent.putExtra( "MATCH_ID", datetime );
                                 intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
                                 intent.putExtra( "WINNER", displayMatchDetailsList.get(getAdapterPosition()).getWinner() );
@@ -297,6 +298,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                                 context.startActivity(intent);
                             }else {
                                 Intent intent = new Intent(context, ActivityChooseGame.class);
+                                intent.putExtra( "MATCH_BO1", 0 );
                                 intent.putExtra( "MATCH_ID", datetime );
                                 intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
                                 intent.putExtra( "YEAR", year );
@@ -358,9 +360,18 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 match_prediction = dataSnapshot.getValue(String.class);
-                //Log.d(TAG, "onDataChange: match_prediction: "+match_prediction);
-                displayMatch.setPrediction(match_prediction);
-                loadDataWithPrediction(displayMatch, viewHolder);
+
+                if (match_prediction != null) {
+
+                    //Log.d(TAG, "onDataChange: match_prediction: "+match_prediction);
+                    displayMatch.setPrediction(match_prediction);
+                    loadDataWithPrediction(displayMatch, viewHolder);
+
+                    //databaseHelper= new DatabaseHelper(context);
+
+                    //databaseHelper.updatePrediction(displayMatch.getRegion(), displayMatch.getDatetime(), match_prediction);
+                }
+
 
             }
 

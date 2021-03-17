@@ -10,9 +10,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.francesco.pickem.Models.ItemAnalistRecyclerVIew;
+import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionStats;
 import com.francesco.pickem.Models.ImageValidator;
-import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.SqliteMatch;
+import com.francesco.pickem.Models.Sqlite_HalfMatch;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 
 import java.text.ParseException;
@@ -120,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertMatch(Sqlite_Match match){
+    public void insertBasicMatchData(Sqlite_HalfMatch match){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -139,7 +142,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void insertMatch(SqliteMatch match){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(YEAR, match.getYear());
+        cv.put(REGION, match.getRegion());
+        cv.put(DAY, match.getDay_id()  );
+        cv.put(MATCH_ID, match.getMatch_datetime()  );
+        cv.put(TEAM1, match.getTeam1());
+        cv.put(TEAM2, match.getTeam2());
+        cv.put(PREDICTION, "");
+        cv.put(WINNER, match.getWinner());
+
+        db.insert(TABLE_MATCHES, null, cv);
+        Log.d(TAG, "insertMatch: inserito: Year:  "+match.getYear()+ " Region: "+match.getRegion() +" Date: " +match.getDay_id()+" Datetime: " +match.getMatch_datetime()+" team1: " +match.getTeam1()+" team2: " +match.getTeam2()+" winner: " +match.getWinner() );
+        db.close();
+
+    }
+
+
+
     public void insertMatchDetails(String region, String dateTime, String team1, String team2){
+        Log.d(TAG, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB insertMatchDetails: ");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -152,23 +177,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<String> getTeamsForRegionMatchID(String region, String date){
-        Log.d(TAG, "getTeamsForRegionMatchID: "+region +" date: " +date);
-        ArrayList <String> teams = new ArrayList<>();
+    public ArrayList<ItemAnalistRecyclerVIew> getItemsAnalystRecyclerVIewForRegionMatchDay(String region, String date){
+        Log.d(TAG, "getItemsAnalystRecyclerVIewForRegionMatchDay: HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        ArrayList <ItemAnalistRecyclerVIew> simpleMAtches = new ArrayList<>();
+        Log.d(TAG, "getSimpleMatchForRegionMatchDay: "+region +" date: " +date);
+
         SQLiteDatabase db = this.getReadableDatabase();
-        String team1 = "";
-        String team2 = "";
-        //                                 0            1
-        String selectQuery = "SELECT "+ TEAM1 +" , " +TEAM2 +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + MATCH_ID + " = ? " ;
+
+        //                                 0                 1            2
+        String selectQuery = "SELECT "+ MATCH_ID +" , " + TEAM1 +" , " +TEAM2 +" FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? " ;
         Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
         //Log.d(TAG, "getTeamsForRegionMatchID: "+cursor.getCount());
         if (cursor.moveToFirst()) {
             do {
 
-                team1 = cursor.getString(0);
-                team2 = cursor.getString(1);
-                teams.add(team1);
-                teams.add(team2);
+                ItemAnalistRecyclerVIew simpleMatch = new ItemAnalistRecyclerVIew();
+                simpleMatch.setDatetime(cursor.getString(0));
+                simpleMatch.setTeam1(cursor.getString(1));
+                simpleMatch.setTeam2(cursor.getString(2));
+                simpleMatch.setPrediction("");
+                simpleMAtches.add(simpleMatch);
+                Log.d(TAG, "getItemsAnalystRecyclerVIewForRegionMatchDay: found."+simpleMatch.getTeam1() + " - " +simpleMatch.getTeam2()+ " datetime: " +simpleMatch.getDatetime());
+                Log.d(TAG, "getItemsAnalystRecyclerVIewForRegionMatchDay: found."+cursor.getString(1) + " - " +cursor.getString(2)+ " datetime: " +cursor.getString(0));
 
             } while (cursor.moveToNext());
         }
@@ -176,7 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        return teams;
+        return simpleMAtches;
     }
 /*
     public ArrayList<String> getIdMatchesForRegionsDate(ArrayList<String> regions, String date){
@@ -211,7 +241,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }*/
 
     public Boolean teamsInsertedForRegionDateTime(String region, String datetime){
-        Log.d(TAG, "teamsInsertedForRegionDay: "+ region + " datetime: "+ datetime);
+        Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA teamsInsertedForRegionDay: "+ region + " datetime: "+ datetime);
 
         SQLiteDatabase db = this.getReadableDatabase();
         String team1 = "";
@@ -228,7 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     Log.d(TAG, "teamsInsertedForRegionDay: - FALSE - THERE ARE NOT TEAMS INSERTED FOR THIS DATE");
                     return false;
                 }else {
-                    Log.d(TAG, "teamsInsertedForRegionDay: - TRUE -  THERE ARE TEAMS INSERTED FOR THIS DATE");
+                    Log.d(TAG, "teamsInsertedForRegionDay: - TRUE -  THERE ARE TEAMS INSERTED FOR THIS DATE: " +team1);
                     return true;
                 }
 
@@ -427,7 +457,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String prediction = cursor.getString(0);
                 String winner = cursor.getString(1);
 
-                if (!prediction.equals("") && !winner.equals("")){
+                Log.d(TAG, "getGlobalStats: prediction: " +prediction + " - winner: "+ winner );
+
+                if (!prediction.equals("") && !winner.equals("") && winner!=null){
                     counter_total+=1;
 
                     if (prediction.equals(winner)){

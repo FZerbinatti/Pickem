@@ -159,11 +159,14 @@ public class RecyclerView_ChooseGame_Adapter extends RecyclerView.Adapter <Recyc
                 public void onClick(View view) {
 
                     Intent intent = new Intent(context, MatchView.class);
-                    intent.putExtra( "MATCH_ID", displayMatchDetailsList.get(getAdapterPosition()).getMatch_id() );
+                    intent.putExtra( "GAME_NUMBER", String.valueOf(getAdapterPosition()+1) );
+                    intent.putExtra( "MATCH_ID", displayMatchDetailsList.get(getAdapterPosition()).getDatetime() );
                     intent.putExtra( "REGION", displayMatchDetailsList.get(getAdapterPosition()).getRegion() );
                     intent.putExtra( "WINNER", displayMatchDetailsList.get(getAdapterPosition()).getWinner() );
                     intent.putExtra( "TEAM1", displayMatchDetailsList.get(getAdapterPosition()).getTeam1().getTeamCode() );
                     intent.putExtra( "TEAM2", displayMatchDetailsList.get(getAdapterPosition()).getTeam2().getTeamCode() );
+
+                    Log.d(TAG, "onCreate: matchID" + displayMatchDetailsList.get(getAdapterPosition()).getMatch_id() + " region: " + displayMatchDetailsList.get(getAdapterPosition()).getRegion()+ " winner: " +  displayMatchDetailsList.get(getAdapterPosition()).getWinner() +" position: "+getAdapterPosition());
 
                     context.startActivity(intent);
 

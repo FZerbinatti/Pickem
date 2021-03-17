@@ -10,20 +10,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.text.format.Time;
 import android.util.Log;
 
-import androidx.annotation.LongDef;
-import androidx.annotation.NonNull;
-
-import com.francesco.pickem.Interfaces.OnGetDataListener;
 import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.MatchNotification;
 import com.francesco.pickem.Models.RegionNotifications;
-import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.Sqlite_HalfMatch;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.R;
@@ -49,7 +44,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -112,7 +106,7 @@ public class BackgroundTasks extends JobService {
 
                 break;
             case 4:
-                startAlarmManager7AM();
+                //startAlarmManager7AM();
                 break;
         }
 
@@ -259,7 +253,7 @@ public class BackgroundTasks extends JobService {
 
                                 String date = getLocalDateFromDateTime(cloudmatchDays.get(i));
                                 // pusha i match nell'SQL locale tabella Matches
-                                databaseHelper.insertMatch( new Sqlite_Match(year, currentRegion.getRegion(), date, cloudmatchDays.get(i)));
+                                databaseHelper.insertBasicMatchData( new Sqlite_HalfMatch(year, currentRegion.getRegion(), date, cloudmatchDays.get(i)));
                                 //filtra tutti i match e ottieni solo i matchdays univoci
 
                                 if (!date.equals(current_date)){

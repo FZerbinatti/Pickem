@@ -61,6 +61,8 @@ public class MatchView extends AppCompatActivity {
 
     ArrayList <Player> team1_players;
     ArrayList <Player> team2_players;
+    String match_winner;
+    String game_number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,64 +73,46 @@ public class MatchView extends AppCompatActivity {
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         context = this;
         imageTeamsPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_teams_images));
-        String match_winner ="";
+        match_winner ="null";
 
         Intent intent = getIntent();
+
+        game_number = "game_"+intent.getStringExtra("GAME_NUMBER");
+
+
         String match_ID = intent.getStringExtra       ("MATCH_ID" );
         String match_region = intent.getStringExtra     ("REGION" );
         if (intent.hasExtra("WINNER")){
             match_winner = intent.getStringExtra     ("WINNER" );
+            Log.d(TAG, "onCreate: WINNER: "+match_winner);
         }
-        String team1 = intent.getStringExtra     ("TEAM1" );
-        String team2 = intent.getStringExtra     ("TEAM2" );
+        //String team1 = intent.getStringExtra     ("TEAM1" );
+        //String team2 = intent.getStringExtra     ("TEAM2" );
 
         Log.d(TAG, "onCreate: " + match_ID + " region: " + match_region+ " winner: " + match_winner);
 
-        RequestOptions options = new RequestOptions()
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .error(R.drawable.ic_load);
 
-        Log.d(TAG, "onCreate: path: "+ imageTeamsPath+team1);
 
-        Glide.with(context)
-                .load(new File(imageTeamsPath +team1+".png")) // Uri of the picture
-                .apply(options)
-                .transition(DrawableTransitionOptions.withCrossFade(500))
-                .into(team_1_logo);
-
-        Glide.with(context)
-                .load(new File(imageTeamsPath +team2+".png")) // Uri of the picture
-                .apply(options)
-                .transition(DrawableTransitionOptions.withCrossFade(500))
-                .into(team_2_logo);
-
-        if (match_winner.equals(team1)){
-            team_1_win.setVisibility(View.VISIBLE);
-            team_2_loss.setVisibility(View.VISIBLE);
-        }else {
-            team_2_win.setVisibility(View.VISIBLE);
-            team_1_loss.setVisibility(View.VISIBLE);
-        }
-
-        downloadMatchStats(match_region, match_ID, team1, team2);
+        downloadMatchStats(match_region, match_ID);
 
     }
 
-    private void downloadMatchStats(String region,  String match_ID, String team1, String team2) {
+    private void downloadMatchStats(String region,  String match_ID) {
 
         RequestOptions options = new RequestOptions()
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .error(R.drawable.ic_load);
+
+        Log.d(TAG, "downloadMatchStats: game number: "+game_number);
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_statistics))
                 .child(region)
                 .child(region+year)
                 .child(getString(R.string.firebase_matches_stats))
-                .child(match_ID);
+                .child(match_ID)
+                .child(game_number);
 
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -143,15 +127,48 @@ public class MatchView extends AppCompatActivity {
                 Log.d(TAG, "onDataChange: "+globalMatchStats.getTeam1().getTeamCode()+ " "+ globalMatchStats.getTeam2().getTeamCode());
                 tv_matchtime.setText(globalMatchStats.getEnded().toString());
 
+                RequestOptions options = new RequestOptions()
+                        .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .error(R.drawable.ic_load);
+
+                String team1 = globalMatchStats.getTeam1().getTeamCode();
+                String team2 = globalMatchStats.getTeam2().getTeamCode();
+
+                Log.d(TAG, "onCreate: path: "+ imageTeamsPath+team1);
+
+                Glide.with(context)
+                        .load(new File(imageTeamsPath +team1+".png")) // Uri of the picture
+                        .apply(options)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(team_1_logo);
+
+                Glide.with(context)
+                        .load(new File(imageTeamsPath +team2+".png")) // Uri of the picture
+                        .apply(options)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(team_2_logo);
+
+                if (match_winner.equals(team1)){
+                    team_1_win.setVisibility(View.VISIBLE);
+                    team_2_loss.setVisibility(View.VISIBLE);
+                }else {
+                    team_2_win.setVisibility(View.VISIBLE);
+                    team_1_loss.setVisibility(View.VISIBLE);
+                }
+
+
+
                 // G L O B A L    S T A T S
                 team_1_total_gold.setText(globalMatchStats.getTeam1().getTotalGold().toString());
                 team_1_barons.setText(globalMatchStats.getTeam1().getBarons().toString());
                 team_1_inibitors.setText(globalMatchStats.getTeam1().getInhibitors().toString());
-                team_1_score.setText(globalMatchStats.getTeam1().getTotalKDA().toString());
+                team_1_score.setText(globalMatchStats.getTeam1().getTotalKDA().replace("a","/"));
                 team_2_total_gold.setText(globalMatchStats.getTeam2().getTotalGold().toString());
                 team_2_barons.setText(globalMatchStats.getTeam2().getBarons().toString());
                 team_2_inibitors.setText(globalMatchStats.getTeam2().getInhibitors().toString());
-                team_2_score.setText(globalMatchStats.getTeam2().getTotalKDA().toString());
+                team_2_score.setText(globalMatchStats.getTeam2().getTotalKDA().replace("a","/"));
 
                 //  T E A M    1
                 for(Map.Entry<String, MatchPlayersStats> entry: globalMatchStats.getTeam1().getParticipant().entrySet()) {

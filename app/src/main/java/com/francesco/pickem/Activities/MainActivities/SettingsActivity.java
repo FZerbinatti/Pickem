@@ -42,7 +42,6 @@ import com.francesco.pickem.Activities.AccountActivities.RegisterActivity;
 import com.francesco.pickem.Activities.SettingsActivities.InfoActivity;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
 import com.francesco.pickem.Activities.SettingsActivities.NotificationRegionActivity;
-import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Adapters.SpinnerAdapter;
 import com.francesco.pickem.Annotation.NonNull;
@@ -51,7 +50,7 @@ import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.EloTracker;
 import com.francesco.pickem.Models.RegionServers;
 import com.francesco.pickem.Models.SimpleRegion;
-import com.francesco.pickem.Models.Sqlite_Match;
+import com.francesco.pickem.Models.Sqlite_HalfMatch;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
@@ -565,6 +564,7 @@ public class SettingsActivity extends AppCompatActivity {
                     for(int i = 0; i< removed_regions.size(); i++){
                         Log.d(TAG, "REMOVING SQL MATCHES FOR THIS REGION: "+ removed_regions.get(i));
                         databaseHelper.removeFromDatabase(removed_regions.get(i));
+
                     }
 
 
@@ -1147,7 +1147,7 @@ public class SettingsActivity extends AppCompatActivity {
                     String match_id = (snapshot.getKey());
                     String date =getLocalDateFromDateTime(match_id);
                     // pusha i match nell'SQL locale tabella Matches
-                    databaseHelper.insertMatch( new Sqlite_Match(year,currentRegion.getRegion(), date, match_id));
+                    databaseHelper.insertBasicMatchData( new Sqlite_HalfMatch(year,currentRegion.getRegion(), date, match_id));
                     //filtra tutti i match e ottieni solo i matchdays univoci
 
                     if (!date.equals(current_date)){

@@ -147,6 +147,6 @@ public class MatchDetails implements Comparable<MatchDetails>{
             }
 
             return matchDateTime2.before(matchDateTime1) ? 1 :(matchDateTime1.before(matchDateTime2) ? -1 :0);
+            }
         }
-    }
 }
