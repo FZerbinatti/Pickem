@@ -1,20 +1,36 @@
 package com.francesco.pickem.Models;
 
-public class AnalistPerson {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+
+public class AnalistPersonChoosen implements Comparator<AnalistPersonChoosen>{
     String image;
     String region;
     String userId;
     String username;
+    Boolean choosen;
 
-    public AnalistPerson() {
+    public AnalistPersonChoosen() {
 
     }
 
-    public AnalistPerson(String image, String region, String userId, String username) {
+    public AnalistPersonChoosen(String image, String region, String userId, String username, Boolean choosen) {
         this.image = image;
         this.region = region;
         this.userId = userId;
         this.username = username;
+        this.choosen = choosen;
+    }
+
+    public Boolean getChoosen() {
+        return choosen;
+    }
+
+    public void setChoosen(Boolean choosen) {
+        this.choosen = choosen;
     }
 
     public String getImage() {
@@ -48,4 +64,14 @@ public class AnalistPerson {
     public void setUsername(String username) {
         this.username = username;
     }
+
+
+
+
+    @Override
+    public int compare(AnalistPersonChoosen analistPersonChoosen, AnalistPersonChoosen t1) {
+        return 0;
+    }
+
+
 }

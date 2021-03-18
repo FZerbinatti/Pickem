@@ -1,26 +1,34 @@
 package com.francesco.pickem.Activities.Statistics;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.francesco.pickem.Activities.SettingsActivities.InfoActivity2;
-import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
+import com.francesco.pickem.Adapters.ChooseAnalystRecyclerViewAdapter;
 import com.francesco.pickem.Models.AnalistPerson;
-import com.francesco.pickem.Models.SimpleRegion;
+import com.francesco.pickem.Models.AnalistPersonChoosen;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,6 +41,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AddAnalystActivity extends AppCompatActivity {
 
@@ -41,40 +51,79 @@ public class AddAnalystActivity extends AppCompatActivity {
     ListView add_analysts_serverlist;
     TextView analyst_request;
     ImageButton back_arrow;
-
+    ChooseAnalystRecyclerViewAdapter adapter;
     ArrayList<String> finalAnalysts;
     ArrayList <AnalistPerson> analists;
     ArrayList<String>userAnalysts;
     Context context;
     TextView analyst_save;
     String serverSelected="";
-    ArrayList <SimpleRegion> analists_of_region;
-    ArrayList<SimpleRegion> all_analysts_for_this_region;
+    EditText edittext_choose_analyst;
+    ImageButton analyst_search;
 
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_analyst);
         back_arrow = findViewById(R.id.back_arrow);
-
         analyst_request = findViewById(R.id.analyst_request);
-        add_analysts_serverlist = findViewById(R.id.add_analysts_serverlist);
         analyst_save= findViewById(R.id.analyst_save);
+/*        edittext_choose_analyst = findViewById(R.id.edittext_choose_analyst);
+        analyst_search= findViewById(R.id.analyst_search);*/
         analists = new ArrayList<>();
         context = this;
 
+        Toast.makeText(context, "Long Press to select", Toast.LENGTH_SHORT).show();
 
 
         actionButton();
 
-
-
         getUserAnalysts();
+
+/*        edittext_choose_analyst.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                analyst_request.setVisibility(View.GONE);
+                analyst_save.setVisibility(View.GONE);
+                return false;
+            }
+        });*/
+
+
+
 
 
     }
 
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
     private void actionButton() {
+
+/*        analyst_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                analyst_request.setVisibility(View.VISIBLE);
+                analyst_save.setVisibility(View.VISIBLE);
+                hideKeyboard(AddAnalystActivity.this);
+
+                //
+
+
+            }
+        });*/
+
 
         back_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,7 +196,7 @@ public class AddAnalystActivity extends AppCompatActivity {
                 }
                 if (interazione == count){
                     Log.d(TAG, "onDataChange: number of analysts: " +analists.size());
-                    getAllAnalysts();
+                    getAllAnalysts(userAnalysts);
                 }
             }
 
@@ -159,10 +208,11 @@ public class AddAnalystActivity extends AppCompatActivity {
 
     }
 
-    private void getAllAnalysts(){
+    private void getAllAnalysts(ArrayList<String>userChoosenAnalysts){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_analysts));
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Integer interazione =0;
@@ -175,7 +225,7 @@ public class AddAnalystActivity extends AppCompatActivity {
                 }
                 if (interazione == count){
                     Log.d(TAG, "onDataChange: number of analysts: " +analists.size());
-                    getAllServers();
+                    loadListviewAnalists(analists,userChoosenAnalysts);
                 }
 
             }
@@ -187,89 +237,47 @@ public class AddAnalystActivity extends AppCompatActivity {
         });
     }
 
-    public void  getAllServers(){
-        Log.d(TAG, "getAllRegions: ");
 
-        ArrayList<String> regions = new ArrayList<>();
 
-        // load da firebase le regioni
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_servers));
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void loadListviewAnalists(ArrayList<AnalistPerson> all_analysts_for_this_region, ArrayList<String>userChoosenAnalysts) {
 
-                    // tutti i team di quella regione, prendi solo il nome
-                    String regionName = snapshot.getKey().toString();
-                    Log.d(TAG, "onDataChange: regionName: "+regionName);
-                    regions.add(regionName);
-                }
-                loadListview(regions);
+        ArrayList <AnalistPersonChoosen> allAnalystsToDisplay = new ArrayList<>();
 
+        for(int i=0; i<all_analysts_for_this_region.size(); i++){
+
+            if (userChoosenAnalysts.contains(all_analysts_for_this_region.get(i).getUsername())){
+                allAnalystsToDisplay.add(new AnalistPersonChoosen(
+                        all_analysts_for_this_region.get(i).getImage(),
+                        all_analysts_for_this_region.get(i).getRegion(),
+                        all_analysts_for_this_region.get(i).getUserId(),
+                        all_analysts_for_this_region.get(i).getUsername(),
+                        true
+                ));
+            }else {
+                allAnalystsToDisplay.add(new AnalistPersonChoosen(
+                        all_analysts_for_this_region.get(i).getImage(),
+                        all_analysts_for_this_region.get(i).getRegion(),
+                        all_analysts_for_this_region.get(i).getUserId(),
+                        all_analysts_for_this_region.get(i).getUsername(),
+                        false
+                ));
             }
-
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        Log.d(TAG, "getAllRegions: regions.size(): "+regions.size());
-
-    }
-
-    private void loadListview(ArrayList<String> allRegions) {
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                allRegions );
-
-
-
-        add_analysts_serverlist.setAdapter(arrayAdapter);
-
-        add_analysts_serverlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String stringRegionSelected = allRegions.get(position);
-                serverSelected=stringRegionSelected;
-                all_analysts_for_this_region = new ArrayList<>();
-                loadAnalystsForThisRegion(stringRegionSelected);
-
-
-            }
-        });
-
-    }
-
-    private void loadAnalystsForThisRegion(String regionSelected) {
-
-        analists_of_region = new ArrayList<>();
-        for(int i=0; i<analists.size(); i++){
-
-            if (analists.get(i).getRegion().equals(regionSelected)){
-                if (userAnalysts.contains(analists.get(i).getUsername())){
-                    analists_of_region.add(new SimpleRegion(analists.get(i).getUsername(), true));
-                }else {
-                    analists_of_region.add(new SimpleRegion(analists.get(i).getUsername(), false));
-                }
-
-            }
-
         }
-        Log.d(TAG, "loadAnalystsForThisRegion: analists_of_region.size()= " +analists_of_region.size());
-        loadListviewAnalistThiRegion(analists_of_region);
 
-    }
+        Collections.sort(allAnalystsToDisplay, new Comparator<AnalistPersonChoosen>() {
+            public int compare(AnalistPersonChoosen v1, AnalistPersonChoosen v2) {
+                return v1.getRegion().compareTo(v2.getRegion());
+            }
+        });
 
-    private void loadListviewAnalistThiRegion(ArrayList<SimpleRegion> all_analysts_for_this_region) {
+
 
         add_analysts_list = findViewById(R.id.add_analysts_list);
-        Log.d(TAG, "all_analysts_for_this_region: "+ all_analysts_for_this_region.size());
+
         add_analysts_list.setLayoutManager(new LinearLayoutManager(this));
-        SimpleRegionRecyclerViewAdapter adapter = new SimpleRegionRecyclerViewAdapter(getApplicationContext(), all_analysts_for_this_region);
-        adapter.notifyDataSetChanged();
+        adapter = new ChooseAnalystRecyclerViewAdapter(getApplicationContext(), allAnalystsToDisplay);
+        //adapter.notifyDataSetChanged();
         add_analysts_list.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -281,35 +289,27 @@ public class AddAnalystActivity extends AppCompatActivity {
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
-                        Log.d(TAG, "onLongItemClick: "+position );
-                        Log.d(TAG, "onLongItemClick: "+all_analysts_for_this_region.get(position).getName());
-                        Log.d(TAG, "onLongItemClick: "+all_analysts_for_this_region.get(position).getChecked());
-                        if (all_analysts_for_this_region.get(position).getChecked()){
-                            Log.d(TAG, "onLongItemClick: is checked");
-                        }else {
-                            Log.d(TAG, "onLongItemClick: is not checked");
-                        }
 
-/*
-                        if (all_analysts_for_this_region.get(position).getChecked()){
-                            all_analysts_for_this_region.get(position).setChecked(false);
+
+                        if (allAnalystsToDisplay.get(position).getChoosen()){
+                            allAnalystsToDisplay.get(position).setChoosen(false);
                             adapter.notifyDataSetChanged();
                             //Log.d(TAG, "onLongItemClick: false");
-                            if (finalAnalysts.contains(all_analysts_for_this_region.get(position).getName())){
-                                finalAnalysts.remove(all_analysts_for_this_region.get(position).getName());
+                            if (finalAnalysts.contains(allAnalystsToDisplay.get(position).getUsername())){
+                                finalAnalysts.remove(allAnalystsToDisplay.get(position).getUsername());
                             }
                         }else {
-                            all_analysts_for_this_region.get(position).setChecked(true);
+                            allAnalystsToDisplay.get(position).setChoosen(true);
                             //Log.d(TAG, "onLongItemClick: true");
                             adapter.notifyDataSetChanged();
-                            finalAnalysts.add(all_analysts_for_this_region.get(position).getName());
+                            finalAnalysts.add(allAnalystsToDisplay.get(position).getUsername());
 
 
 
                         }
 
 
-*/
+
 
 
                     }

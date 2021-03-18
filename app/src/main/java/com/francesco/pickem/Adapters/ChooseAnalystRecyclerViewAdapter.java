@@ -5,20 +5,23 @@ import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.francesco.pickem.Models.SimpleRegion;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.francesco.pickem.Models.AnalistPersonChoosen;
 import com.francesco.pickem.R;
 
 import java.util.ArrayList;
 
 public class ChooseAnalystRecyclerViewAdapter extends RecyclerView.Adapter<ChooseAnalystRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<SimpleRegion> regionList;
+    private ArrayList<AnalistPersonChoosen> analystsList;
     private Context context;
 
     LayoutInflater mInflater;
@@ -27,16 +30,16 @@ public class ChooseAnalystRecyclerViewAdapter extends RecyclerView.Adapter<Choos
     static  String TAG = "EloTrackerRecyclerViewAdapter: ";
 
     // data is passed into the constructor
-    public ChooseAnalystRecyclerViewAdapter(Context context, ArrayList<SimpleRegion> regionList) {
+    public ChooseAnalystRecyclerViewAdapter(Context context, ArrayList<AnalistPersonChoosen> analystsList) {
         this.mInflater = LayoutInflater.from(context);
-        this.regionList = regionList;
+        this.analystsList = analystsList;
         this.context = context;
     }
 
     // inflates the row layout from xml when needed
     @Override
     public ChooseAnalystRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.region_picker_item, parent, false);
+        View view = mInflater.inflate(R.layout.analyst_picker_item, parent, false);
         return new ChooseAnalystRecyclerViewAdapter.ViewHolder(view);
     }
 
@@ -45,86 +48,62 @@ public class ChooseAnalystRecyclerViewAdapter extends RecyclerView.Adapter<Choos
     @Override
     public void onBindViewHolder(ChooseAnalystRecyclerViewAdapter.ViewHolder holder, int position) {
 
+        String image_link = analystsList.get(position).getImage();
+        String analyst_name = analystsList.get(position).getUsername();
+        String analyst_region = analystsList.get(position).getRegion();
+        Boolean analyst_selected = analystsList.get(position).getChoosen();
 
-        String region_name = regionList.get(position).getName();
-        Boolean region_selected = regionList.get(position).getChecked();
+        holder.analyst_name.setText(analyst_name);
+        holder.analyst_region.setText(analyst_region);
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .skipMemoryCache(false)
+                .error(R.drawable.ic_loading_error);
+
+        Glide
+                .with(context)
+                .load(image_link)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .placeholder(R.drawable.background_round_corners)
+                .apply(options)
+                .into(holder.analyst_image);
 
 
-        holder.item_regionList_name.setText(region_name);
 
-
-
-        if(region_selected){
-            ColorStateList colorStateListGreen = ContextCompat.getColorStateList(holder.region_picker_region_background.getContext(), R.color.material_green);
-            holder.region_picker_region_background.setBackgroundTintList(colorStateListGreen);
+        if(analyst_selected){
+            ColorStateList colorStateListGreen = ContextCompat.getColorStateList(holder.analyst_picker_region_background.getContext(), R.color.material_green);
+            holder.analyst_picker_region_background.setBackgroundTintList(colorStateListGreen);
         } else {
-            ColorStateList colorStateListRed = ContextCompat.getColorStateList(holder.region_picker_region_background.getContext(), R.color.material_red);
-            holder.region_picker_region_background.setBackgroundTintList(colorStateListRed);
+            ColorStateList colorStateListRed = ContextCompat.getColorStateList(holder.analyst_picker_region_background.getContext(), R.color.material_red);
+            holder.analyst_picker_region_background.setBackgroundTintList(colorStateListRed);
         }
-
-/*        holder.region_picker_region_background.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (regionList.get(position).getChecked()){
-                    Log.d(TAG, "onClick: was true now false");
-
-                    regionList.get(position).setChecked(false);
-                }else {
-                    Log.d(TAG, "onClick: was false now true");
-                    regionList.get(position).setChecked(true);
-                }
-                notifyDataSetChanged();
-                return false;
-            }
-        });*/
-
-
-
-
 
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return regionList.size();
+        return analystsList.size();
     }
 
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder  {
-        TextView item_regionList_name;
-        ConstraintLayout region_picker_region_background;
+        TextView analyst_name;
+        ImageView analyst_image;
+        TextView analyst_region;
+        ConstraintLayout analyst_picker_region_background;
 
 
         ViewHolder(View itemView) {
             super(itemView);
-            item_regionList_name = itemView.findViewById(R.id.region_picker_region_name);
-            region_picker_region_background = itemView.findViewById(R.id.region_picker_region_background);
+            analyst_name = itemView.findViewById(R.id.choose_analyst_name);
+            analyst_image = itemView.findViewById(R.id.choose_analyst_imageview);
+            analyst_region = itemView.findViewById(R.id.choose_analyst_region);
+            analyst_picker_region_background = itemView.findViewById(R.id.analyst_picker_region_background);
 
-            //itemView.setOnClickListener(this);
-/*            itemView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    int pos = getAdapterPosition();
-                    if (pos !=  RecyclerView.NO_POSITION){
-                        SimpleRegion simpleRegion = regionList.get(pos);
-
-                        if (simpleRegion.getChecked()){
-                            Log.d(TAG, "onClick: was true now false");
-
-                            simpleRegion.setChecked(false);
-                        }else {
-                            Log.d(TAG, "onClick: was false now true");
-                            simpleRegion.setChecked(true);
-                        }
-
-                    }
-                    return false;
-                }
-
-
-            });*/
         }
 
 
@@ -132,7 +111,7 @@ public class ChooseAnalystRecyclerViewAdapter extends RecyclerView.Adapter<Choos
 
     // convenience method for getting data at click position
     String getItem(int id) {
-        return regionList.get(id).getName();
+        return analystsList.get(id).getUserId();
     }
 
     // allows clicks events to be caught
