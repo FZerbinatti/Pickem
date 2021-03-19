@@ -673,7 +673,9 @@ public class PicksActivity extends AppCompatActivity  {
 
 
 
+
     }
+
 
     public boolean isNetworkAvailable() {
         ConnectivityManager manager =

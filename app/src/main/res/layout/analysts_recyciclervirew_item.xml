@@ -11,14 +11,14 @@
         android:id="@+id/item_logo_team1"
         android:layout_width="@dimen/calendar_icons_dimens2"
         android:layout_height="@dimen/calendar_icons_dimens2"
+        android:layout_marginEnd="30dp"
         android:background="@drawable/background_round_corners_smol"
         android:padding="3dp"
-        android:layout_marginEnd="30dp"
         android:src="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/analysts_item_vs"
         app:layout_constraintEnd_toStartOf="@+id/analysts_item_vs"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/analysts_item_time" />
+        app:layout_constraintTop_toTopOf="@+id/analysts_item_vs" />
 
     <TextView
         android:id="@+id/analysts_item_team1"
@@ -49,15 +49,16 @@
 
     <TextView
         android:id="@+id/analysts_item_vs"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="vs"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/item_logo_team1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/item_logo_team2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/item_logo_team1"
-        app:layout_constraintTop_toTopOf="@+id/item_logo_team1" />
+        app:layout_constraintTop_toBottomOf="@+id/analysts_item_time" />
 
 
     <ImageView
@@ -66,11 +67,12 @@
         android:layout_height="@dimen/calendar_icons_dimens2"
         android:layout_marginStart="30dp"
         android:background="@drawable/background_round_corners_smol"
-        android:padding="3dp"
+        android:padding="4dp"
         android:src="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/analysts_item_vs"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/analysts_item_vs"
-        app:layout_constraintTop_toBottomOf="@+id/analysts_item_time" />
+        app:layout_constraintTop_toTopOf="@+id/analysts_item_vs" />
 
 
     <TextView
@@ -97,13 +99,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+<!--
     <ImageView
         android:id="@+id/item_logo_team_predicted"
         android:layout_width="@dimen/calendar_icons_dimens2"
         android:layout_height="@dimen/calendar_icons_dimens2"
         android:background="@drawable/background_round_corners_smol"
         android:padding="3dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:src="@color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,13 +119,44 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/classicroman"
         android:text="Terenas"
-        android:visibility="gone"
         android:textColor="@color/blue_light_opaque"
         android:textSize="20sp"
         android:layout_marginStart="10dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_1"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/transparent"
+        android:elevation="12dp"
+        android:innerRadius="0dp"
+        android:shape="rectangle"
+        android:thicknessRatio="2.0"
+        android:visibility="invisible"
+        app:cardCornerRadius="5dp"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/analysts_item_name"
+        app:layout_constraintStart_toEndOf="@+id/item_logo_team_predicted"
+        app:layout_constraintTop_toTopOf="@+id/analysts_item_name">
+
+        <ImageView
+            android:id="@+id/analyst_imageview"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.cardview.widget.CardView>
+-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

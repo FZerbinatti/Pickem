@@ -135,7 +135,6 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                      //se non hai network, torna a chiamrare la stessa cosa tra mezzora
 
-
                      ConnectivityManager connMgr = (ConnectivityManager) context
                              .getSystemService(Context.CONNECTIVITY_SERVICE);
                      NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -218,7 +217,7 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                          alarmMgr0 = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                          PendingIntent pendingIntent0 = PendingIntent.getBroadcast( context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                         alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (30*60*1000), pendingIntent0);
+                         alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (15*60*1000), pendingIntent0);
                      }
 
                  }

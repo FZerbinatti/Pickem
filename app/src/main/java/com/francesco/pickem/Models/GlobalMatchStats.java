@@ -5,25 +5,17 @@ public class GlobalMatchStats {
     String ended;
     MatchSingleTeamStats team1;
     MatchSingleTeamStats team2;
-    ObjectString winner;
+    String winner;
 
-    public GlobalMatchStats(String ended, ObjectString winner, MatchSingleTeamStats team1, MatchSingleTeamStats team2) {
+    public GlobalMatchStats(String ended, MatchSingleTeamStats team1, MatchSingleTeamStats team2, String winner) {
         this.ended = ended;
-        this.winner = winner;
         this.team1 = team1;
         this.team2 = team2;
+        this.winner = winner;
     }
 
     public GlobalMatchStats() {
 
-    }
-
-    public ObjectString getWinner() {
-        return winner;
-    }
-
-    public void setWinner(ObjectString winner) {
-        this.winner = winner;
     }
 
     public String getEnded() {
@@ -48,5 +40,13 @@ public class GlobalMatchStats {
 
     public void setTeam2(MatchSingleTeamStats team2) {
         this.team2 = team2;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
     }
 }

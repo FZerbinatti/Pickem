@@ -82,8 +82,8 @@ public class ActivityChooseGame extends AppCompatActivity {
                     globalMatchStatsSimplified.setRegion(region);
                     globalMatchStatsSimplified.setYear(year);
 
-                    Log.d("TAG", "onDataChange: dioca "+singleMatch.getWinner().getWinner());
-                    globalMatchStatsSimplified.setWinner(singleMatch.getWinner().getWinner());
+                    Log.d("TAG", "onDataChange: dioca "+singleMatch.getWinner());
+                    globalMatchStatsSimplified.setWinner(singleMatch.getWinner());
 
                     allMatches.add(globalMatchStatsSimplified);
                 }

@@ -106,15 +106,15 @@ public class BackgroundTasks extends JobService {
 
                 break;
             case 4:
-                //startAlarmManager7AM();
+                startAlarmManager7AM();
                 break;
         }
 
         return true;
     }
 
-    private void startAlarmManager7AM() {
-        Log.d(TAG, "startAlarmManager7AM: ");
+    public void startAlarmManager7AM() {
+        //Log.d(TAG, "startAlarmManager7AM: ");
         // un allarme che ogni mattina alle 7 controlla i match della giornata per le regioni scelte
         // se c'è un match e lo user ha getNo_choice_made()>0 per quella regione setta un allarme 1h prima dell'inizio del primo match
         // questo allarme controlla se lo user ha fatto il pick, se non l'ha fatto, setta la notifica insta
@@ -122,15 +122,15 @@ public class BackgroundTasks extends JobService {
         AlarmManager alarmMgr0 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent0 = new Intent(this, AlarmReceiver.class);
         intent0.putExtra("TYPE", "7AMTASK");
-        PendingIntent pendingIntent0 = PendingIntent.getBroadcast(this, 1, intent0, 0);
+        PendingIntent pendingIntent0 = PendingIntent.getBroadcast(this, 1, intent0, PendingIntent.FLAG_ONE_SHOT);
         Calendar task7AM = Calendar.getInstance();
 
 
-        task7AM.set(Calendar.HOUR_OF_DAY, 7);
-        task7AM.set(Calendar.MINUTE, 0);
+        task7AM.set(Calendar.HOUR_OF_DAY, 11);
+        task7AM.set(Calendar.MINUTE, 12);
         task7AM.set(Calendar.SECOND, 0);
         //COMMENTED FOR TESTING PURPOSE
-        task7AM.add(Calendar.DAY_OF_MONTH,1);
+        //task7AM.add(Calendar.DAY_OF_MONTH,1);
 
         task7AM.setTimeZone(TimeZone.getDefault());
         Log.d(TAG, "startAlarmManager7AM: task7AM.getTimeInMillis() "+task7AM.getTimeInMillis());
@@ -139,8 +139,11 @@ public class BackgroundTasks extends JobService {
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
                 AlarmManager.INTERVAL_DAY, pendingIntent0);*/
 
-        alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
         //alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
+        assert alarmMgr0 != null;
+        alarmMgr0.setInexactRepeating(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent0);
 
     }
 

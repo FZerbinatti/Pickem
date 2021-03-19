@@ -338,6 +338,7 @@ public class CalendarActivity extends AppCompatActivity{
             description_calendar.setText("Select Regions to show data");
 
         }else {
+            switch_day_week.setChecked(false);
             calendar_recyclerView.setVisibility(View.INVISIBLE);
             progressbar_calendar.setVisibility(View.VISIBLE);
             description_calendar.setVisibility(View.VISIBLE);

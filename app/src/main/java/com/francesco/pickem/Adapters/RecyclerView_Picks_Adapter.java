@@ -94,7 +94,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
 
 
-        Log.d(TAG, "onBindViewHolder: match_ID:"+match_ID +" datetime: "+dateTime);
+        //Log.d(TAG, "onBindViewHolder: //////////////////////////////// match_ID:"+match_ID +" datetime: "+dateTime + " winner: " + match_winner);
 
         thisMatch.setYear(year);
         thisMatch.setRegion(region);
@@ -107,6 +107,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         thisMatch.setDatetime(dateTime);
         thisMatch.setTeam1_score(team1_score);
         thisMatch.setTeam2_score(team2_score);
+
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -191,6 +192,29 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         // se non ha scelto e il match è concluso
         getUserPick(thisMatch, viewHolder);
+
+        Boolean elapsed = matchAlreadyElapsedQuestionMark(thisMatch);
+        Log.d(TAG, "loadDataWithPrediction: match elapsed? " +elapsed);
+
+        if (elapsed){
+            //se il match è passato, disabilita la possibilità di selezione
+            viewHolder.image_team_1.setEnabled(false);
+            viewHolder.image_team_2.setEnabled(false);
+
+            //se il match è già passato, allora setta il match winner
+            if (match_winner.equals(team1)) {
+                viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
+                viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
+
+            } else if (match_winner.equals(team2) ) {
+                viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
+                viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
+            }
+        }else {
+            // altrimenti i match si possono ancora scegliere/cambiare
+            viewHolder.image_team_1.setEnabled(true);
+            viewHolder.image_team_2.setEnabled(true);
+        }
 
     }
 
@@ -285,7 +309,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             Integer children = (int) snapshot.getChildrenCount();
-                            Log.d(TAG, "onDataChange: childreN : " +children);
+                           // Log.d(TAG, "onDataChange: childreN : " +children);
                             if (children==1){
                                 Intent intent = new Intent(context, MatchView.class);
                                 intent.putExtra( "GAME_NUMBER", "1" );
@@ -338,7 +362,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .child(displayMatch.getDatetime())
                 .setValue(displayMatch.getPrediction());
 
-        Log.d(TAG, "updateUserPick: debug point 2");
+
         databaseHelper.updatePrediction(displayMatch.getRegion(), displayMatch.getDatetime(), displayMatch.getPrediction());
 
     }
@@ -346,6 +370,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     public void getUserPick (DisplayMatch displayMatch, ViewHolder viewHolder){
 
         String match_winner = displayMatch.getWinner();
+        Log.d(TAG, "getUserPick: winner? "+match_winner);
         String team1 = displayMatch.getTeam1();
         String team2 = displayMatch.getTeam2();
         //remove all old regions
@@ -360,10 +385,10 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
                 match_prediction = dataSnapshot.getValue(String.class);
+                //Log.d(TAG, "onDataChange: //// "+match_prediction);
 
                 if (match_prediction != null) {
 
-                    //Log.d(TAG, "onDataChange: match_prediction: "+match_prediction);
                     displayMatch.setPrediction(match_prediction);
                     loadDataWithPrediction(displayMatch, viewHolder);
 
@@ -397,27 +422,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         //Log.d(TAG, "loadDataWithPrediction: ID: "+ displayMatch.getId() +" - region: "+ displayMatch.getRegion() +" teams: "+ displayMatch.getTeam1()  +" vs "+ displayMatch.getTeam2()+" prediction: "+ displayMatch.getPrediction()+" winner: "+ displayMatch.getWinner() );
 
-        Boolean elapsed = matchAlreadyElapsedQuestionMark(displayMatch);
 
-        if (elapsed){
-            //se il match è passato, disabilita la possibilità di selezione
-            viewHolder.image_team_1.setEnabled(false);
-            viewHolder.image_team_2.setEnabled(false);
-
-            //se il match è già passato, allora setta il match winner
-            if (winner.equals(team1)) {
-                viewHolder.icon_prediction_correct_team1.setVisibility(View.VISIBLE);
-                viewHolder.icon_prediction_wrong_team2.setVisibility(View.VISIBLE);
-
-            } else if (winner.equals(team2) ) {
-                viewHolder.icon_prediction_correct_team2.setVisibility(View.VISIBLE);
-                viewHolder.icon_prediction_wrong_team1.setVisibility(View.VISIBLE);
-            }
-        }else {
-            // altrimenti i match si possono ancora scegliere/cambiare
-            viewHolder.image_team_1.setEnabled(true);
-            viewHolder.image_team_2.setEnabled(true);
-        }
         //setta le prediction dell'utente, dove possibile
         if (prediction != null) {
             //se le prediction non sono null, vuol dire che lo user ha fatto la prediction
@@ -474,7 +479,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             }
 
             long matchTimeMillis = strDate.getTime();
-        Log.d(TAG, "datetimeToMillis: "+matchTimeMillis);
+        //Log.d(TAG, "datetimeToMillis: "+matchTimeMillis);
         return matchTimeMillis;
     }
 

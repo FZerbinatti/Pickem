@@ -3,6 +3,7 @@ package com.francesco.pickem.Adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,9 +22,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Interfaces.RecyclerViewClickListener;
+import com.francesco.pickem.Models.AnalistPerson;
 import com.francesco.pickem.Models.ItemAnalistRecyclerVIew;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.text.ParseException;
@@ -85,41 +95,90 @@ public class RecyclerView_Analyst_Adapter extends RecyclerView.Adapter <Recycler
             
             thisMatch.setPrediction(prediction);
 
-            viewHolder.item_logo_team_predicted.setVisibility(View.VISIBLE);
-            viewHolder.analysts_item_name.setVisibility(View.VISIBLE);
-            viewHolder.item_logo_team1 .setVisibility(View.INVISIBLE);
-            viewHolder.item_logo_team2.setVisibility(View.INVISIBLE);
-            viewHolder.analysts_item_time.setVisibility(View.GONE);
-            viewHolder.analysts_item_vs.setVisibility(View.INVISIBLE);
+            //viewHolder.item_logo_team_predicted.setVisibility(View.VISIBLE);
+            //viewHolder.analysts_item_name.setVisibility(View.VISIBLE);
             viewHolder.analysts_item_team1.setVisibility(View.INVISIBLE);
             viewHolder.analysts_item_team2.setVisibility(View.INVISIBLE);
+            viewHolder.analysts_item_time.setVisibility(View.GONE);
             viewHolder.line_separator_analistpick.setVisibility(View.INVISIBLE);
+            /*
+            viewHolder.analysts_item_vs.setVisibility(View.INVISIBLE);
+
+            */
+            //viewHolder.cv_1.setVisibility(View.VISIBLE);
+
+            RequestOptions options2 = new RequestOptions()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .skipMemoryCache(false)
+                    .error(R.drawable.ic_check2);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.firebase_analysts))
+                    .child(analistName);
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @RequiresApi(api = Build.VERSION_CODES.N)
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    AnalistPerson analist = snapshot.getValue(AnalistPerson.class);
+
+                    if (prediction.equals(team1)){
+                        viewHolder.item_logo_team2.setVisibility(View.INVISIBLE);
+                        Glide.with(context)
+                                .load(analist.getImage()) // Uri of the picture
+                                .apply(options2)
+                                .transition(DrawableTransitionOptions.withCrossFade(500))
+                                .into(viewHolder.item_logo_team1);
+                    }else {
+                        viewHolder.item_logo_team1 .setVisibility(View.INVISIBLE);
+                        Glide.with(context)
+                                .load(analist.getImage()) // Uri of the picture
+                                .apply(options2)
+                                .transition(DrawableTransitionOptions.withCrossFade(500))
+                                .into(viewHolder.item_logo_team2);
+                    }
 
 
 
-            viewHolder.analysts_item_name.setText(analistName);
 
-            String local_image1 =imageTeamPath +prediction+".png";
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
+
+
+
+            viewHolder.analysts_item_vs.setText(analistName);
+
+/*            String local_image1 =imageTeamPath +prediction+".png";
 
             Glide.with(context)
                     .load(new File(local_image1)) // Uri of the picture
                     .apply(options)
                     .transition(DrawableTransitionOptions.withCrossFade(500))
-                    .into(viewHolder.item_logo_team_predicted);
+                    .into(viewHolder.item_logo_team_predicted);*/
 
 
         }else {
             Log.d(TAG, "onBindViewHolder: match display");
             //allora siamo nel display di entrambi i teams
 
-            viewHolder.item_logo_team_predicted.setVisibility(View.INVISIBLE);
-            viewHolder.analysts_item_name.setVisibility(View.INVISIBLE);
+            //viewHolder.item_logo_team_predicted.setVisibility(View.INVISIBLE);
+            //viewHolder.analysts_item_name.setVisibility(View.INVISIBLE);
             viewHolder.item_logo_team1 .setVisibility(View.VISIBLE);
             viewHolder.item_logo_team2.setVisibility(View.VISIBLE);
             viewHolder.analysts_item_time.setVisibility(View.VISIBLE);
             viewHolder.analysts_item_vs.setVisibility(View.VISIBLE);
             viewHolder.analysts_item_team1.setVisibility(View.VISIBLE);
             viewHolder.analysts_item_team2.setVisibility(View.VISIBLE);
+
+            //viewHolder.cv_1.setVisibility(View.INVISIBLE);
 
             String team2 = ItemAnalistsList.get(i).getTeam2();
             thisMatch.setTeam1(team1);
@@ -163,9 +222,11 @@ public class RecyclerView_Analyst_Adapter extends RecyclerView.Adapter <Recycler
         private TextView analysts_item_vs;
         private TextView analysts_item_team1;
         private TextView analysts_item_team2;
-        private ImageView item_logo_team_predicted;
-        private TextView analysts_item_name;
+        //private ImageView item_logo_team_predicted;
+        //private TextView analysts_item_name;
         private View line_separator_analistpick;
+        //private CardView cv_1;
+        //private ImageView analyst_imageview;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -178,9 +239,13 @@ public class RecyclerView_Analyst_Adapter extends RecyclerView.Adapter <Recycler
             analysts_item_team1 = (TextView) itemView.findViewById(R.id.analysts_item_team1);
             analysts_item_team2 = (TextView) itemView.findViewById(R.id.analysts_item_team2);
 
-            item_logo_team_predicted = (ImageView) itemView.findViewById(R.id.item_logo_team_predicted);
-            analysts_item_name = (TextView) itemView.findViewById(R.id.analysts_item_name);
+            //item_logo_team_predicted = (ImageView) itemView.findViewById(R.id.item_logo_team_predicted);
+            //analysts_item_name = (TextView) itemView.findViewById(R.id.analysts_item_name);
             line_separator_analistpick = (View) itemView.findViewById(R.id.line_separator_analistpick);
+
+            //cv_1 = (CardView) itemView.findViewById(R.id.cv_1);
+            //analyst_imageview = (ImageView) itemView.findViewById(R.id.analyst_imageview);
+
 
 
         }
