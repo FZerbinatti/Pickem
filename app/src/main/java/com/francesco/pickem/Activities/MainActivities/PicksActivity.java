@@ -1,18 +1,22 @@
  package com.francesco.pickem.Activities.MainActivities;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
+import androidx.work.BackoffPolicy;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,10 +44,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.AccountActivities.LoginActivity;
-import com.francesco.pickem.Activities.EloTracker.EloTrackerActivity;
-import com.francesco.pickem.Activities.EloTracker.NewTrackEloDay;
-import com.francesco.pickem.Activities.IndipendentActivities.MatchView;
-import com.francesco.pickem.Activities.Statistics.StatsPicksActivity;
 import com.francesco.pickem.Adapters.Day_selection_Adapter;
 import com.francesco.pickem.Adapters.Region_selection_Adapter;
 import com.francesco.pickem.Adapters.RecyclerView_Picks_Adapter;
@@ -54,11 +54,12 @@ import com.francesco.pickem.Models.FullDate;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.NotificationsService.BackgroundTasks;
+
+import com.francesco.pickem.NotificationsService.NotifyWorker;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.AndroidDatabaseManager;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.DatabaseHelper;
-import com.francesco.pickem.Services.RecyclerItemClickListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -71,8 +72,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
-public class PicksActivity extends AppCompatActivity  {
+ public class PicksActivity extends AppCompatActivity  {
 
     ViewPager viewPagerRegions, viewPager_match_day;
     Region_selection_Adapter adapterRegions;
@@ -108,6 +110,7 @@ public class PicksActivity extends AppCompatActivity  {
     Integer selectedPage;
     SwipeRefreshLayout pullToRefresh;
     ImageButton databaseOpener;
+    public static final String workTag = "notificationWork";
 
 
     @Override
@@ -145,9 +148,12 @@ public class PicksActivity extends AppCompatActivity  {
 
 
         if(isUserAlreadyLogged()){
-            startBackgorundTasks();
+            startBackgorundFileSync();
+            //notificationSetup();
 
             downloadUserRegions();
+
+
         }
 
         changeNavBarColor();
@@ -164,6 +170,39 @@ public class PicksActivity extends AppCompatActivity  {
 
     }
 
+    private void notificationSetup() {
+        Log.d(TAG, "notificationSetup: ");
+
+        String DBEventIDTag = "WorkerNotificationTAG";
+        Integer DBEventID = 0001;
+
+        //store DBEventID to pass it to the PendingIntent and open the appropriate event page on notification click
+        Data inputData = new Data.Builder().putInt(DBEventIDTag, DBEventID).build();
+        // we then retrieve it inside the NotifyWorker with:
+        // final int DBEventID = getInputData().getInt(DBEventIDTag, ERROR_VALUE);
+
+        WorkRequest notificationWork =
+                new OneTimeWorkRequest.Builder(NotifyWorker.class)
+                        .setInitialDelay(15000, TimeUnit.MILLISECONDS)
+                        .build();
+
+/*        OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(NotifyWorker.class)
+                //.setInitialDelay(millisTill7AM(), TimeUnit.MILLISECONDS)
+                .setInputData(inputData)
+                .addTag(workTag)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, 1*60*1000, TimeUnit.MILLISECONDS)
+                .build();*/
+
+
+        //WorkManager.getInstance(context).beginUniqueWork(workTag, ExistingWorkPolicy.APPEND , notificationWork).enqueue();
+        WorkManager.getInstance(context).enqueue(notificationWork);
+        Log.d(TAG, "notificationSetup: enqueued.");
+
+
+
+
+    }
+
     private void refreshData() {
 
         loadMatchDays(selected_region_name);
@@ -171,6 +210,8 @@ public class PicksActivity extends AppCompatActivity  {
     }
 
     private void downloadUserRegions() {
+
+
 
 
 
@@ -199,8 +240,6 @@ public class PicksActivity extends AppCompatActivity  {
                     pick_progressbar.setVisibility(View.INVISIBLE);
                     loadViewPagerRegion(userRegions);
                 }
-
-
 
             }
 
@@ -617,7 +656,7 @@ public class PicksActivity extends AppCompatActivity  {
         return localDatetime;
     }
 
-    private void startBackgorundTasks() {
+    private void startBackgorundFileSync() {
         Log.d(TAG, "startBackgorundTasks: ");
 
         ComponentName componentName = new ComponentName(this, BackgroundTasks.class);
@@ -625,7 +664,7 @@ public class PicksActivity extends AppCompatActivity  {
         JobInfo info2 = new JobInfo.Builder(2, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setPeriodic(7* 24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
+                //.setPeriodic(7* 24* 60* 60* 1000) // una volta a settimana controlla che le immagini in locale siano sync con le immagini sullo firestorage
                 .build();
         JobScheduler scheduler2 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode2 = scheduler2.schedule(info2);
@@ -640,7 +679,7 @@ public class PicksActivity extends AppCompatActivity  {
         JobInfo info3 = new JobInfo.Builder(3, componentName)
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPersisted(true)
-                .setPeriodic(24* 60* 60* 1000) // controllo che i match siano aggiornati
+                //.setPeriodic(24* 60* 60* 1000) // controllo che i match siano aggiornati
                 .build();
         JobScheduler scheduler3 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         int resultCode3 = scheduler3.schedule(info3);
@@ -650,6 +689,8 @@ public class PicksActivity extends AppCompatActivity  {
             Log.d(TAG, "onCreate: DIO PORCO3");
         }
 
+        //metti una notification a un'ora su jobscheduler
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -658,8 +699,12 @@ public class PicksActivity extends AppCompatActivity  {
                 JobInfo info4 = new JobInfo.Builder(4, componentName)
                         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                         .setPersisted(true)
-                        .setPeriodic(24* 60* 60* 1000) // 7AM task
+
+                        .setPeriodic( 15 * 60 * 1000) // 7AM task
+                        //.setOverrideDeadline(millisTill7AM())
                         .build();
+
+
                 JobScheduler scheduler4 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
                 int resultCode4 = scheduler4.schedule(info4);
                 if (resultCode4 == JobScheduler.RESULT_SUCCESS){
@@ -668,14 +713,13 @@ public class PicksActivity extends AppCompatActivity  {
                     Log.d(TAG, "onCreate: DIO PORCO4");
                 }
             }
-        }, 10000);
+        }, 5000);
 
-
+        //WorkManager.getInstance(context)
 
 
 
     }
-
 
     public boolean isNetworkAvailable() {
         ConnectivityManager manager =
@@ -688,5 +732,29 @@ public class PicksActivity extends AppCompatActivity  {
         }
         return isAvailable;
     }
+
+    public Long millisTill7AM(){
+        // calcola il tempo in millis fino alle 7 di domani mattina
+        Long timeTillSevenAM = 0L;
+
+        Calendar time7AM = Calendar.getInstance();
+
+        time7AM.set(Calendar.HOUR_OF_DAY, 7);
+        time7AM.set(Calendar.MINUTE, 0);
+        time7AM.set(Calendar.SECOND, 0);
+        time7AM.setTimeZone(TimeZone.getDefault());
+        time7AM.add(Calendar.DAY_OF_MONTH,1);
+
+        Long millisTmorrow7AM = time7AM.getTimeInMillis();
+        Long currentMillis = System.currentTimeMillis();
+
+        timeTillSevenAM = millisTmorrow7AM-currentMillis;
+
+
+        Log.d(TAG, "millisTill7AM: "+timeTillSevenAM);
+
+        return timeTillSevenAM;
+    }
+
 
 }

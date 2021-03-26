@@ -21,15 +21,16 @@ import com.francesco.pickem.Models.Sqlite_MatchDay;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static String TAG = "DatabaseHelper: ";
+    private static String TAG = "DatabaseHelper ";
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 7;
+    private static final int DB_VERSION = 8;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -46,6 +47,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TEAM2 = "TEAM2";
     private static final String PREDICTION = "PREDICTION";
     private static final String WINNER = "WINNER";
+
+    //tabella notifications
+    static final String TABLE_NOTIFICATIONS = "TABLE_NOTIFICATIONS";
+    private static final String REGIONS_NO_CHOICE_MADE = "REGIONS_NO_CHOICE_MADE";
+    private static final String REGIONS_FIRST_MATCH_ODT = "REGIONS_FIRST_MATCH_ODT";
+    private static final String REGIONS_MORNING_REMINDER = "REGIONS_MORNING_REMINDER";
+    private static final String TEAMS_AS_TEAM_PLAYS = "TEAMS_AS_TEAM_PLAYS";
+    private static final String TEAMS_MORNING_REMINDER = "TEAMS_MORNING_REMINDER";
 
 
     static final String TABLE_MATCHES = "TABLE_MATCHES";
@@ -85,13 +94,217 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + PREDICTION+ " TEXT ,  "
                 + WINNER + " TEXT  );";
 
+        String CREATE_TABLE_NOTIFICATIONS = "CREATE TABLE " + TABLE_NOTIFICATIONS +
+                "(" + "ID" + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + REGIONS_NO_CHOICE_MADE + " TEXT ,  "
+                + REGIONS_FIRST_MATCH_ODT + " TEXT ,  "
+                + REGIONS_MORNING_REMINDER + " TEXT ,  "
+                + TEAMS_AS_TEAM_PLAYS + " TEXT ,  "
+                + TEAMS_MORNING_REMINDER + " TEXT  );";
+
         db.execSQL(CREATE_TABLE_IMAGE_REGIONS);
         db.execSQL(CREATE_TABLE_IMAGE_TEAMS);
         db.execSQL(CREATE_TABLE_MATCH_DAYS);
         db.execSQL(CREATE_TABLE_MATCHES);
+        db.execSQL(CREATE_TABLE_NOTIFICATIONS);
+
 
 
     }
+
+    public void insert_REGIONS_NO_CHOICE_MADE(String region_to_insert){
+
+        // prendi il contenuto della stringa, aggiungi il valore, reinserisci la stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_insert_REGIONS_NO_CHOICE_MADE ="";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_NO_CHOICE_MADE +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_insert_REGIONS_NO_CHOICE_MADE =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        String final_string  = string_insert_REGIONS_NO_CHOICE_MADE + " " +region_to_insert;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(REGIONS_NO_CHOICE_MADE, final_string);
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+    }
+
+    public void insert_REGIONS_FIRST_MATCH_ODT(String region_to_insert){
+
+        // prendi il contenuto della stringa, aggiungi il valore, reinserisci la stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_insert_REGIONS_FIRST_MATCH_ODT ="";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_FIRST_MATCH_ODT +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_insert_REGIONS_FIRST_MATCH_ODT =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        String final_string  = string_insert_REGIONS_FIRST_MATCH_ODT + " " +region_to_insert;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(REGIONS_FIRST_MATCH_ODT, final_string);
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+    }
+
+    public void insert_REGIONS_MORNING_REMINDER(String region_to_insert){
+
+        // prendi il contenuto della stringa, aggiungi il valore, reinserisci la stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_insert_REGIONS_MORNING_REMINDER ="";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_MORNING_REMINDER +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_insert_REGIONS_MORNING_REMINDER =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        String final_string  = string_insert_REGIONS_MORNING_REMINDER + " " +region_to_insert;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(REGIONS_MORNING_REMINDER, final_string);
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+    }
+
+    public void insert_TEAMS_AS_TEAM_PLAYS(String team_to_insert){
+
+        // prendi il contenuto della stringa, aggiungi il valore, reinserisci la stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_insert_TEAMS_AS_TEAM_PLAYS ="";
+        //                                 0
+        String selectQuery = "SELECT "+ TEAMS_AS_TEAM_PLAYS +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_insert_TEAMS_AS_TEAM_PLAYS =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        String final_string  = string_insert_TEAMS_AS_TEAM_PLAYS + " " +team_to_insert;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TEAMS_AS_TEAM_PLAYS, final_string);
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+    }
+
+    public void insert_TEAMS_MORNING_REMINDER(String team_to_insert){
+
+        // prendi il contenuto della stringa, aggiungi il valore, reinserisci la stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_insert_TEAMS_MORNING_REMINDER ="";
+        //                                 0
+        String selectQuery = "SELECT "+ TEAMS_MORNING_REMINDER +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_insert_TEAMS_MORNING_REMINDER =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        String final_string  = string_insert_TEAMS_MORNING_REMINDER + " " +team_to_insert;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TEAMS_MORNING_REMINDER, final_string);
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+    }
+
+    public void remove_REGIONS_NO_CHOICE_MADE(String region_to_remove){
+
+        // prendi il contenuto della stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_insert_REGIONS_NO_CHOICE_MADE ="";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_NO_CHOICE_MADE +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_insert_REGIONS_NO_CHOICE_MADE =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        //trasforma la stringa di nomi in un array
+        String[] regions = string_insert_REGIONS_NO_CHOICE_MADE.split(" ");
+        ArrayList <String> array_regions = new ArrayList<>();
+        if (regions.length>0){
+
+            array_regions.addAll(Arrays.asList(regions));
+        }
+        StringBuilder new_string_list_regions = new StringBuilder();
+        for(int i=0; i<array_regions.size(); i++){
+            if (!array_regions.get(i).equals(region_to_remove)){
+
+                new_string_list_regions.append(" ").append(array_regions.get(i));
+
+            }
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(REGIONS_NO_CHOICE_MADE, new_string_list_regions.toString());
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+
+
+    }
+
+    public void setAllNotificationFields(){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("ID", 1  );
+        cv.put(REGIONS_NO_CHOICE_MADE,  "" );
+        cv.put(REGIONS_FIRST_MATCH_ODT, "" );
+        cv.put(REGIONS_MORNING_REMINDER, "" );
+        cv.put(TEAMS_AS_TEAM_PLAYS, "" );
+        cv.put(TEAMS_MORNING_REMINDER, "" );
+
+        db.insert(TABLE_MATCH_DAYS, null, cv);
+
+        db.close();
+
+    }
+
+
+
+
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -105,6 +318,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_IMAGE_TEAMS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCH_DAYS);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_MATCHES);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
         onCreate(sqLiteDatabase);
     }
 

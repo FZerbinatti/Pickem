@@ -1,5 +1,6 @@
 package com.francesco.pickem.NotificationsService;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,6 +13,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.text.format.Time;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.ImageValidator;
@@ -46,8 +50,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 import java.util.TimeZone;
 
+@SuppressLint("SpecifyJobSchedulerIdRange")
 public class BackgroundTasks extends JobService {
     private static final String CHANNEL_ID = "1";
     String TAG = "BackgroundTasks";
@@ -92,6 +98,7 @@ public class BackgroundTasks extends JobService {
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
         today = getTodayDate();
         tomorrow = getTomorrowsDate();
+        createNotificationChannel();
         Integer jobID = jobParameters.getJobId();
         //Log.d(TAG, "onStartJob: jobID: "+jobID);
         switch (jobID){
@@ -106,14 +113,36 @@ public class BackgroundTasks extends JobService {
 
                 break;
             case 4:
-                startAlarmManager7AM();
+                startPeriodicCheck();
+                break;
+            case 5:
+                //setNotification();
                 break;
         }
 
         return true;
     }
 
-    public void startAlarmManager7AM() {
+    private void setNotification() {
+
+        String NOTIFICATION_ID = "1";
+        int notificationID = new Random().nextInt();
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_ID)
+                .setSmallIcon(R.drawable.ic_p)
+                .setColor(getApplicationContext().getResources().getColor(R.color.blue_light))
+                .setContentText( "TEST NOTIFICA D" )
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        notificationManagerCompat.notify(notificationID, notificationBuilder.build());
+
+    }
+
+    public void startPeriodicCheck() {
+        Log.d(TAG, "startPeriodicCheck: ");
         //Log.d(TAG, "startAlarmManager7AM: ");
         // un allarme che ogni mattina alle 7 controlla i match della giornata per le regioni scelte
         // se c'è un match e lo user ha getNo_choice_made()>0 per quella regione setta un allarme 1h prima dell'inizio del primo match
@@ -122,12 +151,13 @@ public class BackgroundTasks extends JobService {
         AlarmManager alarmMgr0 = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent intent0 = new Intent(this, AlarmReceiver.class);
         intent0.putExtra("TYPE", "7AMTASK");
-        PendingIntent pendingIntent0 = PendingIntent.getBroadcast(this, 1, intent0, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent0 = PendingIntent.getBroadcast(this, 1, intent0, PendingIntent.	FLAG_CANCEL_CURRENT);
         Calendar task7AM = Calendar.getInstance();
 
+        // i f  =  ogni ora chiama questo set
 
         task7AM.set(Calendar.HOUR_OF_DAY, 11);
-        task7AM.set(Calendar.MINUTE, 12);
+        task7AM.set(Calendar.MINUTE, 53);
         task7AM.set(Calendar.SECOND, 0);
         //COMMENTED FOR TESTING PURPOSE
         //task7AM.add(Calendar.DAY_OF_MONTH,1);
@@ -139,11 +169,14 @@ public class BackgroundTasks extends JobService {
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_DAY,
                 AlarmManager.INTERVAL_DAY, pendingIntent0);*/
 
-        //alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
+        // prova a settare alarms a orari X
+
+        alarmMgr0.set(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(), pendingIntent0);
         //alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
         assert alarmMgr0 != null;
-        alarmMgr0.setInexactRepeating(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent0);
+
+/*        alarmMgr0.setInexactRepeating(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
 
     }
 
@@ -499,15 +532,8 @@ public class BackgroundTasks extends JobService {
                         }, FIREBASE_STORAGE_RESPONSE_TIME);
                         // immagini region in locale
 
-
-
                     }
                 });
-
-
-
-
-
             }
         });
 

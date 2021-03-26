@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerView_Picks_Adapter.ViewHolder> {
 
@@ -89,7 +90,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String match_winner = displayMatchDetailsList.get(i).getWinner();
         String region = displayMatchDetailsList.get(i).getRegion();
         String year = displayMatchDetailsList.get(i).getYear();
-        String dateTime = displayMatchDetailsList.get(i).getDatetime();
+        String dateTime = (( displayMatchDetailsList.get(i).getDatetime()));
         Long team1_score = displayMatchDetailsList.get(i).getTeam1_score();
         Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
 
@@ -167,10 +168,16 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             Log.d(TAG, "onBindViewHolder: "+region+" "+dateTime+" "+match_winner);
             databaseHelper.updateWinner(region, dateTime, match_winner);
         }*/
+        Log.d(TAG, "onBindViewHolder: current:"+System.currentTimeMillis());
+        Log.d(TAG, "onBindViewHolder: match:"+datetimeToMillis(dateTime));
+        Long sum = datetimeToMillis(dateTime) + 1000*60*60;
+        Log.d(TAG, "onBindViewHolder: current+1h= "+sum);
 
-        if (match_winner.trim().isEmpty() && System.currentTimeMillis()>datetimeToMillis(dateTime) && System.currentTimeMillis()< (datetimeToMillis(dateTime))+1000*60*60){
+        if (match_winner.trim().isEmpty() && System.currentTimeMillis()>datetimeToMillis(dateTime) && System.currentTimeMillis()< sum){
+            Log.d(TAG, "onBindViewHolder: condition true");
             viewHolder.match_live.setVisibility(View.VISIBLE);
         }else {
+            Log.d(TAG, "onBindViewHolder: contidion false");
             viewHolder.match_live.setVisibility(View.INVISIBLE);
 
         }
@@ -369,6 +376,7 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
     public void getUserPick (DisplayMatch displayMatch, ViewHolder viewHolder){
 
+
         String match_winner = displayMatch.getWinner();
         Log.d(TAG, "getUserPick: winner? "+match_winner);
         String team1 = displayMatch.getTeam1();
@@ -442,9 +450,10 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         //Log.d(TAG, "matchAlreadyElapsedQuestionMark: (matchDays.getDatetime(): "+(matchDays.getDatetime()));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
             Date strDate = null;
             try {
-                strDate = sdf.parse(matchDays.getDatetime());
+                strDate = sdf.parse(convertDatetimeZtoLocale(matchDays.getDatetime()));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -458,7 +467,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             if (System.currentTimeMillis() < matchTimeMillis) {
                 return false;
             }else {
-                return true;}
+                return true;
+            }
 
 
     }
@@ -469,10 +479,11 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
             // Log.d(TAG, "loadMatchDays: "+matchDays.get(i));
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
             Date strDate = null;
 
             try {
-                strDate = sdf.parse(datetime);
+                strDate = sdf.parse(convertDatetimeZtoLocale(datetime));
 
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -491,6 +502,27 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    public String convertDatetimeZtoLocale(String datetime){
+        //Log.d(TAG, "convertDatetimeZtoLocale: eating this: "+datetime);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+        Date strDate = null;
+
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = null;
+        try {
+            date = sdf.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf.setTimeZone(TimeZone.getDefault());
+        String formattedDate = sdf.format(date);
+
+        //Log.d(TAG, "convertDatetimeZtoLocale: shitting this: "+formattedDate.toString());
+
+        return formattedDate.toString();
     }
 
 

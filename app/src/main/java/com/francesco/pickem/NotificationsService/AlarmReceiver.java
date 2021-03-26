@@ -109,7 +109,6 @@ public class AlarmReceiver extends BroadcastReceiver{
     ArrayList <String> todayMatches;
     ArrayList <MatchDetails> allTodayMatches;
 
-
     ArrayList matchListSplit ;
     ArrayList matchesForThisDate ;
 
@@ -130,7 +129,12 @@ public class AlarmReceiver extends BroadcastReceiver{
             String notification_type = intent.getStringExtra("TYPE");
             Log.d(TAG, " AlarmReciever ha ricevuto:  "+notification_type);
 
-                if (notification_type.equals("7AMTASK")){
+                if (notification_type.equals("PERIODIC_CHECK")){
+                    // se il tempo attuale è compreso tra le 7 e le 8 del mattino
+                    // check se c'è un morning reminder
+
+                }else if (notification_type.equals("7AMTASK")){
+
                     String hour = intent.getStringExtra("HOUR");
 
                      //se non hai network, torna a chiamrare la stessa cosa tra mezzora

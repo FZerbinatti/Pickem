@@ -17,6 +17,8 @@ public class TeamNotification {
 
     public TeamNotification() {
 
+
+
     }
 
     public Integer getNotification_team_morning_reminder() {
