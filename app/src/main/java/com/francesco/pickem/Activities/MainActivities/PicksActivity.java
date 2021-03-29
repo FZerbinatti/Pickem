@@ -1,7 +1,9 @@
  package com.francesco.pickem.Activities.MainActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -13,6 +15,8 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -26,6 +30,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -55,6 +60,7 @@ import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.NotificationsService.BackgroundTasks;
 
+import com.francesco.pickem.NotificationsService.ForegroundService;
 import com.francesco.pickem.NotificationsService.NotifyWorker;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.AndroidDatabaseManager;
@@ -111,6 +117,8 @@ import java.util.concurrent.TimeUnit;
     SwipeRefreshLayout pullToRefresh;
     ImageButton databaseOpener;
     public static final String workTag = "notificationWork";
+    SwitchCompat switch_foregoundservice;
+     private static final String CHANNEL_ID = "1";
 
 
     @Override
@@ -135,8 +143,33 @@ import java.util.concurrent.TimeUnit;
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
         imageRegionPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_regions_images));
+        switch_foregoundservice = findViewById(R.id.switch_foregoundservice);
 
         databaseOpener = findViewById(R.id.databaseOpener);
+
+        switch_foregoundservice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    createNotificationChannel();
+
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        //context.startForegroundService(serviceIntent);
+                        Log.d(TAG, "onCheckedChanged: 1");
+                        Intent serviceIntent = new Intent(PicksActivity.this, ForegroundService.class);
+                        ContextCompat.startForegroundService(PicksActivity.this, serviceIntent);
+
+                    }
+
+                    //ContextCompat.startForegroundService(PicksActivity.this, serviceIntent);
+                }else {
+                    Intent serviceIntent = new Intent(PicksActivity.this, ForegroundService.class);
+                    stopService(serviceIntent);
+                }
+            }
+        });
 
         databaseOpener.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -169,6 +202,34 @@ import java.util.concurrent.TimeUnit;
 
 
     }
+
+/*     public void createNotificationChannel() {
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             NotificationChannel serviceChannel = new NotificationChannel(
+                     CHANNEL_ID,
+                     "Example Service Channel",
+                     NotificationManager.IMPORTANCE_DEFAULT
+             );
+             NotificationManager manager = getSystemService(NotificationManager.class);
+             manager.createNotificationChannel(serviceChannel);
+         }
+     }*/
+
+     private void createNotificationChannel() {
+         // Create the NotificationChannel, but only on API 26+ because
+         // the NotificationChannel class is new and not in the support library
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             CharSequence name = getString(R.string.channel_pickem);
+             String description = getString(R.string.channel_description);
+             int importance = NotificationManager.IMPORTANCE_DEFAULT;
+             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+             channel.setDescription(description);
+             // Register the channel with the system; you can't change the importance
+             // or other notification behaviors after this
+             NotificationManager notificationManager = getSystemService(NotificationManager.class);
+             notificationManager.createNotificationChannel(channel);
+         }
+     }
 
     private void notificationSetup() {
         Log.d(TAG, "notificationSetup: ");
@@ -700,7 +761,7 @@ import java.util.concurrent.TimeUnit;
                         .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                         .setPersisted(true)
 
-                        .setPeriodic( 15 * 60 * 1000) // 7AM task
+                        .setPeriodic( 15 * 60 * 1000)
                         //.setOverrideDeadline(millisTill7AM())
                         .build();
 

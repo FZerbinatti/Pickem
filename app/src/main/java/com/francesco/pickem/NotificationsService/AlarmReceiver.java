@@ -91,6 +91,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AlarmReceiver extends BroadcastReceiver{
     private String TAG = "AlarmReceiver";
     private static final String NOTIFICATION_ID = "1";
+
     private static final String CHANNEL_ID = "1";
     public static String PACKAGE_NAME;
     ArrayList<String> allTomorrowsMatches;
@@ -991,14 +992,15 @@ public class AlarmReceiver extends BroadcastReceiver{
         return localDatetime;
     }
 
-    private void createNotificationChannel(Context context) {
+    public void createNotificationChannel(Context context) {
+        Log.d(TAG, "createNotificationChannel: ");
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = context.getString(R.string.channel_pickem);
             String description = context.getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
