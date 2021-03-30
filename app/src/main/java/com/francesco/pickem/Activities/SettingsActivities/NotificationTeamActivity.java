@@ -22,6 +22,7 @@ import com.francesco.pickem.Models.TeamDetails;
 import com.francesco.pickem.Models.TeamNotification;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +47,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
     String regionSelectedExtra;
     CheckBox checkbox_as_team_plays, checkbox_team_morning_reminder;
     String imageTeamPath;
+    DatabaseHelper databaseHelper;
 
 
     @Override
@@ -67,6 +69,7 @@ public class NotificationTeamActivity extends AppCompatActivity {
         checkbox_team_morning_reminder = findViewById(R.id.checkbox_team_morning_reminder);
         context = this;
         imageTeamPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_teams_images));
+        databaseHelper = new DatabaseHelper(context);
 
         notifications_teams_progressbar.setVisibility(View.VISIBLE);
         team_name.setText(teamSelectedExtra);
@@ -123,13 +126,17 @@ public class NotificationTeamActivity extends AppCompatActivity {
 
                     if (checkbox_as_team_plays.isChecked()){
                         notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(1);
+                        databaseHelper.insert_TEAMS_AS_TEAM_PLAYS(teamSelectedExtra);
                     }else {
                         notificationTeamReference.child(getString(R.string.notification_team_as_team_plays)).setValue(0);
+                        databaseHelper.remove_TEAMS_AS_TEAM_PLAYS(teamSelectedExtra);
                     }
                     if (checkbox_team_morning_reminder.isChecked()){
                         notificationTeamReference.child(getString(R.string.notification_team_morning_reminder)).setValue(1);
+                        databaseHelper.insert_TEAMS_MORNING_REMINDER(teamSelectedExtra);
                     }else {
                         notificationTeamReference.child(getString(R.string.notification_team_morning_reminder)).setValue(0);
+                        databaseHelper.remove_TEAMS_MORNING_REMINDER(teamSelectedExtra);
                     }
                 }
 

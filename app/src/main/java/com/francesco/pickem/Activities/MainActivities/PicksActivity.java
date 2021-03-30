@@ -1,22 +1,16 @@
  package com.francesco.pickem.Activities.MainActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
-import androidx.work.BackoffPolicy;
 import androidx.work.Data;
-import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -30,7 +24,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -60,8 +53,6 @@ import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.RegionDetails;
 import com.francesco.pickem.NotificationsService.BackgroundTasks;
 
-import com.francesco.pickem.NotificationsService.ForegroundService;
-import com.francesco.pickem.NotificationsService.NotifyWorker;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.AndroidDatabaseManager;
 import com.francesco.pickem.Services.PreferencesData;
@@ -117,7 +108,6 @@ import java.util.concurrent.TimeUnit;
     SwipeRefreshLayout pullToRefresh;
     ImageButton databaseOpener;
     public static final String workTag = "notificationWork";
-    SwitchCompat switch_foregoundservice;
      private static final String CHANNEL_ID = "1";
 
 
@@ -143,33 +133,11 @@ import java.util.concurrent.TimeUnit;
         pick_progressbar.setVisibility(View.VISIBLE);
         pick_progressbar_matches.setVisibility(View.VISIBLE);
         imageRegionPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_regions_images));
-        switch_foregoundservice = findViewById(R.id.switch_foregoundservice);
+
 
         databaseOpener = findViewById(R.id.databaseOpener);
 
-        switch_foregoundservice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
-                    createNotificationChannel();
 
-
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        //context.startForegroundService(serviceIntent);
-                        Log.d(TAG, "onCheckedChanged: 1");
-                        Intent serviceIntent = new Intent(PicksActivity.this, ForegroundService.class);
-                        ContextCompat.startForegroundService(PicksActivity.this, serviceIntent);
-
-                    }
-
-                    //ContextCompat.startForegroundService(PicksActivity.this, serviceIntent);
-                }else {
-                    Intent serviceIntent = new Intent(PicksActivity.this, ForegroundService.class);
-                    stopService(serviceIntent);
-                }
-            }
-        });
 
         databaseOpener.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -182,7 +150,6 @@ import java.util.concurrent.TimeUnit;
 
         if(isUserAlreadyLogged()){
             startBackgorundFileSync();
-            //notificationSetup();
 
             downloadUserRegions();
 
@@ -203,66 +170,7 @@ import java.util.concurrent.TimeUnit;
 
     }
 
-/*     public void createNotificationChannel() {
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-             NotificationChannel serviceChannel = new NotificationChannel(
-                     CHANNEL_ID,
-                     "Example Service Channel",
-                     NotificationManager.IMPORTANCE_DEFAULT
-             );
-             NotificationManager manager = getSystemService(NotificationManager.class);
-             manager.createNotificationChannel(serviceChannel);
-         }
-     }*/
 
-     private void createNotificationChannel() {
-         // Create the NotificationChannel, but only on API 26+ because
-         // the NotificationChannel class is new and not in the support library
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-             CharSequence name = getString(R.string.channel_pickem);
-             String description = getString(R.string.channel_description);
-             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-             channel.setDescription(description);
-             // Register the channel with the system; you can't change the importance
-             // or other notification behaviors after this
-             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-             notificationManager.createNotificationChannel(channel);
-         }
-     }
-
-    private void notificationSetup() {
-        Log.d(TAG, "notificationSetup: ");
-
-        String DBEventIDTag = "WorkerNotificationTAG";
-        Integer DBEventID = 0001;
-
-        //store DBEventID to pass it to the PendingIntent and open the appropriate event page on notification click
-        Data inputData = new Data.Builder().putInt(DBEventIDTag, DBEventID).build();
-        // we then retrieve it inside the NotifyWorker with:
-        // final int DBEventID = getInputData().getInt(DBEventIDTag, ERROR_VALUE);
-
-        WorkRequest notificationWork =
-                new OneTimeWorkRequest.Builder(NotifyWorker.class)
-                        .setInitialDelay(15000, TimeUnit.MILLISECONDS)
-                        .build();
-
-/*        OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(NotifyWorker.class)
-                //.setInitialDelay(millisTill7AM(), TimeUnit.MILLISECONDS)
-                .setInputData(inputData)
-                .addTag(workTag)
-                .setBackoffCriteria(BackoffPolicy.LINEAR, 1*60*1000, TimeUnit.MILLISECONDS)
-                .build();*/
-
-
-        //WorkManager.getInstance(context).beginUniqueWork(workTag, ExistingWorkPolicy.APPEND , notificationWork).enqueue();
-        WorkManager.getInstance(context).enqueue(notificationWork);
-        Log.d(TAG, "notificationSetup: enqueued.");
-
-
-
-
-    }
 
     private void refreshData() {
 
@@ -749,35 +657,6 @@ import java.util.concurrent.TimeUnit;
         }else {
             Log.d(TAG, "onCreate: DIO PORCO3");
         }
-
-        //metti una notification a un'ora su jobscheduler
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                // Actions to do after 10 seconds
-
-                JobInfo info4 = new JobInfo.Builder(4, componentName)
-                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                        .setPersisted(true)
-
-                        .setPeriodic( 15 * 60 * 1000)
-                        //.setOverrideDeadline(millisTill7AM())
-                        .build();
-
-
-                JobScheduler scheduler4 = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-                int resultCode4 = scheduler4.schedule(info4);
-                if (resultCode4 == JobScheduler.RESULT_SUCCESS){
-                    Log.d(TAG, "onCreate: SUCCESS JOB SCHEDULER4");
-                }else {
-                    Log.d(TAG, "onCreate: DIO PORCO4");
-                }
-            }
-        }, 5000);
-
-        //WorkManager.getInstance(context)
-
 
 
     }

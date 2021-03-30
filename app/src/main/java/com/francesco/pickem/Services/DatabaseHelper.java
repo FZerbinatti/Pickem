@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String TAG = "DatabaseHelper ";
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 9;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -246,46 +246,179 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // prendi il contenuto della stringa
         SQLiteDatabase db_read = this.getReadableDatabase();
-        String string_insert_REGIONS_NO_CHOICE_MADE ="";
+        String string_remove_REGIONS_NO_CHOICE_MADE ="";
         //                                 0
         String selectQuery = "SELECT "+ REGIONS_NO_CHOICE_MADE +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
         Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
         if (cursor.moveToFirst()) {
             do {
-                string_insert_REGIONS_NO_CHOICE_MADE =  cursor.getString(0);
+                string_remove_REGIONS_NO_CHOICE_MADE =  cursor.getString(0);
             } while (cursor.moveToNext());
         }
         cursor.close();
         db_read.close();
 
         //trasforma la stringa di nomi in un array
-        String[] regions = string_insert_REGIONS_NO_CHOICE_MADE.split(" ");
+        String[] regions = string_remove_REGIONS_NO_CHOICE_MADE.split(" ");
         ArrayList <String> array_regions = new ArrayList<>();
         if (regions.length>0){
-
             array_regions.addAll(Arrays.asList(regions));
         }
         StringBuilder new_string_list_regions = new StringBuilder();
         for(int i=0; i<array_regions.size(); i++){
             if (!array_regions.get(i).equals(region_to_remove)){
-
                 new_string_list_regions.append(" ").append(array_regions.get(i));
-
             }
         }
-
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(REGIONS_NO_CHOICE_MADE, new_string_list_regions.toString());
         db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
         db.close();
+    }
 
+    public void remove_REGIONS_FIRST_MATCH_ODT(String region_to_remove){
 
+        // prendi il contenuto della stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_remove_REGIONS_FIRST_MATCH_ODT ="";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_FIRST_MATCH_ODT +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_remove_REGIONS_FIRST_MATCH_ODT =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
 
+        //trasforma la stringa di nomi in un array
+        String[] regions = string_remove_REGIONS_FIRST_MATCH_ODT.split(" ");
+        ArrayList <String> array_regions = new ArrayList<>();
+        if (regions.length>0){
+            array_regions.addAll(Arrays.asList(regions));
+        }
+        StringBuilder new_string_list_regions = new StringBuilder();
+        for(int i=0; i<array_regions.size(); i++){
+            if (!array_regions.get(i).equals(region_to_remove)){
+                new_string_list_regions.append(" ").append(array_regions.get(i));
+            }
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(REGIONS_FIRST_MATCH_ODT, new_string_list_regions.toString());
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+    }
+
+    public void remove_REGIONS_MORNING_REMINDER(String region_to_remove){
+
+        // prendi il contenuto della stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_remove_REGIONS_MORNING_REMINDER ="";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_MORNING_REMINDER +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_remove_REGIONS_MORNING_REMINDER =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        //trasforma la stringa di nomi in un array
+        String[] regions = string_remove_REGIONS_MORNING_REMINDER.split(" ");
+        ArrayList <String> array_regions = new ArrayList<>();
+        if (regions.length>0){
+            array_regions.addAll(Arrays.asList(regions));
+        }
+        StringBuilder new_string_list_regions = new StringBuilder();
+        for(int i=0; i<array_regions.size(); i++){
+            if (!array_regions.get(i).equals(region_to_remove)){
+                new_string_list_regions.append(" ").append(array_regions.get(i));
+            }
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(REGIONS_MORNING_REMINDER, new_string_list_regions.toString());
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+    }
+
+    public void remove_TEAMS_AS_TEAM_PLAYS(String team_to_remove){
+
+        // prendi il contenuto della stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_remove_TEAMS_AS_TEAM_PLAYS ="";
+        //                                 0
+        String selectQuery = "SELECT "+ TEAMS_AS_TEAM_PLAYS +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_remove_TEAMS_AS_TEAM_PLAYS =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        //trasforma la stringa di nomi in un array
+        String[] regions = string_remove_TEAMS_AS_TEAM_PLAYS.split(" ");
+        ArrayList <String> array_regions = new ArrayList<>();
+        if (regions.length>0){
+            array_regions.addAll(Arrays.asList(regions));
+        }
+        StringBuilder new_string_list_regions = new StringBuilder();
+        for(int i=0; i<array_regions.size(); i++){
+            if (!array_regions.get(i).equals(team_to_remove)){
+                new_string_list_regions.append(" ").append(array_regions.get(i));
+            }
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TEAMS_AS_TEAM_PLAYS, new_string_list_regions.toString());
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+    }
+
+    public void remove_TEAMS_MORNING_REMINDER(String team_to_remove){
+
+        // prendi il contenuto della stringa
+        SQLiteDatabase db_read = this.getReadableDatabase();
+        String string_remove_TEAMS_MORNING_REMINDER ="";
+        //                                 0
+        String selectQuery = "SELECT "+ TEAMS_MORNING_REMINDER +" FROM "+ TABLE_NOTIFICATIONS +" WHERE "+ "ID = 1" ;
+        Cursor cursor = db_read.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                string_remove_TEAMS_MORNING_REMINDER =  cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db_read.close();
+
+        //trasforma la stringa di nomi in un array
+        String[] regions = string_remove_TEAMS_MORNING_REMINDER.split(" ");
+        ArrayList <String> array_regions = new ArrayList<>();
+        if (regions.length>0){
+            array_regions.addAll(Arrays.asList(regions));
+        }
+        StringBuilder new_string_list_regions = new StringBuilder();
+        for(int i=0; i<array_regions.size(); i++){
+            if (!array_regions.get(i).equals(team_to_remove)){
+                new_string_list_regions.append(" ").append(array_regions.get(i));
+            }
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(TEAMS_MORNING_REMINDER, new_string_list_regions.toString());
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
     }
 
     public void setAllNotificationFields(){
-
+        Log.d(TAG, "setAllNotificationFields: ");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -296,15 +429,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(TEAMS_AS_TEAM_PLAYS, "" );
         cv.put(TEAMS_MORNING_REMINDER, "" );
 
-        db.insert(TABLE_MATCH_DAYS, null, cv);
+        db.insert(TABLE_NOTIFICATIONS, null, cv);
 
         db.close();
 
     }
-
-
-
-
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -374,8 +503,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
-
-
 
     public void insertMatchDetails(String region, String dateTime, String team1, String team2){
         Log.d(TAG, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB insertMatchDetails: ");
@@ -453,7 +580,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return matchIds;
     }*/
-
     public Boolean teamsInsertedForRegionDateTime(String region, String datetime){
         Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA teamsInsertedForRegionDay: "+ region + " datetime: "+ datetime);
 

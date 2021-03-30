@@ -102,44 +102,20 @@ public class BackgroundTasks extends JobService {
         Integer jobID = jobParameters.getJobId();
         //Log.d(TAG, "onStartJob: jobID: "+jobID);
         switch (jobID){
-            case 1:
-                //loadSettingsForThisRegion(jobParameters);
-                break;
             case 2:
                 checkIfLocalImageFolderIsUpdated(jobParameters);
                 break;
             case 3:
                 checkIfCurrentUserMatchDaysUpdated(jobParameters);
                 break;
-            case 4:
-                //startPeriodicCheck();
-                break;
-            case 5:
-                //setNotification();
-                break;
+
         }
 
         return true;
     }
 
-    private void setNotification() {
 
-        String NOTIFICATION_ID = "1";
-        int notificationID = new Random().nextInt();
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_ID)
-                .setSmallIcon(R.drawable.ic_p)
-                .setColor(getApplicationContext().getResources().getColor(R.color.blue_light))
-                .setContentText( "TEST NOTIFICA D" )
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-
-        notificationManagerCompat.notify(notificationID, notificationBuilder.build());
-
-    }
-
+/*
     public void startPeriodicCheck() {
         Log.d(TAG, "startPeriodicCheck: ");
 
@@ -168,10 +144,10 @@ public class BackgroundTasks extends JobService {
         //alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), pendingIntent0);
         assert alarmMgr0 != null;
 
-/*        alarmMgr0.setInexactRepeating(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent0);*/
+*//*        alarmMgr0.setInexactRepeating(AlarmManager.RTC_WAKEUP, task7AM.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent0);*//*
 
-    }
+    }*/
 
     private void checkIfCurrentUserMatchDaysUpdated(JobParameters parameters){
         Log.d(TAG, "checkIfCurrentUserMatchDaysUpdated: ");

@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.R;
+import com.francesco.pickem.Services.DatabaseHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,6 +52,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
     ImageView imageview_notification_region;
     Context context;
     String imageRegionPath;
+    DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +74,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         regionSelectedExtra = extras.getString(REGION_SELECTED);
         Log.d(TAG, "onCreate: REGION_SELECTED: " +regionSelectedExtra);
-
+        databaseHelper = new DatabaseHelper(context);
         region_name.setText(regionSelectedExtra);
         notification_regions_progressbar.setVisibility(View.VISIBLE);
         getAllTeams(regionSelectedExtra);
@@ -79,6 +82,8 @@ public class NotificationRegionActivity extends AppCompatActivity {
         loadBackground(regionSelectedExtra);
         loadSettingsForThisRegion(regionSelectedExtra);
         saveButton();
+
+
 
 
 
@@ -166,21 +171,28 @@ public class NotificationRegionActivity extends AppCompatActivity {
                 }else {
                     if (checkbox_not_picked.isChecked()){
                         notificationRegionReference.child(getString(R.string.notification_no_choice_made)).setValue(1);
+                        databaseHelper.insert_REGIONS_NO_CHOICE_MADE(regionSelectedExtra);
                     }else {
                         notificationRegionReference.child(getString(R.string.notification_no_choice_made)).setValue(0);
+                        databaseHelper.remove_REGIONS_NO_CHOICE_MADE(regionSelectedExtra);
                     }
                     if (checkbox_morning_reminder.isChecked()){
                         notificationRegionReference.child(getString(R.string.notification_morning_reminder)).setValue(1);
+                        databaseHelper.insert_REGIONS_MORNING_REMINDER(regionSelectedExtra);
                     }else {
                         notificationRegionReference.child(getString(R.string.notification_morning_reminder)).setValue(0);
+                        databaseHelper.remove_REGIONS_MORNING_REMINDER(regionSelectedExtra);
                     }
                     if (checkbox_at_match_start.isChecked()){
                         notificationRegionReference.child(getString(R.string.notification_first_match_otd)).setValue(1);
+                        databaseHelper.insert_REGIONS_FIRST_MATCH_ODT(regionSelectedExtra);
                     }else {
                         notificationRegionReference.child(getString(R.string.notification_first_match_otd)).setValue(0);
+                        databaseHelper.remove_REGIONS_FIRST_MATCH_ODT(regionSelectedExtra);
                     }
 
                 }
+
 
 
                 Toast.makeText(NotificationRegionActivity.this, "Saved!", Toast.LENGTH_SHORT).show();

@@ -4,9 +4,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -55,6 +57,7 @@ import com.francesco.pickem.Models.Sqlite_MatchDay;
 import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.NotificationsService.AlarmReceiver;
+import com.francesco.pickem.NotificationsService.ForegroundService;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
 import com.francesco.pickem.Services.JsonPlaceHolderAPI_Elo;
@@ -93,8 +96,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    SwitchCompat switch_notification, switch_user_settings;
-    ConstraintLayout show_notifications_box, show_user_box;
+    ImageButton switch_notification, switch_user_settings, switch_elotracker;
+    ConstraintLayout show_notifications_box, show_user_box, show_notifications_box4;
     private String TAG ="SettingsActivity: ";
     private static final String NOTIFICATION_ID = "1";
     Context context;
@@ -103,14 +106,14 @@ public class SettingsActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference reference;
     private DatabaseReference user_preferences_reference;
-
+    private static final String CHANNEL_ID = "1";
     RecyclerView settings_recycler_regioni;
     ListView settings_regions_listview;
     ScrollView parentScrollListener;
     EditText edittext_summoner_name, edittext_username;
     Spinner spinner_choose_server;
     Button button_save_elotracker_info;
-    SwitchCompat switch_elotracker, switch_automatic_elotracker;
+    SwitchCompat switch_automatic_elotracker, switch_show_notification;
     ConstraintLayout show_elotracker_box;
     ArrayList <String> finalRegionChoosen;
     public static String REGION_SELECTED = "REGION_SELECTED";
@@ -134,15 +137,16 @@ public class SettingsActivity extends AppCompatActivity {
     private SpinnerAdapter spinnerAdapter;
     TextView hour_elo_update, elotracker_timer_text;
     Integer hour, minute;
+    Boolean dropdownAccount, dropdownNotification, dropdownElotracker;
 
-    ImageView info, info_button_elotracker;
+    ImageView info, info_button_elotracker, info_button_notifications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        switch_notification = (SwitchCompat)  findViewById(R.id.switch_notification);
-        switch_user_settings = (SwitchCompat)  findViewById(R.id.switch_notificationx);
+        switch_notification = findViewById(R.id.switch_notification);
+        switch_user_settings = findViewById(R.id.switch_notificationx);
         show_notifications_box = findViewById(R.id.show_notifications_box);
         show_user_box = findViewById(R.id.show_notifications_boxx);
         button_logout = findViewById(R.id.button_logout);
@@ -160,6 +164,13 @@ public class SettingsActivity extends AppCompatActivity {
         elotracker_timer_text = findViewById(R.id.elotracker_timer_text);
         button_delete_account = findViewById(R.id.button_delete_account);
         edittext_username = findViewById(R.id.edittext_username);
+        switch_show_notification = findViewById(R.id.switch_show_notification);
+        show_notifications_box4 = findViewById(R.id.show_notifications_box4);
+        info_button_notifications = findViewById(R.id.info_button_notifications);
+
+        dropdownAccount = false;
+        dropdownNotification = false;
+        dropdownElotracker = false;
 
 
 
@@ -246,6 +257,26 @@ public class SettingsActivity extends AppCompatActivity {
 
                 // add a button
                 builder.setPositiveButton("Ok bro", null);
+
+                // create and show the alert dialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+
+            }
+        });
+
+        info_button_notifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                // setup the alert builder
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setTitle("Automatic Elotracker");
+                builder.setMessage(R.string.notification_info);
+
+                // add a button
+                builder.setPositiveButton("got it fam", null);
 
                 // create and show the alert dialog
                 AlertDialog dialog = builder.create();
@@ -660,53 +691,111 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 
-}
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_pickem);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
     private void buttonActions() {
 
-        switch_elotracker.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switch_elotracker.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (switch_elotracker.isChecked()){
+            public void onClick(View view) {
+                if (!dropdownElotracker){
+                    switch_elotracker.setImageResource(R.drawable.ic_expand_up);
                     show_elotracker_box.setVisibility(View.VISIBLE);
                     getAllServers();
                     loadFirebaseEloTrackingData();
+                    dropdownElotracker = true;
                 }else {
-                    Log.d(TAG, "onCreate: OFF");
                     show_elotracker_box.setVisibility(View.GONE);
+                    switch_elotracker.setImageResource(R.drawable.ic_expand_down);
+                    dropdownElotracker = false;
                 }
             }
         });
 
-        switch_notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switch_show_notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (switch_notification.isChecked()){
-                    Log.d(TAG, "onCreate: ON");
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+                if (b){
+                    createNotificationChannel();
+                    show_notifications_box4.setVisibility(View.VISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        //context.startForegroundService(serviceIntent);
+                        Log.d(TAG, "onCheckedChanged: 1");
+                        Intent serviceIntent = new Intent(SettingsActivity.this, ForegroundService.class);
+                        ContextCompat.startForegroundService(SettingsActivity.this, serviceIntent);
+                    }
+                    //ContextCompat.startForegroundService(PicksActivity.this, serviceIntent);
+                }else {
+                    show_notifications_box4.setVisibility(View.GONE);
+
+                    Intent serviceIntent = new Intent(SettingsActivity.this, ForegroundService.class);
+                    stopService(serviceIntent);
+                }
+
+            }
+        });
+
+        switch_notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Boolean serviceRunning = isMyServiceRunning(ForegroundService.class);
+                Log.d(TAG, "onCheckedChanged: !!!!!!!!!!!!!!!!!!!!!!!! ? "+ serviceRunning);
+                if (serviceRunning){
+                    switch_show_notification.setChecked(true);
+                }else {
+                    switch_show_notification.setChecked(false);
+                }
+
+                if (!dropdownNotification){
+                    switch_notification.setImageResource(R.drawable.ic_expand_up);
+                    dropdownNotification = true;
                     show_notifications_box.setVisibility(View.VISIBLE);
                     settings_progressbar.setVisibility(View.VISIBLE);
                     getAllRegions();
                 }else {
-                    Log.d(TAG, "onCreate: OFF");
                     show_notifications_box.setVisibility(View.GONE);
+                    show_notifications_box4.setVisibility(View.GONE);
+                    switch_notification.setImageResource(R.drawable.ic_expand_down);
+                    dropdownNotification = false;
                 }
             }
         });
 
-        switch_user_settings.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switch_user_settings.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (switch_user_settings.isChecked()){
-                    Log.d(TAG, "onCreate: ON");
+            public void onClick(View view) {
+                if (!dropdownAccount){
                     show_user_box.setVisibility(View.VISIBLE);
                     Toast.makeText(context, "Long Press to select / deselect ", Toast.LENGTH_SHORT).show();
                     loadFirebaseData();
+                    switch_user_settings.setImageResource(R.drawable.ic_expand_up);
+                    dropdownAccount = true;
                 }else {
-                    Log.d(TAG, "onCreate: OFF");
                     show_user_box.setVisibility(View.GONE);
+                    switch_user_settings.setImageResource(R.drawable.ic_expand_down);
+                    dropdownAccount = false;
+
                 }
             }
         });
+
 
         button_logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -737,6 +826,16 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setupBottomNavView() {
@@ -893,7 +992,9 @@ public class SettingsActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: DONE ");
 
                 show_elotracker_box.setVisibility(View.GONE);
-                switch_elotracker.setChecked(false);
+
+                dropdownElotracker = false;
+                switch_elotracker.setImageResource(R.drawable.ic_expand_down);
 
 
                 }

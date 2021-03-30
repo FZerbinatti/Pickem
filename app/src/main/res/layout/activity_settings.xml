@@ -90,15 +90,18 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.SwitchCompat
+                    <ImageButton
                         android:id="@+id/switch_notificationx"
-                        android:layout_width="60dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="10dp"
-                        android:theme="@style/SwitchCompatTheme"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_expand_down"
+                        android:background="@drawable/buttons_dropdown_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -415,13 +418,13 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.SwitchCompat
+                    <ImageButton
                         android:id="@+id/switch_notification"
-                        android:layout_width="60dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="10dp"
-
-                        android:theme="@style/SwitchCompatTheme"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_expand_down"
+                        android:background="@drawable/buttons_dropdown_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -433,8 +436,52 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cc1"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/classicroman"
+                        android:gravity="center"
+                        android:text="Enable the Notification engine"
+                        android:textColor="@color/blue_light_opaque"
+                        android:textSize="18sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/switch_show_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="10dp"
+                        android:theme="@style/SwitchCompatTheme"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+                    <ImageView
+                        android:id="@+id/info_button_notifications"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_info"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/show_notifications_box4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cc1">
+                    app:layout_constraintTop_toBottomOf="@+id/show_notifications_box">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cc0"
@@ -483,241 +530,6 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <!--                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                               &lt;!&ndash; <TextView
-                                    android:id="@+id/tv_shownotificationlec"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/lec"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_lec"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationlec" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationlcs"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/lcs"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationlec" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_lcs"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationlcs" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationlck"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/lck"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationlcs" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_lck"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationlck" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationlpl"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/lpl"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationlck" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_lpl"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationlpl" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationtcl"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/tcl"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationlpl" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_tcl"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationtcl" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationcblol"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/cblol"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationtcl" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_cblol"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationcblol" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationopl"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/opl"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationcblol" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_opl"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationopl" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationlla"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/lla"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationopl" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_lla"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationlla" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationpcs"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/pcs"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationlla" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_pcs"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationpcs" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationljl"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/ljl"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationpcs" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_ljl"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationljl" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationlcsa"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/lcs_academy"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationljl" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_lcsa"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationlcsa" />
-
-                                <TextView
-                                    android:id="@+id/tv_shownotificationeum"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginVertical="10dp"
-                                    android:text="@string/eum"
-                                    android:textColor="@color/blue_light"
-                                    android:textSize="18sp"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toBottomOf="@id/tv_shownotificationlcsa" />
-                                <CheckBox
-                                    android:id="@+id/checkbox_notification_eum"
-                                    android:layout_width="30dp"
-                                    android:layout_height="20dp"
-                                    android:layout_marginEnd="10dp"
-                                    android:theme="@style/SwitchCompatTheme"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="@id/tv_shownotificationeum" />&ndash;&gt;
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-
                         </ListView>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -759,12 +571,13 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.SwitchCompat
+                    <ImageButton
                         android:id="@+id/switch_elotracker"
-                        android:layout_width="60dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="10dp"
-                        android:theme="@style/SwitchCompatTheme"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="15dp"
+                        android:src="@drawable/ic_expand_down"
+                        android:background="@drawable/buttons_dropdown_background"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />

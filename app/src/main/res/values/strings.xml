@@ -15,8 +15,9 @@
     <string name="pmbe">Passwords must be equal</string>
 
     <string name="reminder_if_nothing_has_been_chosen_on_match_day_1h_before_match_start">Reminder if nothing has been chosen on match day 1h before match start</string>
-    <string name="elotracker_info"> Insert your Region and Summoner Name and check this switch if you want the EloTracker system to automatically gather your progress every day at midnight and load them into the Elotracker graph, left the switch unckecked if you want to manually update your progress
+    <string name="elotracker_info"> Insert your Region and Summoner Name and check this switch if you want the EloTracker system to automatically gather your progress every day at midnight and load them into the Elotracker graph, left the switch unckecked if you want to manually update your progress. Attention: will work only if the notification engine is up
 </string>
+    <string name="notification_info">To enable the app to provide the best possible experience the system needs to show a persistent notification to let you know that the app has a task costantly working </string>
 
     // Elos for elo tracker
     <string name="Challenger">Challenger</string>

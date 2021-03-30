@@ -76,8 +76,6 @@ public class LoginActivity extends AppCompatActivity {
     TextView see_database;
     DatabaseHelper databaseHelper;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                                     personalized_dialog_background.setVisibility(View.VISIBLE);
                                     personalized_dialog_progressbar1.setProgressTintList(colorStateListYellow);
                                     personalized_dialog_progressbar2.setProgressTintList(colorStateListGreen);
+                                    databaseHelper.setAllNotificationFields();
 
 
                                     login_button.setEnabled(false);
@@ -245,7 +244,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     @RequiresApi(api = Build.VERSION_CODES.N)
                                                     @Override
                                                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                                        personalized_dialog_description.setText("waiting for morgana's Q to end ");
+                                                        personalized_dialog_description.setText("Waiting for Morgana's Q to end ");
                                                         personalized_dialog_progressbar2.setProgress(currentNumber2.getNumber(),true);
                                                         personalized_dialog_percentage2.setText(Math.round(currentNumber2.getNumber()*costante2)+"%");
                                                         currentNumber2.setNumber(currentNumber2.getNumber()+1);
