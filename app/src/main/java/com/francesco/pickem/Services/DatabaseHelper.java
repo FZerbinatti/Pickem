@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.francesco.pickem.Models.ItemAnalistRecyclerVIew;
 import com.francesco.pickem.Models.MatchDetails;
+import com.francesco.pickem.Models.MatchNotification;
 import com.francesco.pickem.Models.RegionStats;
 import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.SqliteMatch;
@@ -416,6 +417,94 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
         db.close();
     }
+
+    public ArrayList<String> getUserMorningReminderRegions ( ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String regions = "";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_MORNING_REMINDER +" FROM "+ TABLE_NOTIFICATIONS +" WHERE ID = 1 " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                regions = ( cursor.getString(0)) ;
+                //Log.d(TAG, "getUserMorningReminderRegions: "+regions);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        String[] array_regions = regions.split(" ");
+        ArrayList <String> user_region_MR = new ArrayList<>(Arrays.asList(array_regions));
+
+        return user_region_MR;
+    }
+
+    public ArrayList<String> getUserMorningReminderTeams ( ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String regions = "";
+        //                                 0
+        String selectQuery = "SELECT "+ TEAMS_MORNING_REMINDER +" FROM "+ TABLE_NOTIFICATIONS +" WHERE ID = 1 " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                regions = ( cursor.getString(0)) ;
+                //Log.d(TAG, "getUserMorningReminderRegions: "+regions);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        String[] array_regions = regions.split(" ");
+        ArrayList <String> user_region_MR = new ArrayList<>(Arrays.asList(array_regions));
+
+        return user_region_MR;
+    }
+
+    public ArrayList<String> getUserREGIONS_FIRST_MATCH_ODT ( ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String regions = "";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_FIRST_MATCH_ODT +" FROM "+ TABLE_NOTIFICATIONS +" WHERE ID = 1 " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                regions = ( cursor.getString(0)) ;
+                //Log.d(TAG, "getUserMorningReminderRegions: "+regions);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        String[] array_regions = regions.split(" ");
+        ArrayList <String> user_region_MR = new ArrayList<>(Arrays.asList(array_regions));
+
+        return user_region_MR;
+    }
+
+    public ArrayList<String> getUserTEAMS_AS_TEAM_PLAYS ( ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String regions = "";
+        //                                 0
+        String selectQuery = "SELECT "+ TEAMS_AS_TEAM_PLAYS +" FROM "+ TABLE_NOTIFICATIONS +" WHERE ID = 1 " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                regions = ( cursor.getString(0)) ;
+                //Log.d(TAG, "getUserMorningReminderRegions: "+regions);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        String[] array_regions = regions.split(" ");
+        ArrayList <String> user_region_MR = new ArrayList<>(Arrays.asList(array_regions));
+
+        return user_region_MR;
+    }
+
+
+
+
 
     public void setAllNotificationFields(){
         Log.d(TAG, "setAllNotificationFields: ");
@@ -993,8 +1082,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<String> matchesForRegion_Date(String region, String date){
-        Log.d(TAG, "matchesForRegion_Date: region: "+region + " date: "+date);
+    public ArrayList<String> matcheIDsForRegion_Date(String region, String date){
+        Log.d(TAG, "matcheIDsForRegion_Date: region: "+region + " date: "+date);
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> match_id = new ArrayList<>();
@@ -1011,6 +1100,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         Log.d(TAG, "matchesForRegion_Date: match_id: "+match_id);
             return match_id;
+
+    }
+
+    public ArrayList<MatchNotification> matchesForRegion_Date(String region, String date){
+        Log.d(TAG, "matchesForRegion_Date: region: "+region + " date: "+date);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<MatchNotification> match_list = new ArrayList<>();
+        //                                 0            1                 2           3
+        String selectQuery = "SELECT "+  REGION +","+ MATCH_ID+" , " + TEAM1 +","+ TEAM2 + " FROM "+ TABLE_MATCHES +" WHERE "+ REGION +" = ? AND " + DAY + " = ? " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{region, date});
+        if (cursor.moveToFirst()) {
+            do {
+                match_list.add( new MatchNotification(cursor.getString(0),"0", cursor.getString(1),cursor.getString(2), cursor.getString(3) ) );
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        Log.d(TAG, "matchesForRegion_Date: match_id: "+match_list);
+        return match_list;
 
     }
 
