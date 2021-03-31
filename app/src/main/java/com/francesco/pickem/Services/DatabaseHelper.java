@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.francesco.pickem.Models.Elo;
+import com.francesco.pickem.Models.EloTrackerNotifications;
 import com.francesco.pickem.Models.ItemAnalistRecyclerVIew;
 import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.MatchNotification;
@@ -31,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String TAG = "DatabaseHelper ";
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 9;
+    private static final int DB_VERSION = 10;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -58,9 +60,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TEAMS_MORNING_REMINDER = "TEAMS_MORNING_REMINDER";
 
 
+    private static final String ELOTRACKER_SUMMONER = "ELOTRACKER_SUMMONER";
+    private static final String ELOTRACKER_TIME = "ELOTRACKER_TIME";
+    private static final String ELOTRACKER_SERVER = "ELOTRACKER_SERVER";
+    private static final String ELOTRACKER_ACTIVE = "ELOTRACKER_ACTIVE";
+
     static final String TABLE_MATCHES = "TABLE_MATCHES";
     private static final String MATCH_ID = "MATCH_ID";
-
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null,DB_VERSION);
@@ -242,6 +248,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
+
+    public void update_ELOTRACKER(EloTrackerNotifications elotracker_data){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(ELOTRACKER_SUMMONER, elotracker_data.getSummoner_name());
+        cv.put(ELOTRACKER_TIME, elotracker_data.getTimer_elotracker());
+        cv.put(ELOTRACKER_SERVER, elotracker_data.getSummoner_server());
+        cv.put(ELOTRACKER_ACTIVE, elotracker_data.getSummoner_elotracker());
+        db.update(TABLE_NOTIFICATIONS,  cv, "ID = 1", new String []{});
+        db.close();
+
+    }
+
+
+
 
     public void remove_REGIONS_NO_CHOICE_MADE(String region_to_remove){
 
@@ -502,9 +525,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return user_region_MR;
     }
 
+    public ArrayList<String> getUserREGIONS_NO_CHOICE_MADE ( ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String regions = "";
+        //                                 0
+        String selectQuery = "SELECT "+ REGIONS_NO_CHOICE_MADE +" FROM "+ TABLE_NOTIFICATIONS +" WHERE ID = 1 " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                regions = ( cursor.getString(0)) ;
+                //Log.d(TAG, "getUserMorningReminderRegions: "+regions);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        String[] array_regions = regions.split(" ");
+        ArrayList <String> user_region_MR = new ArrayList<>(Arrays.asList(array_regions));
+
+        return user_region_MR;
+    }
+
+    public EloTrackerNotifications getUserELOTRACKER_SUMMONER ( ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        EloTrackerNotifications eloTrackerData = new EloTrackerNotifications();
+        //                                 0
+        String selectQuery = "SELECT "+ ELOTRACKER_SUMMONER+ "," + ELOTRACKER_TIME+ "," + ELOTRACKER_SERVER+ "," + ELOTRACKER_ACTIVE +" FROM "+ TABLE_NOTIFICATIONS +" WHERE ID = 1 " ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{});
+        if (cursor.moveToFirst()) {
+            do {
+                eloTrackerData.setSummoner_name(cursor.getString(0));
+                eloTrackerData.setTimer_elotracker(cursor.getString(1));
+                eloTrackerData.setSummoner_server(cursor.getString(2));
+                eloTrackerData.setSummoner_elotracker(cursor.getInt(3));
 
 
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
 
+        return eloTrackerData;
+    }
 
     public void setAllNotificationFields(){
         Log.d(TAG, "setAllNotificationFields: ");
@@ -517,6 +579,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(REGIONS_MORNING_REMINDER, "" );
         cv.put(TEAMS_AS_TEAM_PLAYS, "" );
         cv.put(TEAMS_MORNING_REMINDER, "" );
+        cv.put(ELOTRACKER_TIME, "12:00");
+        cv.put(ELOTRACKER_SUMMONER, "");
+        cv.put(ELOTRACKER_SERVER, "EUW");
+        cv.put(ELOTRACKER_SUMMONER, 0);
 
         db.insert(TABLE_NOTIFICATIONS, null, cv);
 
@@ -1047,6 +1113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String firstMatchForRegion_Date_PastCurrentTime(String region, String date){
+        Log.d(TAG, "firstMatchForRegion_Date_PastCurrentTime: first match for "+region + " in date: "+date + " is: ");
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> match_ids = new ArrayList<>();
         //                                 0
@@ -1237,6 +1304,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             alc.set(1,Cursor2);
             return alc;
         }
+    }
+
+    public boolean allMatchPredictedForDate (String currentYear, String regionSelected, String day ){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> match_days = new ArrayList<>();
+        //                                 0                    1
+        String selectQuery = "SELECT "+ MATCH_ID + " , " +  PREDICTION +" FROM "+ TABLE_MATCHES +" WHERE "+ YEAR +" = ? AND " + REGION + " = ? AND " + DAY + " = ?" ;
+        Cursor cursor = db.rawQuery(selectQuery, new String []{currentYear, regionSelected});
+        if (cursor.moveToFirst()) {
+            do {
+               String matchID = ( cursor.getString(0)) ;
+               String prediction = cursor.getString(1);
+               if (prediction.isEmpty()||prediction==null||prediction.equals(" ")){
+                   Log.d(TAG, "allMatchPredictedForDate: Not all matches have been predicted ");
+                   cursor.close();
+                   db.close();
+                   return false;
+               }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        Log.d(TAG, "allMatchPredictedForDate: all matches predicted for this date");
+        return true;
     }
 
 

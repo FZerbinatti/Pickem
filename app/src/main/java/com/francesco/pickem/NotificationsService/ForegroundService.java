@@ -110,7 +110,7 @@ public class ForegroundService extends Service {
             l += 86400000; // start at next 24 hour
         }*/
         //   86400000
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60000, sender); // 86400000
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60*60000, sender); // 86400000
     }
 }
 

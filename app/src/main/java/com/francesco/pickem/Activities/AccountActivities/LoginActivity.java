@@ -23,11 +23,15 @@ import com.francesco.pickem.Activities.MainActivities.PicksActivity;
 import com.francesco.pickem.Interfaces.OnGetDataListener;
 import com.francesco.pickem.Models.CurrentNumber;
 import com.francesco.pickem.Models.CurrentRegion;
+import com.francesco.pickem.Models.EloTrackerNotifications;
 import com.francesco.pickem.Models.ImageValidator;
 import com.francesco.pickem.Models.MatchDetails;
+import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.Models.SqliteMatch;
 import com.francesco.pickem.Models.Sqlite_HalfMatch;
 import com.francesco.pickem.Models.Sqlite_MatchDay;
+import com.francesco.pickem.Models.TeamNotification;
+import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.PreferencesData;
 import com.francesco.pickem.Services.DatabaseHelper;
@@ -136,6 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful() && (firebaseUser != null && (firebaseUser).isEmailVerified())){
 
                                 downloadUserRegions();
+                                downloadUSerNotificationPreferences();
+                                downloadUserElotrackerInfo();
 
                                 Log.d(TAG, "onComplete: QUI");
 
@@ -311,6 +317,93 @@ public class LoginActivity extends AppCompatActivity {
         changeNavBarColor();
     }
 
+    private void downloadUserElotrackerInfo() {
+
+        DatabaseReference referenceGeneralities = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_users_generealities));
+
+        referenceGeneralities.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                UserGeneralities elotracker_info = snapshot.getValue(UserGeneralities.class);
+
+                databaseHelper.update_ELOTRACKER(new EloTrackerNotifications(elotracker_info.getSummoner_elotracker(), elotracker_info.getSummoner_name(), elotracker_info.getSummoner_server(), elotracker_info.getTime_elotracker()));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+
+    }
+
+    private void downloadUSerNotificationPreferences() {
+
+
+        DatabaseReference referenceTeam = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_user_notification))
+                .child(getString(R.string.firebase_user_notification_teams));
+
+        referenceTeam.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
+                    String userTeam = snapshot.getKey();
+                    TeamNotification teamNotifications = snapshot.getValue(TeamNotification.class);
+                    if (teamNotifications.getNotification_team_as_team_plays()>0){
+                        databaseHelper.insert_TEAMS_AS_TEAM_PLAYS(userTeam);
+                    }
+                    if (teamNotifications.getNotification_team_morning_reminder()>0){
+                        databaseHelper.insert_TEAMS_MORNING_REMINDER(userTeam);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+            }
+        });
+
+        DatabaseReference referenceRegion = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(getString(R.string.firebase_user_notification))
+                .child(getString(R.string.firebase_user_notification_region));
+
+        referenceRegion.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String userRegion = snapshot.getKey();
+
+                    RegionNotifications regionNotifications = snapshot.getValue(RegionNotifications.class);
+                    if (regionNotifications.getNo_choice_made()>0){
+                        databaseHelper.insert_REGIONS_NO_CHOICE_MADE(userRegion);
+                    }
+                    if ((regionNotifications.getNotification_first_match_otd()>0)){
+                        databaseHelper.insert_REGIONS_FIRST_MATCH_ODT(userRegion);
+                    }
+                    if ((regionNotifications.getNotification_morning_reminder()>0)){
+                        databaseHelper.insert_REGIONS_MORNING_REMINDER(userRegion);
+                    }
+
+
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
     private void downloadUserPicksForStatsActivity() {
         CurrentNumber global_counter = new CurrentNumber();
         global_counter.setNumber(0);
@@ -340,7 +433,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
             }
         });
-
     }
 
     public void downloadMatchDetailsForUserPicks(ArrayList<String> userRegionPicks) {

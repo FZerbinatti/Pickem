@@ -50,6 +50,7 @@ import com.francesco.pickem.Annotation.NonNull;
 import com.francesco.pickem.BuildConfig;
 import com.francesco.pickem.Models.CurrentRegion;
 import com.francesco.pickem.Models.EloTracker;
+import com.francesco.pickem.Models.EloTrackerNotifications;
 import com.francesco.pickem.Models.RegionServers;
 import com.francesco.pickem.Models.SimpleRegion;
 import com.francesco.pickem.Models.Sqlite_HalfMatch;
@@ -975,18 +976,20 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(context, "Select Your Region Server!", Toast.LENGTH_SHORT).show();
                 }else {
 
+                    Integer elotracker_active = 0;
+                    if (switch_automatic_elotracker.isChecked()){
+                        elotracker_active = 1;
+                    }
+
+                    databaseHelper.update_ELOTRACKER(new EloTrackerNotifications(elotracker_active, summonerName, summoner_server.getCode(), elotracker_timer_text.getText().toString()));
+
                     DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(getString(R.string.firebase_users_generealities));
 
                             reference.child(getString(R.string.summoner_name)).setValue(summonerName);
                             reference.child(getString(R.string.summoner_server)).setValue(summoner_server.getId().toLowerCase());
-                            if (switch_automatic_elotracker.isChecked()){
-                                reference.child(getString(R.string.summoner_elotracker)).setValue(1);
-                                saveFirstElotracker(summonerName, summoner_server);
-                            }else {
-                                reference.child(getString(R.string.summoner_elotracker)).setValue(0);
-                            }
+                            reference.child(getString(R.string.summoner_elotracker)).setValue(elotracker_active);
                             reference.child("time_elotracker").setValue(hour_elo_update.getText().toString());
 
                 Log.d(TAG, "onClick: DONE ");

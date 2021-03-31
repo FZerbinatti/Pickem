@@ -23,6 +23,13 @@ public class RegionNotifications {
         this.region_name = region_name;
     }
 
+    public RegionNotifications(Integer no_choice_made, Integer notification_first_match_otd, Integer notification_morning_reminder) {
+        this.no_choice_made = no_choice_made;
+        this.notification_first_match_otd = notification_first_match_otd;
+        this.notification_morning_reminder = notification_morning_reminder;
+
+    }
+
     public Integer getNo_choice_made() {
         return no_choice_made;
     }

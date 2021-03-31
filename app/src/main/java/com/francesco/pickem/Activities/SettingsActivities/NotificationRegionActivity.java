@@ -196,8 +196,8 @@ public class NotificationRegionActivity extends AppCompatActivity {
 
 
                 Toast.makeText(NotificationRegionActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(NotificationRegionActivity.this, SettingsActivity.class);
-                startActivity( intent);
+                /*Intent intent = new Intent(NotificationRegionActivity.this, SettingsActivity.class);
+                startActivity( intent);*/
 
 /*                ArrayList <String> newRegions = new ArrayList<>();
                 ArrayList <String> oldRegions = new ArrayList<>();
@@ -286,6 +286,7 @@ public class NotificationRegionActivity extends AppCompatActivity {
                 intent.putExtra(TEAM_SELECTED, stringTeamSelected);
                 intent.putExtra(REGION_SELECTED, regionSelectedExtra);
                 startActivity(intent);
+                finish();
 
             }
         });

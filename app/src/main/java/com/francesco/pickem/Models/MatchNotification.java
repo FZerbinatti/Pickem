@@ -1,6 +1,11 @@
 package com.francesco.pickem.Models;
 
-public class MatchNotification {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
+
+public class MatchNotification implements Comparable<MatchNotification>{
 
     private String region;
     private String id;
@@ -61,5 +66,39 @@ public class MatchNotification {
 
     public void setTeam2(String team2) {
         this.team2 = team2;
+    }
+
+    @Override
+    public String toString() {
+        return "MatchNotification{" +
+                "region='" + region + '\'' +
+                ", id='" + id + '\'' +
+                ", datetime='" + datetime + '\'' +
+                ", team1='" + team1 + '\'' +
+                ", team2='" + team2 + '\'' +
+                '}';
+    }
+
+    @Override
+    public int compareTo(MatchNotification matchNotification) {
+        return 0;
+    }
+
+    public  static class ByDatetime implements Comparator<MatchNotification> {
+
+        @Override
+        public int compare(MatchNotification t1 , MatchNotification t2) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date matchDateTime1 = null;
+            Date matchDateTime2 = null;
+            try {
+                matchDateTime1 = sdf.parse(t1.getDatetime());
+                matchDateTime2 = sdf.parse(t2.getDatetime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return matchDateTime2.before(matchDateTime1) ? 1 :(matchDateTime1.before(matchDateTime2) ? -1 :0);
+        }
     }
 }
