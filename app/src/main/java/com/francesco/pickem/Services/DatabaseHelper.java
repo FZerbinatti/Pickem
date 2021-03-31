@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String TAG = "DatabaseHelper ";
 
     private static final String DB_NAME = "Pickem_LocalDB";
-    private static final int DB_VERSION = 10;
+    private static final int DB_VERSION = 11;
 
     //tabella per le validazioni/update delle immagini
     static final String TABLE_IMAGE_REGIONS = "TABLE_IMAGE_REGIONS";
@@ -107,7 +107,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + REGIONS_FIRST_MATCH_ODT + " TEXT ,  "
                 + REGIONS_MORNING_REMINDER + " TEXT ,  "
                 + TEAMS_AS_TEAM_PLAYS + " TEXT ,  "
-                + TEAMS_MORNING_REMINDER + " TEXT  );";
+                + TEAMS_MORNING_REMINDER + " TEXT ,  "
+                + ELOTRACKER_SUMMONER + " TEXT ,  "
+                + ELOTRACKER_TIME + " TEXT ,  "
+                + ELOTRACKER_SERVER + " TEXT ,  "
+                + ELOTRACKER_ACTIVE + " TEXT  );";
 
         db.execSQL(CREATE_TABLE_IMAGE_REGIONS);
         db.execSQL(CREATE_TABLE_IMAGE_TEAMS);
@@ -582,7 +586,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(ELOTRACKER_TIME, "12:00");
         cv.put(ELOTRACKER_SUMMONER, "");
         cv.put(ELOTRACKER_SERVER, "EUW");
-        cv.put(ELOTRACKER_SUMMONER, 0);
+        cv.put(ELOTRACKER_ACTIVE, 0);
 
         db.insert(TABLE_NOTIFICATIONS, null, cv);
 
