@@ -663,7 +663,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertMatchDetails(String region, String dateTime, String team1, String team2){
+    public void insertMatchTeams(String region, String dateTime, String team1, String team2){
         Log.d(TAG, "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB insertMatchDetails: ");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -740,7 +740,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return matchIds;
     }*/
     public Boolean teamsInsertedForRegionDateTime(String region, String datetime){
-        Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA teamsInsertedForRegionDay: "+ region + " datetime: "+ datetime);
+        Log.d(TAG, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA teamsInsertedForRegionDateTime: "+ region + " datetime: "+ datetime);
 
         SQLiteDatabase db = this.getReadableDatabase();
         String team1 = "";
@@ -753,7 +753,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
 
                 team1 = cursor.getString(0);
-                if (team1.equals("")){
+                if (team1.trim().isEmpty()){
                     Log.d(TAG, "teamsInsertedForRegionDay: - FALSE - THERE ARE NOT TEAMS INSERTED FOR THIS DATE");
                     return false;
                 }else {

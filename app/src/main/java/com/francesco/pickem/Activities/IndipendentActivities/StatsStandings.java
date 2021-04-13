@@ -91,7 +91,7 @@ public class StatsStandings extends AppCompatActivity {
         ArrayList<String> regions = new ArrayList<>();
 
         // load da firebase le regioni
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_servers));
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_statistics));
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {

@@ -180,6 +180,7 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
                         intent.putExtra((getResources().getString(R.string.elotracker_lps)),eloTrackerArrayList.get(position).getLps().toString() );
 
                         startActivity(intent);
+                        finish();
 
                     }
 
@@ -238,6 +239,7 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
                     intent.putExtra("EX_ELO", elotracker_list.get(elotracker_list.size()-1).getElo());
                 }
                 startActivity(intent);
+                finish();
             }
         });
 

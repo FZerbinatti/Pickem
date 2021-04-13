@@ -1,5 +1,6 @@
 package com.francesco.pickem.Activities.AccountActivities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.francesco.pickem.Activities.MainActivities.SettingsActivity;
 import com.francesco.pickem.Adapters.SimpleRegionRecyclerViewAdapter;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.Models.SimpleRegion;
@@ -49,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     Button button_register;
     ProgressBar register_progressbar;
-    ImageButton registration_show_regions;
+    //ImageButton registration_show_regions;
     ConstraintLayout collapsable_box_registration;
     Integer dropdown_status;
     private DatabaseReference reference;
@@ -76,10 +79,11 @@ public class RegisterActivity extends AppCompatActivity {
         register_email = findViewById(R.id.register_email);
         register_password = findViewById(R.id.register_password);
         register_repeat_password = findViewById(R.id.register_repeat_password);
-        registration_show_regions = findViewById(R.id.registration_show_regions);
+        //registration_show_regions = findViewById(R.id.registration_show_regions);
         collapsable_box_registration = findViewById(R.id.collapsable_box_registration);
         textView_selectRegion = findViewById(R.id.textView_selectRegion);
         register_username = findViewById(R.id.register_username);
+
 
 
 
@@ -91,6 +95,8 @@ public class RegisterActivity extends AppCompatActivity {
         if (!rootfolder.exists()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
+
+        loadDatabaseRegions();
 
         register_scrollview = findViewById(R.id.register_scrollview);
         register_recyclerview_regioni = findViewById(R.id.register_recyclerview_regioni);
@@ -126,13 +132,13 @@ public class RegisterActivity extends AppCompatActivity {
         changeNavBarColor();
         goToLogin();
         registration();
-        dropdownMenu();
+        //dropdownMenu();
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
-    private void dropdownMenu() {
+/*    private void dropdownMenu() {
 
         registration_show_regions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,18 +154,18 @@ public class RegisterActivity extends AppCompatActivity {
                     dropdown_status =1;
                     hideKeyboard(RegisterActivity.this);
                     loadDatabaseRegions();
-                }else {
+                }*//*else {
                     register_progressbar.setVisibility(View.GONE);
                     textView_selectRegion.setText("Select Region");
                     collapsable_box_registration.setVisibility(View.GONE);
                     registration_show_regions.setImageResource(R.drawable.ic_dropdown);
                     dropdown_status =0;
-                }
+                }*//*
 
             }
         });
 
-    }
+    }*/
 
     private void loadDatabaseRegions() {
         Log.d(TAG, "loadRegionsWithCheckBox: click");
@@ -294,96 +300,89 @@ public class RegisterActivity extends AppCompatActivity {
                          /*UID = FirebaseAuth.getInstance().getCurrentUser())).getUid();
                         Log.d(TAG, "onClick: UID:"+UID);*/
 
-                        register_progressbar.setVisibility(View.VISIBLE);
-                        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                        // setup the alert builder
+                        AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                        builder.setTitle("Terms And Conditions");
+                        builder.setMessage(R.string.terms_and_conditions);
+                        builder.setNegativeButton("Decline", null);
 
-                            if (task.isSuccessful()) {
-                                UserGeneralities user = new UserGeneralities(email, "null",register_username.getText().toString()+"#"+((int)(Math.random()*9000)+1000),  "null",-1, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid(), "22:00");
-                                FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(getString(R.string.firebase_users_generealities))
-                                        .setValue(user).addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        Toast.makeText(RegisterActivity.this, "User has been registered Successfully", Toast.LENGTH_SHORT).show();
+                        // add a button
+                        builder.setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int q) {
+                                // create and show the alert dialog
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
 
-                                        for (int i = 0; i < choosen_regions.size(); i++) {
+                                register_progressbar.setVisibility(View.VISIBLE);
+                                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+
+                                    if (task.isSuccessful()) {
+                                        UserGeneralities user = new UserGeneralities(email, "null",register_username.getText().toString()+"#"+((int)(Math.random()*9000)+1000),  "null",-1, choosen_regions, FirebaseAuth.getInstance().getCurrentUser().getUid(), "22:00");
+                                        FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(getString(R.string.firebase_users_generealities))
+                                                .setValue(user).addOnCompleteListener(task1 -> {
+                                            if (task1.isSuccessful()) {
+                                                Toast.makeText(RegisterActivity.this, "User has been registered Successfully", Toast.LENGTH_SHORT).show();
+
+                                                for (int i = 0; i < choosen_regions.size(); i++) {
 
 
-                                            RegionNotifications regionNotifications = new RegionNotifications(1, 0, 0, choosen_regions.get(i));
-                                            FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                    .child(getString(R.string.firebase_user_notification))
-                                                    .child(getString(R.string.firebase_user_notification_region))
-                                                    .child(choosen_regions.get(i))
-                                                    .setValue(regionNotifications).addOnCompleteListener(task2 -> {
-                                                if (task2.isSuccessful()) {
-                                                    Log.d(TAG, "registered: Notification Region ");
+                                                    RegionNotifications regionNotifications = new RegionNotifications(1, 0, 0, choosen_regions.get(i));
+                                                    FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .child(getString(R.string.firebase_user_notification))
+                                                            .child(getString(R.string.firebase_user_notification_region))
+                                                            .child(choosen_regions.get(i))
+                                                            .setValue(regionNotifications).addOnCompleteListener(task2 -> {
+                                                        if (task2.isSuccessful()) {
+                                                            Log.d(TAG, "registered: Notification Region ");
 
-                                                } else {
-                                                    Log.d(TAG, "ERROR: registered: Notification Region ");
+                                                        } else {
+                                                            Log.d(TAG, "ERROR: registered: Notification Region ");
+                                                        }
+                                                    });
+
                                                 }
-                                            });
 
-                                        }
-
-                                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                                        Log.d(TAG, "onClick: firebaseUser: " + firebaseUser);
-                                        Log.d(TAG, "onClick: firebaseUser = " + firebaseUser.getUid());
-                                        if (!firebaseUser.isEmailVerified()) {
+                                                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                                Log.d(TAG, "onClick: firebaseUser: " + firebaseUser);
+                                                Log.d(TAG, "onClick: firebaseUser = " + firebaseUser.getUid());
+                                                if (!firebaseUser.isEmailVerified()) {
 
 
-                                            firebaseUser.sendEmailVerification();
-                                            Toast.makeText(RegisterActivity.this, "Email verification sent, check your email!", Toast.LENGTH_LONG).show();
-                                            register_progressbar.setVisibility(View.GONE);
-                                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                            startActivity(intent);
-                                            finish();
+                                                    firebaseUser.sendEmailVerification();
+                                                    Toast.makeText(RegisterActivity.this, "Email verification sent, check your email!", Toast.LENGTH_LONG).show();
+                                                    register_progressbar.setVisibility(View.GONE);
+                                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
 
-                                        }
+                                                }
 
+                                            } else {
+                                                Toast.makeText(RegisterActivity.this, "Registration Error", Toast.LENGTH_SHORT).show();
+                                                Log.d(TAG, "onClick: TASK 1 INSUCCESS");
+                                                register_progressbar.setVisibility(View.GONE);
+
+                                            }
+                                        });
                                     } else {
-                                        Toast.makeText(RegisterActivity.this, "Registration Error", Toast.LENGTH_SHORT).show();
-                                        Log.d(TAG, "onClick: TASK 1 INSUCCESS");
+                                        Log.d(TAG, "onClick: " + task.toString());
+                                        Toast.makeText(RegisterActivity.this, "Registration Error, Contact HelpDesk", Toast.LENGTH_SHORT).show();
                                         register_progressbar.setVisibility(View.GONE);
-
                                     }
                                 });
-                            } else {
-                                Log.d(TAG, "onClick: " + task.toString());
-                                Toast.makeText(RegisterActivity.this, "Registration Error, Contact HelpDesk", Toast.LENGTH_SHORT).show();
-                                register_progressbar.setVisibility(View.GONE);
                             }
                         });
 
-                        //crea anche la sezione delle notifiche  di default per le region scelte
-                        // -------------------------------------
-                        // da loopare per ogni regione scelta
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
 
 
 
 
-
-
-    /*                    FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child(getString(R.string.firebase_user_notification))
-                                .child(getString(R.string.firebase_user_notification_teams))
-                                .setValue(regionNotifications).addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()){
-                                Log.d(TAG, "registered: Notification Region ");
-
-                            }else{
-                                Log.d(TAG, "ERROR: registered: Notification Region ");
-                            }
-                        });*/
-
-
-                        // -------------------------------------
-
-                        // questo crea sotto Users un UsersPreferences, un ID, e sotto 3 caselle di cui una lista
-    /*                    reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
-                        user_preferences_reference = reference.child(getString(R.string.firebase_preferences));
-                        user_preferences_reference.push().setValue(new UserGeneralities("","" , choosen_regions));*/
 
                     }
 

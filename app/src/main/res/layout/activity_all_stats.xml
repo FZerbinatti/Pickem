@@ -85,7 +85,7 @@
                         android:layout_height="match_parent"
                         android:fontFamily="@font/classicroman"
                         android:gravity="center_horizontal|center_vertical"
-                        android:text="Analists Picks"
+                        android:text="Analysts Picks"
                         android:textColor="@color/white"
                         android:textSize="30dp" />
 

@@ -6,10 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -20,7 +16,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,7 +64,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
  public class PicksActivity extends AppCompatActivity  {
 
@@ -369,7 +363,7 @@ import java.util.concurrent.TimeUnit;
 
                         if (!databaseHelper.teamsInsertedForRegionDateTime(selected_region_name, matchDetails.getDatetime())){
 
-                            databaseHelper.insertMatchDetails(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
+                            databaseHelper.insertMatchTeams(selected_region_name,  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                         }
                         if(!matchDetails.getWinner().equals(" ")){
                             databaseHelper.updateWinner(selected_region_name, matchDetails.getDatetime(), matchDetails.getWinner());

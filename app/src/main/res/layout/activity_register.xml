@@ -169,12 +169,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/simplex"
-                            android:text="Select Regions:"
+                            android:text="Long Click to select"
                             android:textSize="20sp"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
-
+<!--
                         <ImageButton
                             android:id="@+id/registration_show_regions"
                             android:layout_width="50dp"
@@ -184,7 +185,7 @@
                             android:src="@drawable/ic_dropdown"
                             app:layout_constraintBottom_toBottomOf="@+id/textView_selectRegion"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/textView_selectRegion" />
+                            app:layout_constraintTop_toTopOf="@+id/textView_selectRegion" />-->
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -192,7 +193,7 @@
                         android:id="@+id/collapsable_box_registration"
                         android:layout_width="match_parent"
                         android:layout_height="250dp"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

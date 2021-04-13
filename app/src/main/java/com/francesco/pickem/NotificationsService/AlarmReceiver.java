@@ -34,8 +34,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
@@ -57,7 +55,6 @@ import com.francesco.pickem.Models.MatchDetails;
 import com.francesco.pickem.Models.MatchNotification;
 import com.francesco.pickem.Models.RegionNotifications;
 import com.francesco.pickem.Models.TeamNotification;
-import com.francesco.pickem.Models.UserGeneralities;
 import com.francesco.pickem.R;
 import com.francesco.pickem.Services.DatabaseHelper;
 import com.francesco.pickem.Services.JsonPlaceHolderAPI_Elo;
@@ -137,7 +134,7 @@ public class AlarmReceiver extends BroadcastReceiver{
 
 
         }
-                else if (notification_type.equals("7AMTASK")){
+                /*else if (notification_type.equals("7AMTASK")){
                     String hour = intent.getStringExtra("HOUR");
 
                      //se non hai network, torna a chiamrare la stessa cosa tra mezzora
@@ -227,7 +224,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                          alarmMgr0.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (15*60*1000), pendingIntent0);
                      }
 
-                 }
+                 }*/
                 else if (notification_type.equals("FIRST_MATCH")){
 
                     String region = intent.getStringExtra("REGION");
@@ -240,16 +237,15 @@ public class AlarmReceiver extends BroadcastReceiver{
                     RemoteViews expandedView = new RemoteViews(PACKAGE_NAME,
                             R.layout.notification_region_expanded);
 
-                            collapsedView.setTextViewText(R.id.custom_notif_textview_action, "Starting soon: ");
-                            collapsedView.setTextViewText(R.id.custom_notif_region_regionname_collapsed, region);
-                            //collapsedView.setImageViewBitmap(R.id.custom_notif_region_regionlogo_collapsed, BitmapFactory.decodeFile(imagepath));
-                            collapsedView.setImageViewResource(R.id.custom_notif_region_regionlogo_collapsed, R.drawable.logo_lck);
 
                             collapsedView.setTextViewText(R.id.custom_notif_textview_action, "Starting soon: ");
+                            collapsedView.setTextViewText(R.id.custom_notif_region_regionname_collapsed, region);
+                            collapsedView.setImageViewResource(R.id.custom_notif_region_regionlogo_collapsed, R.drawable.logo_lck);
+
                             expandedView.setTextViewText(R.id.custom_notif_time, time);
                             expandedView.setTextViewText(R.id.custom_notif_region_regionname, region);
                             expandedView.setImageViewBitmap(R.id.custom_notif_region_regionlogo, BitmapFactory.decodeFile(imagepath));
-                            //expandedView.setImageViewResource(R.id.custom_notif_region_regionlogo, R.drawable.logo_lck);
+
 
                             Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                                     .setSmallIcon(R.drawable.ic_p)
@@ -468,7 +464,7 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                                  //intent per andare a PicksActivity quando si fa tap sulla notifica
                                  Intent resultIntent = new Intent(context, PicksActivity.class);
-                                 PendingIntent goToPickem = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                 PendingIntent goToPickem = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
                                  NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, NOTIFICATION_ID)
                                          .setSmallIcon(R.drawable.ic_p)
@@ -571,7 +567,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 
-                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                         try {
                             calendar.setTime(formatter.parse(firstMatchOfToday));
@@ -608,7 +604,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                         }
                         calendar.add(Calendar.MINUTE, -5);
 
-                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                         Log.d(TAG, "thisUserRegionsNotificationPreference: setto una notifica 5 minuti prima che inizi la priam partita del giorno: "+firstMatchOfToday+ "che dovrebbe essere: "+calendar.getTimeInMillis() + " == " +calendar.getTime());
                         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
                         //testing
@@ -698,7 +694,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                         intent.putStringArrayListExtra("ALL_T_MATCHES", tomorrowStringArrayMatches);
                         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                         alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                         //testing
 
@@ -767,7 +763,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                                         Log.d(TAG, "addTeamNotification: "+matchStartCalendart.getTime());
                                         Log.d(TAG, "addTeamNotification: "+matchStartCalendart.getTimeInMillis() +" "+userTeamNotifications.getTeam() +" " +userTeamNotifications.getRegion());
 
-                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                                         alarmManager.set(AlarmManager.RTC_WAKEUP, (matchStartCalendart.getTimeInMillis()), alarmIntent);
                                         //testing
@@ -783,7 +779,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                                         intent.putExtra("TEAM", userTeamNotifications.getTeam());
                                         intent.putExtra("TIME", timeAtTeamPlays);
 
-                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                                         alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                                     }
@@ -818,7 +814,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                                         MatchDetails matchDetails = dataSnapshot.getValue(MatchDetails.class);
                                         //Log.d(TAG, "onSuccess: "+matchDetails.getDatetime());
                                         if (matchDetails!=null){
-                                           databaseHelper.insertMatchDetails(userTeamNotifications.getRegion(),  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
+                                           databaseHelper.insertMatchTeams(userTeamNotifications.getRegion(),  matchDetails.getDatetime() , matchDetails.getTeam1(), matchDetails.getTeam2() );
                                         }
                                     }
 
@@ -968,14 +964,14 @@ public class AlarmReceiver extends BroadcastReceiver{
         if (todayPlayingRegions.size()>0){
             Log.d(TAG, "engine: oggi ci sono in programma delle partite." );
             // if 7<time<8 AM
-            String currentHour = new SimpleDateFormat("HH", Locale.getDefault()).format(new Date());
+            String currentHour = new SimpleDateFormat("HH", Locale.getDefault()).format(new Date()).replaceFirst("^0+(?!$)", "");
             Log.d(TAG, "engine: local time: " + currentHour);
             int nextHour = Integer.parseInt(currentHour)+1;
-            String nextHourString = String.valueOf(nextHour);
-            String next2Hours = String.valueOf(nextHour+1);
+            String nextHourString = String.valueOf(nextHour).replaceFirst("^0+(?!$)", "");
+            String next2Hours = String.valueOf(nextHour+1).replaceFirst("^0+(?!$)", "");
 
-
-            if (currentHour.equals("7")){
+            //s.replaceFirst("0", "")
+            if (currentHour.equals("9")){
                 Log.d(TAG, "engine: sono le 7 di mattina, inizio la ricerca per le partite di oggi");
 
                 ArrayList <String> userMorningReminderRegions = databaseHelper.getUserMorningReminderRegions();
@@ -1003,50 +999,60 @@ public class AlarmReceiver extends BroadcastReceiver{
                         Collections.sort(list_matchesForRegionToday, new MatchNotification.ByDatetime());
 
                         for (int i=0; i<list_matchesForRegionToday.size(); i++){
-                            tomorrowStringArrayMatches.add(list_matchesForRegionToday.get(i).getRegion()+" " +getTimeFromDateTime(list_matchesForRegionToday.get(i).getDatetime()) +" -  [ " + list_matchesForRegionToday.get(i).getTeam1() + " vs " + list_matchesForRegionToday.get(i).getTeam2() + " ]");
+                            tomorrowStringArrayMatches.add(list_matchesForRegionToday.get(i).getRegion()+" " + getTimeFromDateTime(convertDatetimeZtoLocale(list_matchesForRegionToday.get(i).getDatetime())) +" -  [ " + list_matchesForRegionToday.get(i).getTeam1() + " vs " + list_matchesForRegionToday.get(i).getTeam2() + " ]");
                         }
 
                         Log.d(TAG, " setto una notifica instantanea con questo numero di match: "+tomorrowStringArrayMatches.size());
                         intent.putStringArrayListExtra("ALL_T_MATCHES", tomorrowStringArrayMatches);
-                        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                         alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                     }
 
                 }
+
+            }else  if (currentHour.equals("6")){
+                //teams will play notification
                 // morning reminder teams:
                 ArrayList <String> userMorningReminderTeams = databaseHelper.getUserMorningReminderTeams();
+
                 if (userMorningReminderTeams.size()>0){
                     Log.d(TAG, "engine: lo user ha dei team per i quali vuole essere notificato la mattina");
                     ArrayList <MatchNotification> list_matchesForRegionToday = new ArrayList<>();
                     for(int i=0; i<todayPlayingRegions.size(); i++){
-                        if (userMorningReminderRegions.contains(todayPlayingRegions.get(i))){
-                            Log.d(TAG, "engine: delle regioni favorite dallo user giocano oggi");
+                        //if (userMorningReminderRegions.contains(todayPlayingRegions.get(i))){
                             list_matchesForRegionToday.addAll(databaseHelper.matchesForRegion_Date(todayPlayingRegions.get(i), getTodayDate())) ;
-                        }
+                            Log.d(TAG, "engine: "+list_matchesForRegionToday.size());
+                        //}
                     }
+
                     for(int i=0; i<list_matchesForRegionToday.size(); i++){
+
+                        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                         if (userMorningReminderTeams.contains(list_matchesForRegionToday.get(i).getTeam1())){
+
                             // set team notification
                             //setta la notifica instantanea con l'ora a cui gioca
                             Intent intent = new Intent(context, AlarmReceiver.class);
                             intent.putExtra("TYPE", "TEAM_MORNING");
                             intent.putExtra("TEAM", list_matchesForRegionToday.get(i).getTeam1());
-                            intent.putExtra("TIME", getHourFromDateTime(list_matchesForRegionToday.get(i).getDatetime()));
+                            intent.putExtra("TIME", getHourFromDateTime(convertDatetimeZtoLocale(list_matchesForRegionToday.get(i).getDatetime())));
                             alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                             alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                         }else if (userMorningReminderTeams.contains(list_matchesForRegionToday.get(i).getTeam2())){
+
                             Intent intent = new Intent(context, AlarmReceiver.class);
                             intent.putExtra("TYPE", "TEAM_MORNING");
                             intent.putExtra("TEAM", list_matchesForRegionToday.get(i).getTeam2());
-                            intent.putExtra("TIME", getHourFromDateTime(list_matchesForRegionToday.get(i).getDatetime()));
+                            intent.putExtra("TIME", getHourFromDateTime(convertDatetimeZtoLocale(list_matchesForRegionToday.get(i).getDatetime())));
                             alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                             alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                         }
                     }
                 }
-            }else {
+
+            } else {
                 //elotracker active?
                 EloTrackerNotifications eloTrackerNotifications = databaseHelper.getUserELOTRACKER_SUMMONER();
                 if (eloTrackerNotifications.getSummoner_elotracker()>0){
@@ -1177,7 +1183,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                                         intent.putExtra("TYPE", "UNPICKED");
                                         intent.putExtra("REGION", todayPlayingRegions.get(i));
                                         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                        alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), alarmIntent);
 
                                     }
@@ -1202,9 +1208,9 @@ public class AlarmReceiver extends BroadcastReceiver{
                                     Intent intent = new Intent(context, AlarmReceiver.class);
                                     intent.putExtra("TYPE", "FIRST_MATCH");
                                     intent.putExtra("REGION", todayPlayingRegions.get(i));
-                                    intent.putExtra("TIME", nextHourString );
+                                    intent.putExtra("TIME", nextHourString+":00" );
                                     alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                                     alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+2000, alarmIntent);
                                 }
                             }
@@ -1222,7 +1228,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                         for(int k=0; k<list_matchesForRegionToday.size(); k++){
                             if (teams_as_team_plays.contains(list_matchesForRegionToday.get(k).getTeam1())){
                                 //prendi l'ora
-                                if (getHourFromDateTime(list_matchesForRegionToday.get(k).getDatetime()).equals(nextHourString)){
+                                if (getLocalHourFromDateTime(list_matchesForRegionToday.get(k).getDatetime()).equals(nextHourString)){
                                     // motifica del team che sta per giocare
                                     Log.d(TAG, "onDataChange: setto la notifica per TEAM  as team play");
 
@@ -1232,14 +1238,14 @@ public class AlarmReceiver extends BroadcastReceiver{
                                     intent.putExtra("TIME", nextHourString);
                                     alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                                     Log.d(TAG, "addTeamNotification: timeAtThisTeamPlays: "+ nextHourString );
-                                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                                     alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                                 }
 
                             }else if (teams_as_team_plays.contains(list_matchesForRegionToday.get(k).getTeam2())){
                                 //prendi l'ora
-                                if (getHourFromDateTime(list_matchesForRegionToday.get(k).getDatetime()).equals(nextHourString)){
+                                if (getLocalHourFromDateTime(list_matchesForRegionToday.get(k).getDatetime()).equals(nextHourString)){
                                     // motifica del team che sta per giocare
                                     Log.d(TAG, "onDataChange: setto la notifica per TEAM  as team play");
 
@@ -1249,7 +1255,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                                     intent.putExtra("TIME", nextHourString);
                                     alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                                     Log.d(TAG, "addTeamNotification: timeAtThisTeamPlays: "+ nextHourString );
-                                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                    alarmIntent = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                                     alarmManager.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis()+2000), alarmIntent);
                                 }
@@ -1264,6 +1270,25 @@ public class AlarmReceiver extends BroadcastReceiver{
             }
 
         }
+    }
+
+    private String getLocalHourFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalHourFromDateTime: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("HH");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+
+        return localDatetime;
     }
 }
 

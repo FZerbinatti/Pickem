@@ -58,7 +58,7 @@ public class ForegroundService extends Service {
 
         setAlarmManager();
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
 

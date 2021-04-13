@@ -94,8 +94,13 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         Long team1_score = displayMatchDetailsList.get(i).getTeam1_score();
         Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
 
+        databaseHelper= new DatabaseHelper(context);
 
         //Log.d(TAG, "onBindViewHolder: //////////////////////////////// match_ID:"+match_ID +" datetime: "+dateTime + " winner: " + match_winner);
+        //se team1 sul SQLite è vuoto riempilo
+/*        if (!databaseHelper.teamsInsertedForRegionDateTime(region, dateTime)){
+            databaseHelper.insertMatchTeams(region, dateTime, team1, team2);
+        }*/
 
         thisMatch.setYear(year);
         thisMatch.setRegion(region);

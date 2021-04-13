@@ -259,6 +259,7 @@ public class SettingsActivity extends AppCompatActivity {
                 // add a button
                 builder.setPositiveButton("Ok bro", null);
 
+
                 // create and show the alert dialog
                 AlertDialog dialog = builder.create();
                 dialog.show();
