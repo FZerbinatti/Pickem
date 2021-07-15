@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:411029265997:android:967f862562c645a12b0604",
         "android_client_info": {
-          "package_name": "com.francesco.pickem"
+          "package_name": "com.dreamsphere.pickem"
         }
       },
       "oauth_client": [
@@ -39,7 +39,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:411029265997:android:856b20a22b6512602b0604",
         "android_client_info": {
-          "package_name": "com.francesco.pickemapp"
+          "package_name": "com.dreamsphere.pickemapp"
         }
       },
       "oauth_client": [
