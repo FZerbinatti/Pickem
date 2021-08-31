@@ -486,7 +486,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-
 /*    private void getWinnerOfThisMatch(String region, String match_id) {
         //if datetime elapsed, get winner of this match
         if (matchAlreadyElapsedQuestionMark(match_id)){
@@ -512,7 +511,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }*/
-
     public boolean matchAlreadyElapsedQuestionMark(String datetime) {
 
         //Log.d(TAG, "matchAlreadyElapsedQuestionMark: (matchDays.getDatetime(): "+(matchDays.getDatetime()));
@@ -537,7 +535,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-
 
     private void downloadUserRegions() {
 

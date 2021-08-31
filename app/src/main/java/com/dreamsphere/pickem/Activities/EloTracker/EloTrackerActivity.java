@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.dreamsphere.pickem.Activities.MainActivities.CalendarActivity;
@@ -26,7 +27,13 @@ import com.dreamsphere.pickem.Activities.Statistics.StatsPicksActivity;
 import com.dreamsphere.pickem.Adapters.EloTrackerRecyclerViewAdapter;
 import com.dreamsphere.pickem.Annotation.NonNull;
 import com.dreamsphere.pickem.Models.EloTracker;
+import com.dreamsphere.pickem.Models.RegionServers;
+import com.dreamsphere.pickem.Models.UserGeneralities;
 import com.dreamsphere.pickem.R;
+import com.dreamsphere.pickem.Services.JsonPlaceHolderAPI_Elo;
+import com.dreamsphere.pickem.Services.JsonPlaceHolderAPI_Summoner;
+import com.dreamsphere.pickem.Services.Post_Elo;
+import com.dreamsphere.pickem.Services.Post_Summoner;
 import com.dreamsphere.pickem.Services.RecyclerItemClickListener;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -50,13 +57,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class EloTrackerActivity extends AppCompatActivity  implements OnChartGestureListener, OnChartValueSelectedListener {
 
     Context context;
-    ImageButton button_add_elotracker;
+    ImageButton button_add_elotracker, button_update_elotracker;
     RecyclerView recycler_eloTracker;
     EloTrackerRecyclerViewAdapter adapter;
     private FirebaseUser user;
@@ -91,15 +107,25 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
         year = String.valueOf(calendar.get(Calendar.YEAR));
 
         setupBottomNavView();
-        loadFirebaseDataEloTracker();
+        //loadFirebaseDataEloTracker();
 
 
-        loadGraph(elotracker_list);
+        //loadGraph(elotracker_list);
+
+        getLastEloTrackerUpdateIfPresent();
 
 
 
 
 
+    }
+
+    private void getLastEloTrackerUpdateIfPresent(){
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+        userID = user.getUid();
+        getUserSummonerNameAndSoloqData();
     }
 
 
@@ -108,9 +134,7 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
 
 
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
-        userID = user.getUid();
+
 
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -242,6 +266,17 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
                 finish();
             }
         });
+
+/*        button_update_elotracker = findViewById(R.id.button_update_elotracker);
+        button_update_elotracker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                //getUserSummonerNameAndSoloqData();
+
+            }
+        });*/
 
 
     }
@@ -377,6 +412,10 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
 
     }
 
+
+
+
+
 /*    public class MyXAxisValueFormatter extends IndexAxisValueFormatter {
         private ArrayList<String> mValues;
 
@@ -447,4 +486,158 @@ public class EloTrackerActivity extends AppCompatActivity  implements OnChartGes
     public void onNothingSelected() {
 
     }
+
+    public native String getKeys();
+    static {
+        System.loadLibrary("api-keys");
+    }
+
+    public String getTodayDate(){
+
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 0);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String selectedDate = sdf.format(c.getTime());
+        return selectedDate;
+    }
+
+    private void getUserSummonerNameAndSoloqData(){
+
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users));
+        reference.child(userID).child(getString(R.string.firebase_users_generealities)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@androidx.annotation.NonNull DataSnapshot dataSnapshot) {
+                UserGeneralities userProfile = dataSnapshot.getValue(UserGeneralities.class);
+                if (userProfile !=null){
+                    String summonerName = userProfile.getSummoner_name();
+                    String summonerServer = userProfile.getSummoner_server();
+
+                    if (!summonerName.isEmpty() && !summonerServer.isEmpty()){
+                        saveFirstElotracker(summonerName, summonerServer);
+                    }else {}
+                    loadFirebaseDataEloTracker();
+                }
+            }
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void saveFirstElotracker(String summonerName, String summoner_server) {
+
+
+        // get summoner ID from summoner name + server
+        // https://     euw1    .api.riotgames.com      /lol/summoner/v4/summoners/by-name/         DEMACIA%20REICH         ?api_key=       RGAPI-632893d3-8938-4031-a32e-4aa92062d229
+
+        String address = getString(R.string.HTTP) + summoner_server +getString(R.string.riot_api_address);
+        /// https://euw1.api.riotgames.com
+
+        //summoner name + api_key_path + API key
+        String end_path = summonerName + getString(R.string.key_request)+ getKeys();
+
+
+        Log.d(TAG, "saveFirstElotracker: address: " +address + "/lol/summoner/v4/summoners/by-name/" +end_path);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(address)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        //https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+        //https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+
+        JsonPlaceHolderAPI_Summoner jsonPlaceHolderAPI_summoner = retrofit.create(JsonPlaceHolderAPI_Summoner.class);
+        Log.d(TAG, "saveFirstElotracker: passando a getPost: "+end_path);
+        // devi passare a GetPost:    DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
+        Log.d(TAG, "saveFirstElotracker: deve essere = "+"DEMACIA REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0");
+        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, getKeys()) ;
+
+        callSummoner.enqueue(new Callback<Post_Summoner>() {
+            @Override
+            public void onResponse(Call<Post_Summoner> call, Response<Post_Summoner> response) {
+                if (!response.isSuccessful()){
+                    Log.d(TAG, "onResponse: "+response.code());
+                    Toast.makeText(context, "Something went wrong, check Summoner Name and Region selected!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(context, "Updated!", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onResponse: "+ response.body().getId() +" summonerLevel:" + response.body().getSummonerLevel() + " summoner Name: "+ response.body().getName());
+                //ora che hai lo il summonerID puoi fare l'altra call all'API
+
+                JsonPlaceHolderAPI_Elo jsonPlaceHolderAPIElo = retrofit.create(JsonPlaceHolderAPI_Elo.class);
+
+                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), getKeys() );
+                callElo.enqueue(new Callback<List<Post_Elo>>() {
+                    @Override
+                    public void onResponse(Call<List<Post_Elo>> call, Response<List<Post_Elo>> response) {
+                        if (!response.isSuccessful()){
+                            Log.d(TAG, "onResponse: "+response.code());
+                            return;
+                        }
+
+                        List<Post_Elo> postElos = response.body();
+
+                        for (Post_Elo postElo : postElos){
+                            if (postElo.getQueueType().equals("RANKED_SOLO_5x5")){
+                                Log.d(TAG, "onResponse: "+ postElo.getSummonerName() +" elo: " + postElo.getTier() + " " + postElo.getRank() +" " + postElo.getLeaguePoints()+ "LP");
+
+                                String elo = postElo.getTier().substring(0, 1).toUpperCase() + postElo.getTier().substring(1).toLowerCase();
+
+                                EloTracker eloTracker = new EloTracker(
+                                        getTodayDate(),
+                                        getTodayDate(),
+                                        elo+" "+(postElo.getRank()),
+                                        postElo.getLeaguePoints()
+                                );
+
+                                Calendar calendar = Calendar.getInstance();
+                                int year = calendar.get(Calendar.YEAR);
+                                Log.d(TAG, "onClick: year:"+year);
+
+
+                                FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(getString(R.string.firebase_users_elotracker))
+                                        .child(String.valueOf(year))
+                                        .child(getTodayDate() )
+                                        .setValue(eloTracker).addOnCompleteListener(task2 -> {
+
+                                    loadFirebaseDataEloTracker();
+
+                                });
+
+
+
+
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Post_Elo>> call, Throwable t) {
+                        Log.d(TAG, "onFailure: ERROR COMINCATING WITH API: "+t.getMessage());
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<Post_Summoner> call, Throwable t) {
+                Log.d(TAG, "onFailure: ERROR COMINCATING WITH API: "+t.getMessage());
+                Toast.makeText(context, "Something went wrong server-side, contact helpdesk", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
+
+
+
+
 }

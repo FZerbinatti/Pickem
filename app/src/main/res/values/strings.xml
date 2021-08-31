@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Pickem</string>
     <string name="already_have_an_account_sign_in"> <u> Already have an account? Sign in </u></string>
-    <string name="not_registered_yet_sing_in"><u>Not Registered yet? Sing up.</u></string>
+    <string name="not_registered_yet_sing_in"><u>Not Registered yet? Sign up.</u></string>
     <string name="enter_an_username">Choose a Username</string>
     <string name="enter_an_email">Enter an Email</string>
     <string name="enter_a_password">Enter a Password</string>

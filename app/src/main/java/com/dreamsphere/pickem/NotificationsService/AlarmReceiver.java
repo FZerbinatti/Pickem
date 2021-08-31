@@ -1071,7 +1071,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                         /// https://euw1.api.riotgames.com
 
                         //summoner name + api_key_path + API key
-                        String end_path = summonerName + context.getString(R.string.key_request)+ BuildConfig.RIOT_API_KEY;
+                        String end_path = summonerName + context.getString(R.string.key_request)+ getKeys();
 
 
                         Log.d(TAG, "saveFirstElotracker: address: " +address + "/lol/summoner/v4/summoners/by-name/" +end_path);
@@ -1088,7 +1088,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                         Log.d(TAG, "saveFirstElotracker: passando a getPost: "+end_path);
                         // devi passare a GetPost:    DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
                         Log.d(TAG, "saveFirstElotracker: deve essere = "+"DEMACIA REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0");
-                        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, BuildConfig.RIOT_API_KEY) ;
+                        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, getKeys()) ;
 
                         callSummoner.enqueue(new Callback<Post_Summoner>() {
                             @Override
@@ -1104,7 +1104,7 @@ public class AlarmReceiver extends BroadcastReceiver{
 
                                 JsonPlaceHolderAPI_Elo jsonPlaceHolderAPIElo = retrofit.create(JsonPlaceHolderAPI_Elo.class);
 
-                                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), BuildConfig.RIOT_API_KEY );
+                                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), getKeys() );
                                 callElo.enqueue(new Callback<List<Post_Elo>>() {
                                     @Override
                                     public void onResponse(Call<List<Post_Elo>> call, Response<List<Post_Elo>> response) {
@@ -1271,6 +1271,11 @@ public class AlarmReceiver extends BroadcastReceiver{
             }
 
         }
+    }
+
+    public native String getKeys();
+    static {
+        System.loadLibrary("api-keys");
     }
 
     private String getLocalHourFromDateTime(String datetime) {

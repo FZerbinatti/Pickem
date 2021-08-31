@@ -128,25 +128,19 @@ import java.util.TimeZone;
         pick_progressbar_matches.setVisibility(View.VISIBLE);
         imageRegionPath = context.getFilesDir().getAbsolutePath() + (getString(R.string.folder_regions_images));
 
-
         databaseOpener = findViewById(R.id.databaseOpener);
-
-
-
-        databaseOpener.setOnClickListener(new View.OnClickListener() {
+        /*databaseOpener.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
                 Intent dbmanager = new Intent(PicksActivity.this, AndroidDatabaseManager.class);
                 startActivity(dbmanager);
             }
-        });
+        });*/
 
 
         if(isUserAlreadyLogged()){
             //startBackgorundFileSync();
-
             downloadUserRegions();
-
 
         }
 
@@ -168,17 +162,11 @@ import java.util.TimeZone;
 
 
     private void refreshData() {
-
         loadMatchDays(selected_region_name);
 
     }
 
     private void downloadUserRegions() {
-
-
-
-
-
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.firebase_users))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -267,6 +255,8 @@ import java.util.TimeZone;
         });
 
     }
+
+
 
     public void loadMatchDays(String selected_region){
 

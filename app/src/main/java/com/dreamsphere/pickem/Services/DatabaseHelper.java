@@ -903,9 +903,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public RegionStats getRegionStats(String year, String regionSelected ){
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        //la data deve essere anteriore alla data attuale, aggiungi un IF statement
+        SQLiteDatabase db = this.getReadableDatabase();
 
         //ArrayList<String> match_ids = new ArrayList<>();
         int counter_total=0;
@@ -931,14 +930,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
-        //Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
+        Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
         return new RegionStats(regionSelected ,counter_right, counter_total);
     }
 
     public RegionStats getGlobalStats(String year){
         SQLiteDatabase db = this.getReadableDatabase();
-
-        //la data deve essere anteriore alla data attuale, aggiungi un IF statement
 
         //ArrayList<String> match_ids = new ArrayList<>();
         int counter_total=0;
@@ -966,7 +963,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
-        //Log.d(TAG, "getCorrectPicksPercentageForRegion: "+regionSelected +": "+ counter_right+"/"+counter_total);
+        Log.d(TAG, "getCorrectPicksPercentageForRegion: "+ counter_right+"/"+counter_total);
         return new RegionStats("Global" ,counter_right, counter_total);
     }
 
@@ -1024,7 +1021,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(PREDICTION, prediction);
 
         db.update(TABLE_MATCHES,  cv, REGION +" = ? AND "+ MATCH_ID + "= ? ", new String []{region, match_ID});
-        Log.d(TAG, "updatePrediction: done: "+region +" " + match_ID +" "+ prediction);
+        Log.d(TAG, " updatePrediction: done: "+region +" " + match_ID +" "+ prediction);
         db.close();
     }
 

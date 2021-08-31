@@ -95,7 +95,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class SettingsActivity extends AppCompatActivity {
+public class  SettingsActivity extends AppCompatActivity {
 
     ImageButton switch_notification, switch_user_settings, switch_elotracker;
     ConstraintLayout show_notifications_box, show_user_box, show_notifications_box4;
@@ -1012,6 +1012,12 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    public native String getKeys();
+    static {
+        System.loadLibrary("api-keys");
+    }
+
+
     private void saveFirstElotracker(String summonerName, RegionServers summoner_server) {
 
 
@@ -1022,7 +1028,7 @@ public class SettingsActivity extends AppCompatActivity {
         /// https://euw1.api.riotgames.com
 
         //summoner name + api_key_path + API key
-        String end_path = summonerName + getString(R.string.key_request)+ BuildConfig.RIOT_API_KEY;
+        String end_path = summonerName + getString(R.string.key_request)+ getKeys();
 
 
         Log.d(TAG, "saveFirstElotracker: address: " +address + "/lol/summoner/v4/summoners/by-name/" +end_path);
@@ -1039,7 +1045,7 @@ public class SettingsActivity extends AppCompatActivity {
         Log.d(TAG, "saveFirstElotracker: passando a getPost: "+end_path);
         // devi passare a GetPost:    DEMACIA%20REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0
         Log.d(TAG, "saveFirstElotracker: deve essere = "+"DEMACIA REICH?api_key=RGAPI-3c834326-87d8-479f-acb9-bf94f64212e0");
-        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, BuildConfig.RIOT_API_KEY) ;
+        Call<Post_Summoner> callSummoner =  jsonPlaceHolderAPI_summoner.getPost(summonerName, getKeys()) ;
 
         callSummoner.enqueue(new Callback<Post_Summoner>() {
             @Override
@@ -1049,13 +1055,13 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(context, "Something went wrong, check Summoner Name and Region selected!", Toast.LENGTH_LONG).show();
                     return;
                 }
-                Toast.makeText(context, "Success! Current Elo registered, will update every 24 hours!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Success! Current User Registered and Elotracker Updated!", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onResponse: "+ response.body().getId() +" summonerLevel:" + response.body().getSummonerLevel() + " summoner Name: "+ response.body().getName());
                 //ora che hai lo il summonerID puoi fare l'altra call all'API
 
                 JsonPlaceHolderAPI_Elo jsonPlaceHolderAPIElo = retrofit.create(JsonPlaceHolderAPI_Elo.class);
 
-                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), BuildConfig.RIOT_API_KEY );
+                Call<List<Post_Elo>> callElo = jsonPlaceHolderAPIElo.getPost(response.body().getId(), getKeys() );
                 callElo.enqueue(new Callback<List<Post_Elo>>() {
                     @Override
                     public void onResponse(Call<List<Post_Elo>> call, Response<List<Post_Elo>> response) {
@@ -1091,7 +1097,9 @@ public class SettingsActivity extends AppCompatActivity {
                                         .child(getYesterdayDate() )
                                         .setValue(eloTracker).addOnCompleteListener(task2 -> {
 
-                                    if (task2.isSuccessful()){
+
+                                    //Elotracker automatic disattivato
+                                    /*if (task2.isSuccessful()){
                                         Log.d(TAG, "Success elo added");
                                         // aggiungi JobScheduler che checka ogni 24h se Elotracher è 1
                                         // prendi l'ora a cui il player vuola che la rank sia aggiornata
@@ -1132,7 +1140,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                                     }else{
                                         Log.d(TAG, "ERROR");
-                                    }
+                                    }*/
                                 });
 
 

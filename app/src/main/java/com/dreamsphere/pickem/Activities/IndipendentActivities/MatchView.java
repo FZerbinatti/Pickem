@@ -26,9 +26,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class MatchView extends AppCompatActivity {
 
@@ -125,7 +129,7 @@ public class MatchView extends AppCompatActivity {
 
                 GlobalMatchStats globalMatchStats = dataSnapshot.getValue(GlobalMatchStats.class);
                 Log.d(TAG, "onDataChange: "+globalMatchStats.getTeam1().getTeamCode()+ " "+ globalMatchStats.getTeam2().getTeamCode());
-                tv_matchtime.setText(globalMatchStats.getEnded().toString());
+                tv_matchtime.setText("ended at: "+ getLocalHourFromDateTime(globalMatchStats.getEnded().toString()));
 
                 RequestOptions options = new RequestOptions()
                         .fitCenter()
@@ -794,5 +798,25 @@ public class MatchView extends AppCompatActivity {
 
 
 
+    }
+
+
+    private String getLocalHourFromDateTime(String datetime) {
+        Log.d(TAG, "getLocalHourFromDateTime: datetime: "+datetime);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date value = null;
+        try {
+            value = formatter.parse(datetime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
+
+        dateFormatter.setTimeZone(TimeZone.getDefault());
+
+        String localDatetime = dateFormatter.format(value);
+
+        return localDatetime;
     }
 }
