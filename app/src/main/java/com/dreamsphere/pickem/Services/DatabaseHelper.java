@@ -61,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String ELOTRACKER_SUMMONER = "ELOTRACKER_SUMMONER";
     private static final String ELOTRACKER_TIME = "ELOTRACKER_TIME";
     private static final String ELOTRACKER_SERVER = "ELOTRACKER_SERVER";
+
     private static final String ELOTRACKER_ACTIVE = "ELOTRACKER_ACTIVE";
 
     static final String TABLE_MATCHES = "TABLE_MATCHES";
