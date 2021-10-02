@@ -298,7 +298,7 @@ public class BackgroundTasks extends JobService {
 
                 // immagini regions in cloud
                 int region_image_size = listResult.getItems().size();
-                //Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini regions in cloud */**********************************************************" +region_image_size);
+                Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini regions in cloud */**********************************************************" +region_image_size);
                 for (int i = 0; i < region_image_size; i++) {
                     String file_cloud_path =listResult.getItems().get(i).toString();
                     String[] datetime =file_cloud_path.split("region_img/");
@@ -318,7 +318,7 @@ public class BackgroundTasks extends JobService {
                 File folderRegions = new File(getFilesDir().getAbsolutePath()
                         + (getString(R.string.folder_regions_images)));
                 File[] files_regions = folderRegions.listFiles();
-                //Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini region in locale*/**********************************************************" +files_regions.length);
+                Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini region in locale*/**********************************************************" +files_regions.length);
                 if(files_regions != null){
                     for(File f : files_regions){
                         String fileName = f.getName();
@@ -370,7 +370,7 @@ public class BackgroundTasks extends JobService {
                                 // se ci sono piu immagini regions sul cloud di quelle locali
                                 ArrayList<String> moreRegions = new ArrayList<>();
                                 //Integer cloud_regions_images_size =cloud_regions_images.size();
-                                //Log.d(TAG, "run:******************************************************* is: "+region_image_size +" > "+local_regions_images.size() +" ?");
+                                Log.d(TAG, "run:******************************************************* is: "+region_image_size +" > "+local_regions_images.size() +" ?");
                                 if (region_image_size>local_regions_images.size()){
                                     //Log.d(TAG, "run:*******************************************************  TRUE");
                                     for (int i=0; i<region_image_size; i++){
@@ -388,10 +388,11 @@ public class BackgroundTasks extends JobService {
                                         gsReference.getFile(file);
                                     }
                                 }
-
+                                Log.d(TAG, "run: TEAMS IMAGE CHECK:");
                                 // se ci sono piu immagini regions sul cloud di quelle locali
                                 ArrayList<String> moreTeams = new ArrayList<>();
                                 Integer cloud_teams_images_size =cloud_teams_images.size();
+
                                 if (cloud_teams_images_size>local_teams_images.size()){
                                     for (int i=0; i<cloud_teams_images_size; i++){
                                         if (!local_teams_images.contains(cloud_teams_images.get(i).getName()) ){
@@ -438,7 +439,7 @@ public class BackgroundTasks extends JobService {
                                                     gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                                                         @Override
                                                         public void onSuccess(StorageMetadata storageMetadata) {
-                                                            //Log.d(TAG, "onSuccess: modifico nel db questi dati: "+ region_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
+                                                            Log.d(TAG, "onSuccess: modifico nel db questi dati: "+ region_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
                                                             databaseHelper.updateImageRegion(new ImageValidator(region_name,storageMetadata.getCreationTimeMillis()));
                                                         }
                                                     });
@@ -477,7 +478,7 @@ public class BackgroundTasks extends JobService {
                                                     gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                                                         @Override
                                                         public void onSuccess(StorageMetadata storageMetadata) {
-                                                            //Log.d(TAG, "onSuccess: scaricato,  modifico nel db questi dati: "+ team_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
+                                                            Log.d(TAG, "onSuccess: scaricato,  modifico nel db questi dati: "+ team_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
                                                             databaseHelper.updateImageTeams(new ImageValidator(team_name,storageMetadata.getCreationTimeMillis()));
                                                         }
                                                     });
