@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.ParseException;
@@ -153,6 +154,7 @@ import java.util.TimeZone;
                 refreshData(); // your code
                 startBackgorundFileSync();
                 pullToRefresh.setRefreshing(false);
+                Toast.makeText(context, "Sync started in background, can take up to a minute", Toast.LENGTH_SHORT).show();
             }
         });
 

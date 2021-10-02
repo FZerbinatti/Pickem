@@ -98,7 +98,7 @@ public class BackgroundTasks extends JobService {
         //Log.d(TAG, "onStartJob: jobID: "+jobID);
         switch (jobID){
             case 2:
-                checkIfLocalImageFolderIsUpdated(jobParameters);
+                checkIfLocalImageRegionFolderIsUpdated(jobParameters);
                 break;
             case 3:
                 checkIfCurrentUserMatchDaysUpdated(jobParameters);
@@ -279,7 +279,7 @@ public class BackgroundTasks extends JobService {
 
     }
 
-    private void checkIfLocalImageFolderIsUpdated(JobParameters parameters) {
+    private void checkIfLocalImageRegionFolderIsUpdated(JobParameters parameters) {
         //Log.d(TAG, "checkIfLocalImageFolderIsUpdated: */**********************************************************" );
 
         // 1- prendi la lista delle immagini presenti in locale,
@@ -297,7 +297,7 @@ public class BackgroundTasks extends JobService {
             public void onSuccess(ListResult listResult) {
 
                 // immagini regions in cloud
-                int region_image_size = listResult.getItems().size();
+                Integer region_image_size = listResult.getItems().size();
                 Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini regions in cloud */**********************************************************" +region_image_size);
                 for (int i = 0; i < region_image_size; i++) {
                     String file_cloud_path =listResult.getItems().get(i).toString();
@@ -337,8 +337,10 @@ public class BackgroundTasks extends JobService {
 
                         //immagini teams sul cloud
                         Integer teams_image_size = listResult.getItems().size();
+                        Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini teams in cloud */**********************************************************" +teams_image_size);
 
                         for (int i = 0; i < teams_image_size; i++) {
+
                             String file_cloud_path = listResult.getItems().get(i).toString();
                             String[] datetime =file_cloud_path.split("team_img/");
                             String file_name =datetime[1];
@@ -355,6 +357,7 @@ public class BackgroundTasks extends JobService {
                         File folderTeams = new File(getFilesDir().getAbsolutePath()
                                 +getString(R.string.folder_teams_images));
                         File[] files_teams = folderTeams.listFiles();
+                        Log.d(TAG, "checkIfLocalImageFolderIsUpdated: immagini teams in locale*/**********************************************************" +files_teams.length);
                         if(files_teams != null){
                             for(File f : files_teams){ // loop and print all file
                                 String fileName = f.getName(); // this is file name
@@ -391,19 +394,21 @@ public class BackgroundTasks extends JobService {
                                 Log.d(TAG, "run: TEAMS IMAGE CHECK:");
                                 // se ci sono piu immagini regions sul cloud di quelle locali
                                 ArrayList<String> moreTeams = new ArrayList<>();
-                                Integer cloud_teams_images_size =cloud_teams_images.size();
-
-                                if (cloud_teams_images_size>local_teams_images.size()){
-                                    for (int i=0; i<cloud_teams_images_size; i++){
+                                //Integer cloud_teams_images_size = cloud_teams_images.size();
+                                Log.d(TAG, "run:******************************************************* is: "+teams_image_size +" > "+local_teams_images.size() +" ?");
+                                if (teams_image_size>local_teams_images.size()){
+                                    for (int i=0; i<teams_image_size; i++){
                                         if (!local_teams_images.contains(cloud_teams_images.get(i).getName()) ){
+                                            Log.d(TAG, "run: NOT FOUND: "+cloud_teams_images.get(i).getName());
                                             moreTeams.add(cloud_teams_images.get(i).getName());
                                         }
                                     }
+                                    Log.d(TAG, "run: è stato creato un pool con i nomi delle immagini non trovare in locale");
                                     for (int i=0; i<moreTeams.size(); i++){
                                         // devo creare un file e scaricarci dentro l'immagine
                                         StorageReference teamsReference = storage.getReference("team_img");
                                         File file = new File(folderTeams+"/"+moreTeams.get(i));
-                                        StorageReference gsReference = storage.getReferenceFromUrl(teamsReference+"/"+cloud_teams_images.get(i));
+                                        StorageReference gsReference = storage.getReferenceFromUrl(teamsReference+"/"+moreTeams.get(i));
                                         gsReference.getFile(file);
                                     }
                                 }
@@ -473,7 +478,7 @@ public class BackgroundTasks extends JobService {
                                                     //scarica l'immagine nello stesso path
 
                                                     StorageReference gsReference = storage.getReferenceFromUrl(teamsReference+"/"+cloud_teams_images.get(i).getName());
-                                                    //Log.d(TAG, "run: cerco di scaricare l'immagine da: "+gsReference + " ||||| "+teamsReference+"/"+cloud_teams_images.get(i).getName());
+                                                    Log.d(TAG, "run: cerco di scaricare l'immagine da: "+gsReference + " ||||| "+teamsReference+"/"+cloud_teams_images.get(i).getName());
                                                     gsReference.getFile(folderTeamsImage);
                                                     gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                                                         @Override
@@ -489,12 +494,12 @@ public class BackgroundTasks extends JobService {
 
 
                                     }
-                                }, FIREBASE_STORAGE_RESPONSE_TIME);
+                                }, 30000);
 
 
 
                             }
-                        }, FIREBASE_STORAGE_RESPONSE_TIME);
+                        }, 20000);
                         // immagini region in locale
 
                     }
