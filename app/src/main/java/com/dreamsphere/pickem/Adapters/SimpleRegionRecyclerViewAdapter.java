@@ -47,12 +47,12 @@ public class SimpleRegionRecyclerViewAdapter extends RecyclerView.Adapter<Simple
 
 
         String region_name = regionList.get(position).getName();
+        if (region_name.equals("Mondiali")){
+            region_name="Worlds";
+        }
         Boolean region_selected = regionList.get(position).getChecked();
 
-
         holder.item_regionList_name.setText(region_name);
-
-
 
         if(region_selected){
             ColorStateList colorStateListGreen = ContextCompat.getColorStateList(holder.region_picker_region_background.getContext(), R.color.material_green);
