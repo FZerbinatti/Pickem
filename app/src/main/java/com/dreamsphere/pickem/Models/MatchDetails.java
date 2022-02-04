@@ -24,6 +24,18 @@ public class MatchDetails implements Comparable<MatchDetails>{
 
     }
 
+    public MatchDetails(String id, String datetime, String team1, String team2, String winner, Long team1_score, Long team2_score, String team1_image, String team2_image) {
+        this.id = id;
+        this.datetime = datetime;
+        this.team1 = team1;
+        this.team2 = team2;
+        this.winner = winner;
+        this.team1_score = team1_score;
+        this.team2_score = team2_score;
+        this.team1_image = team1_image;
+        this.team2_image = team2_image;
+    }
+
     public MatchDetails(String id, String datetime, String team1, String team2, String winner, Long team1_score, Long team2_score) {
         this.id = id;
         this.datetime = datetime;

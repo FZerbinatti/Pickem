@@ -494,12 +494,12 @@ public class BackgroundTasks extends JobService {
 
 
                                     }
-                                }, 30000);
+                                }, 60000);
 
 
 
                             }
-                        }, 20000);
+                        }, 60000);
                         // immagini region in locale
 
                     }

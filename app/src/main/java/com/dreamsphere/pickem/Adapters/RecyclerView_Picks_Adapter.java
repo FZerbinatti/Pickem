@@ -89,6 +89,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
         String dateTime = (( displayMatchDetailsList.get(i).getDatetime()));
         Long team1_score = displayMatchDetailsList.get(i).getTeam1_score();
         Long team2_score = displayMatchDetailsList.get(i).getTeam2_score();
+        String team1Image = displayMatchDetailsList.get(i).getUrlLogoteam1();
+        String team2Image = displayMatchDetailsList.get(i).getUrlLogoteam2();
 
         databaseHelper= new DatabaseHelper(context);
 
@@ -115,7 +117,8 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .error(R.drawable.ic_loading_error);
+                //.error(R.drawable.ic_loading_error)
+                ;
 
 
 

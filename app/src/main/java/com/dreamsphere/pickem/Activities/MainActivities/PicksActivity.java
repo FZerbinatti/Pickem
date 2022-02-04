@@ -155,6 +155,8 @@ import java.util.TimeZone;
                 startBackgorundFileSync();
                 pullToRefresh.setRefreshing(false);
                 Toast.makeText(context, "Sync started in background, can take up to a minute", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onRefresh: REMOVING year: "+(myCalendar.get(Calendar.YEAR)-1));
+                databaseHelper.removePastYear(String.valueOf(myCalendar.get(Calendar.YEAR)-1));
             }
         });
 
@@ -524,6 +526,9 @@ import java.util.TimeZone;
             displayMatch.setYear(selected_region_name + year);
             displayMatch.setTeam1_score(matchListForThisDay.get(i).getTeam1_score());
             displayMatch.setTeam2_score(matchListForThisDay.get(i).getTeam2_score());
+            displayMatch.setUrlLogoteam1(matchListForThisDay.get(i).getTeam1_image());
+            displayMatch.setUrlLogoteam2(matchListForThisDay.get(i).getTeam2_image());
+
             //Log.d(TAG, "fromMatchDaysToDisplayMatch: "+displayMatch.getDatetime());
 
             if (displayMatch.getTeam1() == null) {

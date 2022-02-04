@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class StatsPicksActivity extends AppCompatActivity{
+    private static final String TAG = "Stats Activity";
     Context context;
     Button button_manual_elo_tracking;
     ProgressBar stats_progressbar;
@@ -57,6 +59,7 @@ public class StatsPicksActivity extends AppCompatActivity{
         databaseHelper = new DatabaseHelper(this);
         myCalendar = Calendar.getInstance();
         year = String.valueOf(myCalendar.get(Calendar.YEAR));
+        Log.d(TAG, "onCreate: current year: "+year);
 
         globalStats(year);
 

@@ -1083,6 +1083,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void removePastYear(String pastYear) {
 
+        Log.d(TAG, "removePastYear: ");
         SQLiteDatabase db = this.getWritableDatabase();
 
         String whereClause = YEAR+"=?";
