@@ -152,7 +152,7 @@ import java.util.TimeZone;
             @Override
             public void onRefresh() {
                 refreshData(); // your code
-                startBackgorundFileSync();
+                //startBackgorundFileSync();
                 pullToRefresh.setRefreshing(false);
                 Toast.makeText(context, "Sync started in background, can take up to a minute", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onRefresh: REMOVING year: "+(myCalendar.get(Calendar.YEAR)-1));
@@ -206,6 +206,8 @@ import java.util.TimeZone;
     }
 
     public void loadViewPagerRegion(ArrayList<String> userSelectedRegions){
+
+
 
         adapterRegions = new Region_selection_Adapter(userSelectedRegions, PicksActivity.this);
 

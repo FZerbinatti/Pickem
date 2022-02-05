@@ -3,6 +3,7 @@ package com.dreamsphere.pickem.Adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.dreamsphere.pickem.Interfaces.RecyclerViewClickListener;
 import com.dreamsphere.pickem.Models.MatchDetails;
 import com.dreamsphere.pickem.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.ParseException;
@@ -36,6 +40,8 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
     RecyclerViewClickListener clickListener;
     MatchDetails thisMatch;
     String imageTeamPath;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference teamReference = storage.getReference("team_img");
 
     public RecyclerView_Calendar_Adapter() {
     }
@@ -69,6 +75,8 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
         String match_ID = displayMatchDetailsList.get(i).getId();
         String dateTime = displayMatchDetailsList.get(i).getDatetime();
         String firstMatch = displayMatchDetailsList.get(i).getState();
+        String team1Image = displayMatchDetailsList.get(i).getTeam1_image();
+        String team2Image = displayMatchDetailsList.get(i).getTeam2_image();
 
         String match_time = getTimeMinutesFromDatetime(dateTime);
         String match_date = getLocalDateFromDateTime(dateTime);
@@ -81,6 +89,8 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
         thisMatch.setTeam2(team2);
         thisMatch.setDatetime(dateTime);
         thisMatch.setState(firstMatch);
+        thisMatch.setTeam1_image(team1Image);
+        thisMatch.setTeam2_image(team2Image);
 
         if (thisMatch.getState().equals("0")){
             viewHolder.textview_match_date.setVisibility(View.GONE);
@@ -89,11 +99,9 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.skipMemoryCache(true)
                 .error(R.drawable.ic_loading_error);
-
-
 
             if (team1.equals(" ")){
                 viewHolder.image_team_1.setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
@@ -108,13 +116,14 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
 
             }else {
 
-                String local_image =imageTeamPath +team1+".png";
-
+                //String local_image =imageTeamPath +team1+".png";
                 Glide.with(context)
-                        .load(new File(local_image)) // Uri of the picture
+                        .load(thisMatch.getTeam1_image()) // Uri of the picture
                         .apply(options)
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(viewHolder.image_team_1);
+
+
 
             }
 
@@ -133,7 +142,7 @@ public class RecyclerView_Calendar_Adapter extends RecyclerView.Adapter <Recycle
                 String local_image =imageTeamPath +team2+".png";
 
                 Glide.with(context)
-                        .load(new File(local_image)) // Uri of the picture
+                        .load(thisMatch.getTeam2_image()) // Uri of the picture
                         .apply(options)
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(viewHolder.image_team_2);

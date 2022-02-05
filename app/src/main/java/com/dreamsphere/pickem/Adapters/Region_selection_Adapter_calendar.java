@@ -1,6 +1,7 @@
 package com.dreamsphere.pickem.Adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.dreamsphere.pickem.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +37,8 @@ import java.util.ArrayList;
         private String imageRegionPath;
         private Context context;
         ArrayList <String> selectedCalendarRegions;
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference regionReference = storage.getReference("region_img");
 
         public Region_selection_Adapter_calendar(ArrayList<String> allRegions, String imageRegionPath, Context context, ArrayList <String> selectedCalendarRegions) {
 
@@ -65,12 +71,12 @@ import java.util.ArrayList;
 
             RequestOptions options2 = new RequestOptions()
                     .fitCenter()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .error(R.drawable.tbd);
+                    //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.skipMemoryCache(true)
+                    .error(R.drawable.ic_loading_error);
 
 
-            String local_image =imageRegionPath+allRegions.get(position).replace(" ", "")+".png";
+           // String local_image =imageRegionPath+allRegions.get(position).replace(" ", "")+".png";
             //Log.d(TAG, "instantiateItem: $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ "+imageRegionPath);
 
 
@@ -85,12 +91,21 @@ import java.util.ArrayList;
                 holder.opacityImage.setVisibility(View.GONE);
             }
 
+            regionReference.child(allRegions.get(position).replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
 
-            Glide.with(context)
-                    .load(new File(local_image)) // Uri of the picture
-                    .apply(options2)
-                    .transition(DrawableTransitionOptions.withCrossFade(500))
-                    .into(holder.regionImage);
+                    Glide.with(context)
+                            .load(uri) // Uri of the picture
+                            .apply(options2)
+                            .transition(DrawableTransitionOptions.withCrossFade(500))
+                            .into(holder.regionImage);
+
+                }
+            });
+
+
+
 
 
             holder.regionImage.setOnClickListener(new View.OnClickListener() {

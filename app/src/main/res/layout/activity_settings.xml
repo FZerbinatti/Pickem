@@ -420,6 +420,7 @@
 
                     <ImageButton
                         android:id="@+id/switch_notification"
+
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_marginEnd="15dp"

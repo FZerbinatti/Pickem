@@ -82,6 +82,9 @@ If you have any questions or suggestions about my Terms and Conditions, do not h
     <string name="riot_api_address">.api.riotgames.com</string>
     <string name="key_request">"?api_key="</string>
 
+    // firestorage
+    <string name="storageRegionReference">gs://pickemandroid.appspot.com/region_img/</string>
+
 
     // firebase children
     <string name="firebase_users">Users</string>

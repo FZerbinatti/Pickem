@@ -2,6 +2,7 @@ package com.dreamsphere.pickem.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,9 @@ import com.dreamsphere.pickem.Models.GlobalMatchStatsSimplified;
 import com.dreamsphere.pickem.Models.MatchSingleTeamStats;
 import com.dreamsphere.pickem.R;
 import com.dreamsphere.pickem.Services.DatabaseHelper;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.util.List;
@@ -38,6 +42,8 @@ public class RecyclerView_ChooseGame_Adapter extends RecyclerView.Adapter <Recyc
     String match_prediction;
     String imageTeamPath;
     DatabaseHelper databaseHelper;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference teamReference = storage.getReference("team_img");
 
     public RecyclerView_ChooseGame_Adapter() {
     }
@@ -86,25 +92,46 @@ public class RecyclerView_ChooseGame_Adapter extends RecyclerView.Adapter <Recyc
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.skipMemoryCache(true)
                 .error(R.drawable.ic_loading_error);
 
-                String local_image1 =imageTeamPath +team1.getTeamCode()+".png";
+                //String local_image1 =imageTeamPath +team1.getTeamCode()+".png";
+
+
+
+
+        teamReference.child(team1.getTeamCode().replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
 
                 Glide.with(context)
-                        .load(new File(local_image1)) // Uri of the picture
+                        .load(uri) // Uri of the picture
                         .apply(options)
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(viewHolder.image_team_1);
 
-                String local_image2 =imageTeamPath +team2.getTeamCode()+".png";
+            }
+        });
+
+               // String local_image2 =imageTeamPath +team2.getTeamCode()+".png";
+
+
+
+        teamReference.child(team2.getTeamCode().replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
 
                 Glide.with(context)
-                        .load(new File(local_image2)) // Uri of the picture
+                        .load(uri) // Uri of the picture
                         .apply(options)
                         .transition(DrawableTransitionOptions.withCrossFade(500))
                         .into(viewHolder.image_team_2);
+
+            }
+        });
+
+
 
 
         viewHolder.textview_match_timer.setText(match_time);

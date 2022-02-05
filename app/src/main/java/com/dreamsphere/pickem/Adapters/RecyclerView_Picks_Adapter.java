@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +25,16 @@ import com.dreamsphere.pickem.Interfaces.RecyclerViewClickListener;
 import com.dreamsphere.pickem.Models.DisplayMatch;
 import com.dreamsphere.pickem.R;
 import com.dreamsphere.pickem.Services.DatabaseHelper;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,6 +53,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
     String match_prediction;
     String imageTeamPath;
     DatabaseHelper databaseHelper;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference teamReference = storage.getReference("team_img");
+
 
     public RecyclerView_Picks_Adapter() {
     }
@@ -115,9 +121,9 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                //.error(R.drawable.ic_loading_error)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.skipMemoryCache(true)
+                .error(R.drawable.ic_loading_error)
                 ;
 
 
@@ -135,13 +141,23 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }else {
 
-                String local_image =imageTeamPath +team1+".png";
+                //String local_image =imageTeamPath +team1+".png";
 
-                Glide.with(context)
-                        .load(new File(local_image)) // Uri of the picture
-                        .apply(options)
-                        .transition(DrawableTransitionOptions.withCrossFade(500))
-                        .into(viewHolder.image_team_1);
+                teamReference.child(thisMatch.getTeam1().replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+
+                        Glide.with(context)
+                                //.load(new File(local_image)) // Uri of the picture
+                                .load(uri)
+                                .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade(200))
+                                .into(viewHolder.image_team_1);
+
+                    }
+                });
+
+
 
             }
 
@@ -157,13 +173,24 @@ public class RecyclerView_Picks_Adapter extends RecyclerView.Adapter <RecyclerVi
 
             }else {
 
-                String local_image =imageTeamPath +team2+".png";
+                //String local_image =imageTeamPath +team2+".png";
 
-                Glide.with(context)
-                        .load(new File(local_image)) // Uri of the picture
-                        .apply(options)
-                        .transition(DrawableTransitionOptions.withCrossFade(500))
-                        .into(viewHolder.image_team_2);
+
+                teamReference.child(thisMatch.getTeam2().replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+
+                        Glide.with(context)
+                                //.load(new File(local_image)) // Uri of the picture
+                                .load(uri)
+                                .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade(200))
+                                .into(viewHolder.image_team_2);
+
+                    }
+                });
+
+
 
 
             }

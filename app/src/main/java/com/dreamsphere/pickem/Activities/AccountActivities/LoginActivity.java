@@ -141,10 +141,10 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful() && (firebaseUser != null && (firebaseUser).isEmailVerified())){
 
                                 downloadUserRegions();
-                                downloadUSerNotificationPreferences();
+                                //**downloadUSerNotificationPreferences();
                                 downloadUserElotrackerInfo();
 
-                                Log.d(TAG, "onComplete: QUI");
+                                /* Log.d(TAG, "onComplete: QUI");
 
                                 File rootfolder = new File(getFilesDir()
                                         + "/images");
@@ -272,8 +272,10 @@ public class LoginActivity extends AppCompatActivity {
                                                 gsReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
                                                     @Override
                                                     public void onSuccess(StorageMetadata storageMetadata) {
-                                                        /*String[] datetime =file_name.split(".");
+                                                        */
+                                /*String[] datetime =file_name.split(".");
                                                         String name =datetime[0];*/
+                                /*
                                                         Log.d(TAG, "onSuccess: inserisco nel db questi dati: "+ file_name + " creationTimeMillis: "+ storageMetadata.getCreationTimeMillis());
 
                                                         databaseHelper.insertImageTeam(new ImageValidator(file_name, storageMetadata.getCreationTimeMillis()));
@@ -282,7 +284,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                             }
 
-                                            downloadUserPicksForStatsActivity();
+                                            //**downloadUserPicksForStatsActivity();
 
                                         }
                                     }, 3000);
@@ -295,10 +297,15 @@ public class LoginActivity extends AppCompatActivity {
                                     PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
                                     startActivity(intent);
 
-                                }
+                                }*/
+                                login_progressbar.setVisibility(View.GONE);
+                                PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
+                                Intent intent = new Intent( LoginActivity.this, PicksActivity.class);
+                                PreferencesData.setUserLoggedInStatus(getApplicationContext(),true);
+                                startActivity(intent);
 
                             }else {
-                                Toast.makeText(LoginActivity.this, "Login Error, Have you verified your email? If so, Try again", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Press Login Again", Toast.LENGTH_SHORT).show();
                                 login_progressbar.setVisibility(View.GONE);
                             }
                         }

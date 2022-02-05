@@ -756,7 +756,7 @@ public class  SettingsActivity extends AppCompatActivity {
             }
         });
 
-        switch_notification.setOnClickListener(new View.OnClickListener() {
+/*        switch_notification.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -781,7 +781,7 @@ public class  SettingsActivity extends AppCompatActivity {
                     dropdownNotification = false;
                 }
             }
-        });
+        });*/
 
         switch_user_settings.setOnClickListener(new View.OnClickListener() {
             @Override

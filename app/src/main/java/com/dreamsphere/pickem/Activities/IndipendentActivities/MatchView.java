@@ -5,6 +5,7 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +20,14 @@ import com.dreamsphere.pickem.Models.GlobalMatchStats;
 import com.dreamsphere.pickem.Models.MatchPlayersStats;
 import com.dreamsphere.pickem.Models.Player;
 import com.dreamsphere.pickem.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.ParseException;
@@ -68,6 +72,11 @@ public class MatchView extends AppCompatActivity {
     String match_winner;
     String game_number;
 
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference teamReference = storage.getReference("team_img");
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,8 +114,8 @@ public class MatchView extends AppCompatActivity {
 
         RequestOptions options = new RequestOptions()
                 .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.skipMemoryCache(true)
                 .error(R.drawable.ic_load);
 
         Log.d(TAG, "downloadMatchStats: game number: "+game_number);
@@ -133,8 +142,8 @@ public class MatchView extends AppCompatActivity {
 
                 RequestOptions options = new RequestOptions()
                         .fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
+                        //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                        //.skipMemoryCache(true)
                         .error(R.drawable.ic_load);
 
                 String team1 = globalMatchStats.getTeam1().getTeamCode();
@@ -142,17 +151,35 @@ public class MatchView extends AppCompatActivity {
 
                 Log.d(TAG, "onCreate: path: "+ imageTeamsPath+team1);
 
-                Glide.with(context)
-                        .load(new File(imageTeamsPath +team1+".png")) // Uri of the picture
-                        .apply(options)
-                        .transition(DrawableTransitionOptions.withCrossFade(500))
-                        .into(team_1_logo);
+                teamReference.child(team1.replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
 
-                Glide.with(context)
-                        .load(new File(imageTeamsPath +team2+".png")) // Uri of the picture
-                        .apply(options)
-                        .transition(DrawableTransitionOptions.withCrossFade(500))
-                        .into(team_2_logo);
+                        Glide.with(context)
+                                .load(uri) // Uri of the picture
+                                .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade(500))
+                                .into(team_1_logo);
+
+                    }
+                });
+
+                teamReference.child(team2.replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+
+                        Glide.with(context)
+                                .load(uri) // Uri of the picture
+                                .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade(500))
+                                .into(team_2_logo);
+
+                    }
+                });
+
+
+
+
 
                 if (match_winner.equals(team1)){
                     team_1_win.setVisibility(View.VISIBLE);

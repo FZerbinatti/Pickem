@@ -2,6 +2,7 @@ package com.dreamsphere.pickem.Adapters;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.dreamsphere.pickem.Interfaces.RecyclerViewClickListener;
 import com.dreamsphere.pickem.Models.RegionStats;
 import com.dreamsphere.pickem.R;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -34,6 +38,8 @@ public class RecyclerView_Statistics_Adapter extends RecyclerView.Adapter <Recyc
     RecyclerViewClickListener clickListener;
     RegionStats thisRegionStats;
     String imageTeamPath;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference regionReference = storage.getReference("region_img");
 
     public RecyclerView_Statistics_Adapter() {
     }
@@ -84,18 +90,27 @@ public class RecyclerView_Statistics_Adapter extends RecyclerView.Adapter <Recyc
 
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
+                //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                //.skipMemoryCache(true)
                 .error(R.drawable.ic_loading_error);
 
 
-        String local_image =imageTeamPath +regionName+".png";
+        //String local_image =imageTeamPath +regionName+".png";
 
-        Glide.with(context)
-                .load(new File(local_image)) // Uri of the picture
-                .apply(options)
-                .transition(DrawableTransitionOptions.withCrossFade(500))
-                .into(viewHolder.region_image);
+        regionReference.child(regionName.replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+
+                Glide.with(context)
+                        .load(uri) // Uri of the picture
+                        .apply(options)
+                        .transition(DrawableTransitionOptions.withCrossFade(500))
+                        .into(viewHolder.region_image);
+
+            }
+        });
+
+
 
         viewHolder.progressbar_statistics_item.setProgress(Math.round(percentage));
         ColorStateList colorStateList = ContextCompat.getColorStateList(viewHolder.progressbar_statistics_item.getContext(), progressBarColor(Math.round(percentage)));
