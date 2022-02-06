@@ -20,6 +20,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"
@@ -29,9 +31,20 @@
         android:text="Picks Statistics"
         android:textColor="@color/white"
         android:textSize="30dp"
+        android:paddingVertical="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_reload"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_reload"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
 

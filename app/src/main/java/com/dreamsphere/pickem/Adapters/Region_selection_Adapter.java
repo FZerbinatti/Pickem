@@ -34,6 +34,7 @@ public class Region_selection_Adapter extends PagerAdapter {
 
 
 
+
     public Region_selection_Adapter(ArrayList<String> leaguesSelectedList, Context context) {
         this.leaguesSelectedList = leaguesSelectedList;
         this.context = context;

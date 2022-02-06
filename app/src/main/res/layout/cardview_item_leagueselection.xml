@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:foregroundGravity="top"
-                android:src="@drawable/logo_lec"
+                android:src="@drawable/ic_load"
                 android:padding="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

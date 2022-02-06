@@ -138,7 +138,7 @@
                 android:visibility="invisible"
 
                 android:layout_marginTop="30sp"
-                android:text="There Are not Yet matches for this region"
+                android:text="No match found, please reload swiping down!"
                 android:textColor="@color/white"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"

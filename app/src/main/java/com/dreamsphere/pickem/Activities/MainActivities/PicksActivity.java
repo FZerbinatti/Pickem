@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +54,7 @@ import com.dreamsphere.pickem.R;
 import com.dreamsphere.pickem.Services.AndroidDatabaseManager;
 import com.dreamsphere.pickem.Services.PreferencesData;
 import com.dreamsphere.pickem.Services.DatabaseHelper;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -60,6 +62,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,6 +108,8 @@ import java.util.TimeZone;
     ImageButton databaseOpener;
     public static final String workTag = "notificationWork";
      private static final String CHANNEL_ID = "1";
+     FirebaseStorage storage = FirebaseStorage.getInstance();
+     StorageReference regionReference = storage.getReference("region_img");
 
 
     @Override
@@ -229,15 +235,24 @@ import java.util.TimeZone;
                 String local_image =userSelectedRegions.get(position).replace(" ", "")+".png";
                 RequestOptions options = new RequestOptions()
                         .fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
+                        //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                        //.skipMemoryCache(true)
                         .error(R.drawable.ic_load);
 
-                Glide.with(context)
-                        .load(new File(imageRegionPath+local_image)) // Uri of the picture
-                        .apply(options)
-                        .transition(DrawableTransitionOptions.withCrossFade(500))
-                        .into(pick_backgroundimage);
+
+                regionReference.child(selected_region_name.replace(" ", "")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+
+                        Glide.with(context)
+                                .load(uri) // Uri of the picture
+                                .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade(500))
+                                .into(pick_backgroundimage);
+
+                    }
+                });
+
 
             }
 
